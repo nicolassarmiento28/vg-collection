@@ -73,6 +73,10 @@ function isValidGamesState(value: unknown): value is GamesState {
     return false
   }
 
+  if ('search' in value && value.search !== undefined && typeof value.search !== 'string') {
+    return false
+  }
+
   return value.games.every(isValidGame)
 }
 
