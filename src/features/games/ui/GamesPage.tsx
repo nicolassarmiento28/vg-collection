@@ -10,6 +10,10 @@ import { GamesToolbar } from './GamesToolbar'
 
 type ModalMode = 'create' | 'edit'
 
+export function normalizeOptionalRating(rating: number | null | undefined): number | undefined {
+  return rating ?? undefined
+}
+
 export function GamesPage() {
   const { message } = AntdApp.useApp()
   const { state, dispatch } = useGamesContext()
@@ -55,6 +59,8 @@ export function GamesPage() {
   }
 
   const handleSubmit = (values: GameFormValues) => {
+    const rating = normalizeOptionalRating(values.rating)
+
     if (modalMode === 'create') {
       const now = new Date().toISOString()
 
@@ -65,7 +71,7 @@ export function GamesPage() {
           title: values.title,
           platform: values.platform,
           status: values.status,
-          rating: values.rating,
+          rating,
           notes: values.notes,
           createdAt: now,
           updatedAt: now,
@@ -89,7 +95,7 @@ export function GamesPage() {
           title: values.title,
           platform: values.platform,
           status: values.status,
-          rating: values.rating,
+          rating,
           notes: values.notes,
           updatedAt: new Date().toISOString(),
         },

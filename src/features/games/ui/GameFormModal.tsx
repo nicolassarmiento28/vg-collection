@@ -52,13 +52,15 @@ export function GameFormModal({ open, mode, game, onCancel, onSubmit }: GameForm
       return
     }
 
+    form.resetFields()
+
     if (mode === 'edit' && game !== undefined) {
       form.setFieldsValue({
         title: game.title,
         platform: game.platform,
         status: game.status,
-        rating: game.rating,
-        notes: game.notes,
+        rating: game.rating ?? undefined,
+        notes: game.notes ?? '',
       })
       return
     }
