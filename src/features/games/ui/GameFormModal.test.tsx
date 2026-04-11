@@ -63,6 +63,37 @@ describe('GameFormModal', () => {
     expect(onSubmit).not.toHaveBeenCalled()
   })
 
+  it('blocks submit when year is outside accepted range', async () => {
+    const onSubmit = vi.fn()
+
+    render(
+      <GameFormModal
+        open
+        mode="edit"
+        game={{
+          id: 'game-2',
+          title: 'Existing game',
+          platform: 'pc',
+          status: 'backlog',
+          createdAt: '2024-01-01T00:00:00.000Z',
+          updatedAt: '2024-01-01T00:00:00.000Z',
+        }}
+        onCancel={() => {}}
+        onSubmit={onSubmit}
+      />,
+    )
+
+    await userEvent.clear(screen.getByLabelText('Titulo'))
+    await userEvent.type(screen.getByLabelText('Titulo'), 'Chrono Trigger')
+    await userEvent.type(screen.getByLabelText('Genero'), 'RPG')
+    await userEvent.type(screen.getByLabelText('Anio'), '1969')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Guardar' }))
+
+    expect(await screen.findByText((_, e) => getErrorText('El anio debe estar entre 1970 y 2100', e))).toBeInTheDocument()
+    expect(onSubmit).not.toHaveBeenCalled()
+  })
+
   it('submits successfully when required fields are completed', async () => {
     const onSubmit = vi.fn()
 
