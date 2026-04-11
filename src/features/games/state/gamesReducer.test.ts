@@ -74,4 +74,13 @@ describe('gamesReducer', () => {
     expect(nextState.platformFilter).toBe('xbox')
     expect(nextState.statusFilter).toBe('playing')
   })
+
+  it('normalizes localized completed status filter values', () => {
+    const nextState = gamesReducer(defaultGamesState, {
+      type: 'setStatusFilter',
+      payload: 'Completado' as unknown as GamesAction['payload'],
+    })
+
+    expect(nextState.statusFilter).toBe('completed')
+  })
 })
