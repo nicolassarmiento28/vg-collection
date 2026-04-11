@@ -27,6 +27,9 @@ describe('gamesStorage', () => {
           updatedAt: '2026-01-02T00:00:00.000Z',
         },
       ],
+      search: 'metroid',
+      platformFilter: 'switch',
+      statusFilter: 'all',
     }
 
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
@@ -40,6 +43,48 @@ describe('gamesStorage', () => {
       JSON.stringify({
         games: [],
         search: 42,
+        platformFilter: 'all',
+        statusFilter: 'all',
+      }),
+    )
+
+    expect(loadGamesState()).toEqual(defaultGamesState)
+  })
+
+  it('falls back to default state when required filters are missing', () => {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        games: [],
+        search: '',
+      }),
+    )
+
+    expect(loadGamesState()).toEqual(defaultGamesState)
+  })
+
+  it('falls back to default state when platform filter is invalid', () => {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        games: [],
+        search: '',
+        platformFilter: 'steamdeck',
+        statusFilter: 'all',
+      }),
+    )
+
+    expect(loadGamesState()).toEqual(defaultGamesState)
+  })
+
+  it('falls back to default state when status filter is invalid', () => {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        games: [],
+        search: '',
+        platformFilter: 'all',
+        statusFilter: 'wishlist',
       }),
     )
 
@@ -66,6 +111,9 @@ describe('gamesStorage', () => {
             updatedAt: '2026-01-02T00:00:00.000Z',
           },
         ],
+        search: '',
+        platformFilter: 'all',
+        statusFilter: 'all',
       }),
     )
 

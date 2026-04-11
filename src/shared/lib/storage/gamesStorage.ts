@@ -73,7 +73,15 @@ function isValidGamesState(value: unknown): value is GamesState {
     return false
   }
 
-  if ('search' in value && value.search !== undefined && typeof value.search !== 'string') {
+  if (typeof value.search !== 'string') {
+    return false
+  }
+
+  if (value.platformFilter !== 'all' && !VALID_PLATFORMS.includes(value.platformFilter as Platform)) {
+    return false
+  }
+
+  if (value.statusFilter !== 'all' && !VALID_STATUSES.includes(value.statusFilter as GameStatus)) {
     return false
   }
 

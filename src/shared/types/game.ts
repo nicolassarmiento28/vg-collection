@@ -21,8 +21,14 @@ export interface Game {
 
 export interface GamesState {
   games: Game[]
+  search: string
+  platformFilter: Platform | 'all'
+  statusFilter: GameStatus | 'all'
 }
 
 export const defaultGamesState: GamesState = {
   games: [],
+  search: '',
+  platformFilter: 'all',
+  statusFilter: 'all',
 }
