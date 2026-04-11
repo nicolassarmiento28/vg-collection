@@ -74,6 +74,61 @@ function isValidGame(value: unknown): value is Game {
   return true
 }
 
+function migrateStoredGame(value: unknown): Game | null {
+  if (isValidGame(value)) {
+    return value
+  }
+
+  if (!isRecord(value)) {
+    return null
+  }
+
+  if (
+    typeof value.id !== 'string' ||
+    typeof value.title !== 'string' ||
+    typeof value.platform !== 'string' ||
+    typeof value.status !== 'string' ||
+    typeof value.createdAt !== 'string' ||
+    typeof value.updatedAt !== 'string'
+  ) {
+    return null
+  }
+
+  if (value.id.length === 0) {
+    return null
+  }
+
+  if (!VALID_PLATFORMS.includes(value.platform as Platform)) {
+    return null
+  }
+
+  if (!VALID_STATUSES.includes(value.status as GameStatus)) {
+    return null
+  }
+
+  if (value.rating !== undefined && typeof value.rating !== 'number') {
+    return null
+  }
+
+  if (value.notes !== undefined && typeof value.notes !== 'string') {
+    return null
+  }
+
+  if (value.genre !== undefined && (typeof value.genre !== 'string' || value.genre.length === 0)) {
+    return null
+  }
+
+  if (value.year !== undefined && (typeof value.year !== 'number' || !Number.isInteger(value.year))) {
+    return null
+  }
+
+  return {
+    ...value,
+    genre: value.genre ?? 'Sin genero',
+    year: value.year ?? 2000,
+  } as Game
+}
+
 function isValidGamesState(value: unknown): value is GamesState {
   if (!isRecord(value) || !Array.isArray(value.games)) {
     return false
@@ -102,7 +157,35 @@ export function loadGamesState(): GamesState {
 
   try {
     const parsed: unknown = JSON.parse(raw)
-    return isValidGamesState(parsed) ? parsed : defaultGamesState
+    if (!isRecord(parsed) || !Array.isArray(parsed.games)) {
+      return defaultGamesState
+    }
+
+    if (typeof parsed.search !== 'string') {
+      return defaultGamesState
+    }
+
+    if (parsed.platformFilter !== 'all' && !VALID_PLATFORMS.includes(parsed.platformFilter as Platform)) {
+      return defaultGamesState
+    }
+
+    if (parsed.statusFilter !== 'all' && !VALID_STATUSES.includes(parsed.statusFilter as GameStatus)) {
+      return defaultGamesState
+    }
+
+    const games = parsed.games.map(migrateStoredGame)
+    if (games.some((game) => game === null)) {
+      return defaultGamesState
+    }
+
+    const migratedState: GamesState = {
+      games: games as Game[],
+      search: parsed.search,
+      platformFilter: parsed.platformFilter as GamesState['platformFilter'],
+      statusFilter: parsed.statusFilter as GamesState['statusFilter'],
+    }
+
+    return isValidGamesState(migratedState) ? migratedState : defaultGamesState
   } catch {
     return defaultGamesState
   }

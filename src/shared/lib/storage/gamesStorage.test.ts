@@ -124,17 +124,16 @@ describe('gamesStorage', () => {
     expect(loadGamesState()).toEqual(defaultGamesState)
   })
 
-  it('falls back to default state when stored game is missing genre', () => {
+  it('migrates legacy game when genre and year are missing', () => {
     window.localStorage.setItem(
       STORAGE_KEY,
       JSON.stringify({
         games: [
           {
             id: 'g-2',
-            title: 'Invalid entry',
+            title: 'Legacy entry',
             platform: 'pc',
             status: 'backlog',
-            year: 2010,
             createdAt: '2026-01-01T00:00:00.000Z',
             updatedAt: '2026-01-02T00:00:00.000Z',
           },
@@ -145,7 +144,23 @@ describe('gamesStorage', () => {
       }),
     )
 
-    expect(loadGamesState()).toEqual(defaultGamesState)
+    expect(loadGamesState()).toEqual({
+      games: [
+        {
+          id: 'g-2',
+          title: 'Legacy entry',
+          platform: 'pc',
+          status: 'backlog',
+          genre: 'Sin genero',
+          year: 2000,
+          createdAt: '2026-01-01T00:00:00.000Z',
+          updatedAt: '2026-01-02T00:00:00.000Z',
+        },
+      ],
+      search: '',
+      platformFilter: 'all',
+      statusFilter: 'all',
+    })
   })
 
   it('falls back to default state when stored game has invalid year', () => {
