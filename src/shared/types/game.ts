@@ -13,6 +13,8 @@ export interface Game {
   title: string
   platform: Platform
   status: GameStatus
+  genre: string
+  year: number
   rating?: number
   notes?: string
   createdAt: string

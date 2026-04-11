@@ -41,13 +41,13 @@ export function GamesTable({ games, onEdit, onComplete }: GamesTableProps) {
     },
     {
       title: 'Genero',
+      dataIndex: 'genre',
       key: 'genre',
-      render: () => '-',
     },
     {
       title: 'Ano',
+      dataIndex: 'year',
       key: 'year',
-      render: () => '-',
     },
     {
       title: 'Nota',

@@ -8,6 +8,8 @@ const baseGame: Game = {
   title: 'Halo Infinite',
   platform: 'xbox',
   status: 'backlog',
+  genre: 'Shooter',
+  year: 2021,
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
 }
@@ -36,6 +38,8 @@ describe('gamesReducer', () => {
         updates: {
           title: 'Halo 3',
           platform: 'pc',
+          genre: 'FPS',
+          year: 2007,
           rating: 10,
         },
       },
@@ -46,6 +50,8 @@ describe('gamesReducer', () => {
         ...baseGame,
         title: 'Halo 3',
         platform: 'pc',
+        genre: 'FPS',
+        year: 2007,
         rating: 10,
       },
     ])

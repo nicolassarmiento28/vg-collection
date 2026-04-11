@@ -39,6 +39,8 @@ function isValidGame(value: unknown): value is Game {
     typeof value.title !== 'string' ||
     typeof value.platform !== 'string' ||
     typeof value.status !== 'string' ||
+    typeof value.genre !== 'string' ||
+    typeof value.year !== 'number' ||
     typeof value.createdAt !== 'string' ||
     typeof value.updatedAt !== 'string'
   ) {
@@ -46,6 +48,10 @@ function isValidGame(value: unknown): value is Game {
   }
 
   if (value.id.length === 0) {
+    return false
+  }
+
+  if (value.genre.length === 0 || !Number.isInteger(value.year)) {
     return false
   }
 

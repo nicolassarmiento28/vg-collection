@@ -78,6 +78,8 @@ describe('GameFormModal', () => {
         title: 'Existing game',
         platform: 'pc',
         status: 'backlog',
+        genre: 'Adventure',
+        year: 2010,
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
       },
@@ -105,6 +107,8 @@ describe('GameFormModal', () => {
         title: 'Existing game',
         platform: 'pc',
         status: 'backlog',
+        genre: 'Adventure',
+        year: 2010,
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
       },
@@ -137,5 +141,29 @@ describe('GameFormModal', () => {
     })
 
     expect(modal.queryByText('El titulo es obligatorio')).not.toBeInTheDocument()
+  })
+
+  it('pre-fills genre and year in edit mode', async () => {
+    const modal = await renderModal({
+      open: true,
+      mode: 'edit',
+      game: {
+        id: 'game-3',
+        title: 'Existing game',
+        platform: 'switch',
+        status: 'playing',
+        genre: 'RPG',
+        year: 2017,
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+      },
+      onCancel: () => {},
+      onSubmit: vi.fn(),
+    })
+
+    await waitFor(() => {
+      expect(modal.getByRole('textbox', { name: 'Genero' })).toHaveValue('RPG')
+      expect(modal.getByRole('spinbutton', { name: 'Anio' })).toHaveValue('2017')
+    })
   })
 })

@@ -21,6 +21,8 @@ describe('gamesStorage', () => {
           title: 'Metroid Prime',
           platform: 'switch',
           status: 'backlog',
+          genre: 'FPS',
+          year: 2002,
           rating: 9,
           notes: 'Replay before 4',
           createdAt: '2026-01-01T00:00:00.000Z',
@@ -107,6 +109,57 @@ describe('gamesStorage', () => {
             title: 'Invalid entry',
             platform: 'pc',
             status: 'backlog',
+            genre: 'Action',
+            year: 2010,
+            createdAt: '2026-01-01T00:00:00.000Z',
+            updatedAt: '2026-01-02T00:00:00.000Z',
+          },
+        ],
+        search: '',
+        platformFilter: 'all',
+        statusFilter: 'all',
+      }),
+    )
+
+    expect(loadGamesState()).toEqual(defaultGamesState)
+  })
+
+  it('falls back to default state when stored game is missing genre', () => {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        games: [
+          {
+            id: 'g-2',
+            title: 'Invalid entry',
+            platform: 'pc',
+            status: 'backlog',
+            year: 2010,
+            createdAt: '2026-01-01T00:00:00.000Z',
+            updatedAt: '2026-01-02T00:00:00.000Z',
+          },
+        ],
+        search: '',
+        platformFilter: 'all',
+        statusFilter: 'all',
+      }),
+    )
+
+    expect(loadGamesState()).toEqual(defaultGamesState)
+  })
+
+  it('falls back to default state when stored game has invalid year', () => {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        games: [
+          {
+            id: 'g-3',
+            title: 'Invalid entry',
+            platform: 'pc',
+            status: 'backlog',
+            genre: 'Action',
+            year: '2010',
             createdAt: '2026-01-01T00:00:00.000Z',
             updatedAt: '2026-01-02T00:00:00.000Z',
           },

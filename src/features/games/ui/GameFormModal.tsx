@@ -25,7 +25,7 @@ interface GameFormValues {
   platform: Platform
   status: GameStatus
   genre: string
-  year: number | undefined
+  year: number
   rating?: number
   notes?: string
 }
@@ -61,8 +61,8 @@ export function GameFormModal({ open, mode, game, onCancel, onSubmit }: GameForm
         title: game.title,
         platform: game.platform,
         status: game.status,
-        genre: '',
-        year: undefined,
+        genre: game.genre,
+        year: game.year,
         rating: game.rating ?? undefined,
         notes: game.notes ?? '',
       })
