@@ -11,7 +11,12 @@ This template provides a minimal setup to get React working in Vite with HMR and
 
 ## MVP Verification Notes
 
-After starting the app with `npm run dev`, the following checks are pending manual browser verification by the user:
+Automated checks completed:
+
+- [x] `npm run test` passes (23 tests)
+- [x] `npm run build` passes
+
+Manual browser checks pending user verification after starting `npm run dev`:
 
 - [ ] Add a game and refresh page (data persists)
 - [ ] Edit a game and confirm values update
