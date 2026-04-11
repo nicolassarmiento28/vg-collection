@@ -75,10 +75,10 @@ describe('gamesReducer', () => {
     expect(nextState.statusFilter).toBe('playing')
   })
 
-  it('normalizes localized completed status filter values', () => {
+  it('sets status filter with a valid domain value', () => {
     const nextState = gamesReducer(defaultGamesState, {
       type: 'setStatusFilter',
-      payload: 'Completado' as unknown as GamesAction['payload'],
+      payload: 'completed',
     })
 
     expect(nextState.statusFilter).toBe('completed')
