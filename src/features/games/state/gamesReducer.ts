@@ -48,7 +48,7 @@ export function gamesReducer(state: GamesState, action: GamesAction): GamesState
     case 'setStatusFilter':
       return {
         ...state,
-        statusFilter: action.payload,
+        statusFilter: action.payload === ('Completado' as GameStatus) ? 'completed' : action.payload,
       }
     default:
       return state
