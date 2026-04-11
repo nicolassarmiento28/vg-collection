@@ -40,6 +40,26 @@ describe('gamesStorage', () => {
     expect(loadGamesState()).toEqual(defaultGamesState)
   })
 
+  it('falls back to default state when stored game has empty id', () => {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        games: [
+          {
+            id: '',
+            title: 'Invalid entry',
+            platform: 'pc',
+            status: 'backlog',
+            createdAt: '2026-01-01T00:00:00.000Z',
+            updatedAt: '2026-01-02T00:00:00.000Z',
+          },
+        ],
+      }),
+    )
+
+    expect(loadGamesState()).toEqual(defaultGamesState)
+  })
+
   it('does not throw when save fails', () => {
     vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
       throw new Error('write failure')

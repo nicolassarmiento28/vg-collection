@@ -45,6 +45,10 @@ function isValidGame(value: unknown): value is Game {
     return false
   }
 
+  if (value.id.length === 0) {
+    return false
+  }
+
   if (!VALID_PLATFORMS.includes(value.platform as Platform)) {
     return false
   }
