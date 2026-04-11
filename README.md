@@ -11,13 +11,13 @@ This template provides a minimal setup to get React working in Vite with HMR and
 
 ## MVP Verification Notes
 
-After starting the app with `npm run dev`, verify the following flows:
+After starting the app with `npm run dev`, the following checks are pending manual browser verification by the user:
 
-- Add game + refresh persists
-- Edit game updates values
-- Complete action works
-- Search + filters work together
-- Mobile width behavior checks
+- [ ] Add a game and refresh page (data persists)
+- [ ] Edit a game and confirm values update
+- [ ] Mark game as completed from table action
+- [ ] Combine search and filters
+- [ ] Check mobile width behavior
 
 Currently, two official plugins are available:
 
