@@ -34,6 +34,18 @@ describe('gamesStorage', () => {
     expect(loadGamesState()).toEqual(state)
   })
 
+  it('falls back to default state when stored search is not a string', () => {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        games: [],
+        search: 42,
+      }),
+    )
+
+    expect(loadGamesState()).toEqual(defaultGamesState)
+  })
+
   it('falls back to default state on invalid JSON', () => {
     window.localStorage.setItem(STORAGE_KEY, '{invalid')
 
