@@ -2,6 +2,23 @@
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
+## Scripts
+
+- `npm run dev`
+- `npm run build`
+- `npm run preview`
+- `npm run test`
+
+## MVP Verification Notes
+
+After starting the app with `npm run dev`, verify the following flows:
+
+- Add game + refresh persists
+- Edit game updates values
+- Complete action works
+- Search + filters work together
+- Mobile width behavior checks
+
 Currently, two official plugins are available:
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
