@@ -120,9 +120,12 @@ export function GameFormModal({ open, mode, game, onCancel, onSubmit }: GameForm
         <Form.Item
           label="Anio"
           name="year"
-          rules={[{ required: true, message: 'El anio es obligatorio' }]}
+          rules={[
+            { required: true, message: 'El anio es obligatorio' },
+            { type: 'number', min: 1970, max: 2100, message: 'El anio debe estar entre 1970 y 2100' },
+          ]}
         >
-          <InputNumber aria-label="Anio" min={1970} max={2100} style={{ width: '100%' }} />
+          <InputNumber aria-label="Anio" style={{ width: '100%' }} />
         </Form.Item>
 
         <Form.Item label="Nota" name="rating">
