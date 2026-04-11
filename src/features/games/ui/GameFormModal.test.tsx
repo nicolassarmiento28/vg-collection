@@ -121,7 +121,13 @@ describe('GameFormModal', () => {
       expect(onSubmit).toHaveBeenCalledTimes(1)
     })
 
-    const submittedValues = onSubmit.mock.calls[0][0] as Record<string, unknown>
+    const firstSubmitCall = onSubmit.mock.calls[0]
+    expect(firstSubmitCall).toBeDefined()
+    if (!firstSubmitCall) {
+      throw new Error('Expected submit call payload')
+    }
+
+    const [submittedValues] = firstSubmitCall
     expect(submittedValues).toMatchObject({
       title: 'Existing game',
       platform: 'pc',
