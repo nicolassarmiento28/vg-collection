@@ -1,3 +1,5 @@
+import { getServerEnv } from './serverEnv'
+
 interface CachedToken {
   accessToken: string
   expiresAt: number
@@ -9,7 +11,7 @@ let cachedToken: CachedToken | null = null
 let pendingRequest: Promise<string> | null = null
 
 function getRequiredEnv(name: 'TWITCH_CLIENT_ID' | 'TWITCH_CLIENT_SECRET'): string {
-  const value = process.env[name]
+  const value = getServerEnv(name)
 
   if (!value) {
     throw new Error('Missing Twitch credentials')

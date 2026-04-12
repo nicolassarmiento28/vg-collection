@@ -2,19 +2,20 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import { setServerEnvForTests } from './serverEnv'
 import { getTwitchAccessToken, resetTwitchTokenCacheForTests } from './twitchToken'
 
 describe('getTwitchAccessToken', () => {
   afterEach(() => {
     vi.restoreAllMocks()
     resetTwitchTokenCacheForTests()
-    delete process.env.TWITCH_CLIENT_ID
-    delete process.env.TWITCH_CLIENT_SECRET
+    setServerEnvForTests('TWITCH_CLIENT_ID', undefined)
+    setServerEnvForTests('TWITCH_CLIENT_SECRET', undefined)
   })
 
   it('requests a new token from Twitch when cache is empty', async () => {
-    process.env.TWITCH_CLIENT_ID = 'client-id'
-    process.env.TWITCH_CLIENT_SECRET = 'client-secret'
+    setServerEnvForTests('TWITCH_CLIENT_ID', 'client-id')
+    setServerEnvForTests('TWITCH_CLIENT_SECRET', 'client-secret')
 
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(JSON.stringify({ access_token: 'token-1', expires_in: 3600 }), {
@@ -30,8 +31,8 @@ describe('getTwitchAccessToken', () => {
   })
 
   it('reuses token from cache until expiration window', async () => {
-    process.env.TWITCH_CLIENT_ID = 'client-id'
-    process.env.TWITCH_CLIENT_SECRET = 'client-secret'
+    setServerEnvForTests('TWITCH_CLIENT_ID', 'client-id')
+    setServerEnvForTests('TWITCH_CLIENT_SECRET', 'client-secret')
 
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(JSON.stringify({ access_token: 'token-2', expires_in: 3600 }), {

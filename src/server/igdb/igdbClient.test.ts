@@ -3,6 +3,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { igdbRequest, setIgdbTokenResolver } from './igdbClient'
+import { setServerEnvForTests } from './serverEnv'
 
 describe('igdbRequest', () => {
   afterEach(() => {
@@ -11,7 +12,7 @@ describe('igdbRequest', () => {
 
   it('calls IGDB endpoint with Twitch auth headers', async () => {
     setIgdbTokenResolver(async () => 'server-token')
-    process.env.TWITCH_CLIENT_ID = 'client-id'
+    setServerEnvForTests('TWITCH_CLIENT_ID', 'client-id')
 
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(JSON.stringify([{ id: 1, name: 'Halo' }]), {
@@ -37,7 +38,7 @@ describe('igdbRequest', () => {
 
   it('throws on non-OK IGDB responses', async () => {
     setIgdbTokenResolver(async () => 'server-token')
-    process.env.TWITCH_CLIENT_ID = 'client-id'
+    setServerEnvForTests('TWITCH_CLIENT_ID', 'client-id')
 
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response('blocked', {

@@ -1,11 +1,12 @@
 import { getTwitchAccessToken } from './twitchToken'
+import { getServerEnv } from './serverEnv'
 
 type TokenResolver = () => Promise<string>
 
 let resolveToken: TokenResolver = getTwitchAccessToken
 
 function getClientId(): string {
-  const clientId = process.env.TWITCH_CLIENT_ID
+  const clientId = getServerEnv('TWITCH_CLIENT_ID')
 
   if (!clientId) {
     throw new Error('Missing Twitch client id')
