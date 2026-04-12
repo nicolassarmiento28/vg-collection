@@ -9,6 +9,13 @@ This template provides a minimal setup to get React working in Vite with HMR and
 - `npm run preview`
 - `npm run test`
 
+## IGDB / Twitch configuration
+
+- Create a local `.env` file from `.env.example`.
+- Set `TWITCH_CLIENT_ID` and `TWITCH_CLIENT_SECRET` with your app credentials.
+- Never commit `.env` files or real credentials to git.
+- IGDB calls must always stay server-side; do not expose secrets in frontend code.
+
 ## MVP Verification Notes
 
 Automated checks completed:
