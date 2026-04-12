@@ -85,6 +85,10 @@ export function GameFormModal({ open, mode, game, onCancel, onSubmit }: GameForm
       destroyOnHidden
     >
       <Form form={form} layout="vertical" initialValues={initialValues} onFinish={onSubmit}>
+        <Form.Item label="Buscar en IGDB" name="igdbSearch">
+          <Input.Search aria-label="Buscar en IGDB" placeholder="Ej. Zelda" enterButton="Buscar" />
+        </Form.Item>
+
         <Form.Item
           label="Titulo"
           name="title"

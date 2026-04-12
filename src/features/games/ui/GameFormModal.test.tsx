@@ -46,6 +46,18 @@ async function renderModal(props: Parameters<typeof GameFormModal>[0]) {
 }
 
 describe('GameFormModal', () => {
+  it('shows IGDB search controls in create mode', async () => {
+    const modal = await renderModal({
+      open: true,
+      mode: 'create',
+      onCancel: () => {},
+      onSubmit: vi.fn(),
+    })
+
+    expect(modal.getByLabelText('Buscar en IGDB')).toBeInTheDocument()
+    expect(modal.getByRole('button', { name: 'Buscar' })).toBeInTheDocument()
+  })
+
   it('shows required validations and blocks submit for empty form', async () => {
     const user = userEvent.setup()
     const onSubmit = vi.fn()
