@@ -30,6 +30,7 @@ describe('gamesStorage', () => {
         },
       ],
       search: 'metroid',
+      platformFamilyFilter: 'all',
       platformFilter: 'switch',
       statusFilter: 'all',
     }
@@ -158,6 +159,7 @@ describe('gamesStorage', () => {
         },
       ],
       search: '',
+      platformFamilyFilter: 'all',
       platformFilter: 'all',
       statusFilter: 'all',
     })

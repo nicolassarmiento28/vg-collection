@@ -73,10 +73,12 @@ describe('gamesReducer', () => {
 
   it('sets search and filter values', () => {
     let nextState = reduce({ type: 'setSearch', payload: 'halo' })
+    nextState = gamesReducer(nextState, { type: 'setPlatformFamilyFilter', payload: 'microsoft' })
     nextState = gamesReducer(nextState, { type: 'setPlatformFilter', payload: 'xbox' })
     nextState = gamesReducer(nextState, { type: 'setStatusFilter', payload: 'playing' })
 
     expect(nextState.search).toBe('halo')
+    expect(nextState.platformFamilyFilter).toBe('microsoft')
     expect(nextState.platformFilter).toBe('xbox')
     expect(nextState.statusFilter).toBe('playing')
   })

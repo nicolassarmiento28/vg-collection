@@ -1,4 +1,4 @@
-import type { Game, GameStatus, GamesState, Platform } from '../../../shared/types/game'
+import type { Game, GameStatus, GamesState, Platform, PlatformFamily } from '../../../shared/types/game'
 
 export type GamesAction =
   | { type: 'addGame'; payload: Game }
@@ -11,6 +11,7 @@ export type GamesAction =
     }
   | { type: 'markGameCompleted'; payload: { id: string } }
   | { type: 'setSearch'; payload: string }
+  | { type: 'setPlatformFamilyFilter'; payload: PlatformFamily | 'all' }
   | { type: 'setPlatformFilter'; payload: Platform | 'all' }
   | { type: 'setStatusFilter'; payload: GameStatus | 'all' }
 
@@ -39,6 +40,11 @@ export function gamesReducer(state: GamesState, action: GamesAction): GamesState
       return {
         ...state,
         search: action.payload,
+      }
+    case 'setPlatformFamilyFilter':
+      return {
+        ...state,
+        platformFamilyFilter: action.payload,
       }
     case 'setPlatformFilter':
       return {

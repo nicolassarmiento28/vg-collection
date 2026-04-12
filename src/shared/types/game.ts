@@ -32,6 +32,7 @@ export interface Game {
 export interface GamesState {
   games: Game[]
   search: string
+  platformFamilyFilter: PlatformFamily | 'all'
   platformFilter: Platform | 'all'
   statusFilter: GameStatus | 'all'
 }
@@ -39,6 +40,7 @@ export interface GamesState {
 export const defaultGamesState: GamesState = {
   games: [],
   search: '',
+  platformFamilyFilter: 'all',
   platformFilter: 'all',
   statusFilter: 'all',
 }

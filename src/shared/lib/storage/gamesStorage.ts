@@ -247,6 +247,13 @@ function isValidGamesState(value: unknown): value is GamesState {
     return false
   }
 
+  if (
+    value.platformFamilyFilter !== 'all' &&
+    !VALID_PLATFORM_FAMILIES.includes(value.platformFamilyFilter as PlatformFamily)
+  ) {
+    return false
+  }
+
   if (value.platformFilter !== 'all' && !VALID_PLATFORMS.includes(value.platformFilter as Platform)) {
     return false
   }
@@ -274,6 +281,14 @@ export function loadGamesState(): GamesState {
       return defaultGamesState
     }
 
+    if (
+      parsed.platformFamilyFilter !== undefined &&
+      parsed.platformFamilyFilter !== 'all' &&
+      !VALID_PLATFORM_FAMILIES.includes(parsed.platformFamilyFilter as PlatformFamily)
+    ) {
+      return defaultGamesState
+    }
+
     if (parsed.platformFilter !== 'all' && !VALID_PLATFORMS.includes(parsed.platformFilter as Platform)) {
       return defaultGamesState
     }
@@ -290,6 +305,10 @@ export function loadGamesState(): GamesState {
     const migratedState: GamesState = {
       games: games as Game[],
       search: parsed.search,
+      platformFamilyFilter:
+        parsed.platformFamilyFilter === undefined
+          ? 'all'
+          : (parsed.platformFamilyFilter as GamesState['platformFamilyFilter']),
       platformFilter: parsed.platformFilter as GamesState['platformFilter'],
       statusFilter: parsed.statusFilter as GamesState['statusFilter'],
     }
