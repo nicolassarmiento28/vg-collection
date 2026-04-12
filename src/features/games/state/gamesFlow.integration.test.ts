@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest'
 
 import { loadGamesState, saveGamesState, STORAGE_KEY } from '../../../shared/lib/storage/gamesStorage'
+import { getFamilyByPlatform } from '../../../shared/constants/platforms'
 import { defaultGamesState, type GamesState } from '../../../shared/types/game'
 import { gamesReducer, type GamesAction } from './gamesReducer'
 
@@ -13,10 +14,13 @@ function filterGames(state: GamesState) {
 
   return state.games.filter((game) => {
     const matchesSearch = searchValue.length === 0 || game.title.toLowerCase().includes(searchValue)
+    const gameFamily = game.platformFamily ?? getFamilyByPlatform(game.platform)
+    const matchesFamily =
+      state.platformFamilyFilter === 'all' || gameFamily === state.platformFamilyFilter
     const matchesPlatform = state.platformFilter === 'all' || game.platform === state.platformFilter
     const matchesStatus = state.statusFilter === 'all' || game.status === state.statusFilter
 
-    return matchesSearch && matchesPlatform && matchesStatus
+    return matchesSearch && matchesFamily && matchesPlatform && matchesStatus
   })
 }
 
@@ -96,6 +100,7 @@ describe('games flow integration at state/storage layer', () => {
     const completedAndFilteredState = applyActions(loadedAfterEdit, [
       { type: 'markGameCompleted', payload: { id: 'g-1' } },
       { type: 'setSearch', payload: 'zelda' },
+      { type: 'setPlatformFamilyFilter', payload: 'nintendo' },
       { type: 'setPlatformFilter', payload: 'switch' },
       { type: 'setStatusFilter', payload: 'completed' },
     ])
