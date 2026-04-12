@@ -2,6 +2,7 @@ import { App as AntdApp, Card, Space } from 'antd'
 import { useMemo, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
+import { getFamilyByPlatform } from '../../../shared/constants/platforms'
 import { useGamesContext } from '../state/GamesContext'
 import type { Game } from '../../../shared/types/game'
 import { GameFormModal, type GameFormValues } from './GameFormModal'
@@ -28,13 +29,22 @@ export function GamesPage() {
     return state.games.filter((game) => {
       const matchesSearch =
         searchValue.length === 0 || game.title.toLowerCase().includes(searchValue)
+      const gameFamily = game.platformFamily ?? getFamilyByPlatform(game.platform)
+      const matchesFamily =
+        state.platformFamilyFilter === 'all' || gameFamily === state.platformFamilyFilter
       const matchesPlatform =
         state.platformFilter === 'all' || game.platform === state.platformFilter
       const matchesStatus = state.statusFilter === 'all' || game.status === state.statusFilter
 
-      return matchesSearch && matchesPlatform && matchesStatus
+      return matchesSearch && matchesFamily && matchesPlatform && matchesStatus
     })
-  }, [state.games, state.platformFilter, state.search, state.statusFilter])
+  }, [
+    state.games,
+    state.platformFamilyFilter,
+    state.platformFilter,
+    state.search,
+    state.statusFilter,
+  ])
 
   const closeModal = () => {
     setIsModalOpen(false)
@@ -115,9 +125,13 @@ export function GamesPage() {
       <Space direction="vertical" size="middle" style={{ width: '100%' }}>
         <GamesToolbar
           search={state.search}
+          platformFamilyFilter={state.platformFamilyFilter}
           platformFilter={state.platformFilter}
           statusFilter={state.statusFilter}
           onSearchChange={(value) => dispatch({ type: 'setSearch', payload: value })}
+          onPlatformFamilyFilterChange={(value) =>
+            dispatch({ type: 'setPlatformFamilyFilter', payload: value })
+          }
           onPlatformFilterChange={(value) =>
             dispatch({ type: 'setPlatformFilter', payload: value })
           }

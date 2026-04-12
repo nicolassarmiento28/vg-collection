@@ -1,16 +1,25 @@
 import { Button, Empty, Space, Table, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 
+import { getFamilyByPlatform } from '../../../shared/constants/platforms'
 import { StatusTag } from '../../../shared/ui/StatusTag'
 import type { Game, Platform } from '../../../shared/types/game'
 
-const platformLabels: Record<Platform, string> = {
+const platformLabels: Partial<Record<Platform, string>> = {
   pc: 'PC',
   playstation: 'PlayStation',
   xbox: 'Xbox',
   switch: 'Switch',
   mobile: 'Mobile',
   other: 'Otra',
+}
+
+function getPlatformLabel(platform: Platform): string {
+  return platformLabels[platform] ?? platform
+}
+
+function getPlatformFamilyLabel(game: Game): string {
+  return game.platformFamily ?? getFamilyByPlatform(game.platform) ?? '-'
 }
 
 interface GamesTableProps {
@@ -28,10 +37,15 @@ export function GamesTable({ games, onEdit, onComplete }: GamesTableProps) {
       render: (value: string) => <Typography.Text strong>{value}</Typography.Text>,
     },
     {
+      title: 'Familia',
+      key: 'platformFamily',
+      render: (_, record) => getPlatformFamilyLabel(record),
+    },
+    {
       title: 'Plataforma',
       dataIndex: 'platform',
       key: 'platform',
-      render: (value: Platform) => platformLabels[value],
+      render: (value: Platform) => getPlatformLabel(value),
     },
     {
       title: 'Estado',
