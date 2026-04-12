@@ -163,6 +163,90 @@ describe('gamesStorage', () => {
     })
   })
 
+  it('keeps legacy platform values from old versions without data loss', () => {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        games: [
+          {
+            id: 'legacy-ps1',
+            title: 'Legacy PS1 title',
+            platform: 'ps1',
+            status: 'completed',
+            genre: 'Action',
+            year: 1998,
+            createdAt: '2026-01-01T00:00:00.000Z',
+            updatedAt: '2026-01-02T00:00:00.000Z',
+          },
+        ],
+        search: '',
+        platformFilter: 'all',
+        statusFilter: 'all',
+      }),
+    )
+
+    expect(loadGamesState().games[0]?.platform).toBe('ps1')
+  })
+
+  it('migrates legacy game preserving IGDB metadata', () => {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        games: [
+          {
+            id: 'legacy-igdb',
+            title: 'Legacy IGDB game',
+            platform: 'switch',
+            status: 'backlog',
+            createdAt: '2026-01-01T00:00:00.000Z',
+            updatedAt: '2026-01-02T00:00:00.000Z',
+            igdb: {
+              id: 1020,
+              slug: 'legacy-igdb-game',
+              genres: ['RPG'],
+            },
+          },
+        ],
+        search: '',
+        platformFilter: 'all',
+        statusFilter: 'all',
+      }),
+    )
+
+    const loadedGame = loadGamesState().games[0]
+    expect(loadedGame?.igdb?.id).toBe(1020)
+    expect(loadedGame?.igdb?.slug).toBe('legacy-igdb-game')
+  })
+
+  it('falls back to default state when IGDB metadata has invalid shape', () => {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        games: [
+          {
+            id: 'legacy-igdb-invalid',
+            title: 'Broken IGDB game',
+            platform: 'switch',
+            status: 'backlog',
+            genre: 'Adventure',
+            year: 2020,
+            createdAt: '2026-01-01T00:00:00.000Z',
+            updatedAt: '2026-01-02T00:00:00.000Z',
+            igdb: {
+              id: 'bad-id',
+              slug: 'broken-igdb-game',
+            },
+          },
+        ],
+        search: '',
+        platformFilter: 'all',
+        statusFilter: 'all',
+      }),
+    )
+
+    expect(loadGamesState()).toEqual(defaultGamesState)
+  })
+
   it('falls back to default state when stored game has invalid year', () => {
     window.localStorage.setItem(
       STORAGE_KEY,

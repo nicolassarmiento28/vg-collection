@@ -1,20 +1,68 @@
 import {
   defaultGamesState,
   type Game,
+  type GameIgdbMetadata,
   type GameStatus,
   type GamesState,
   type Platform,
 } from '../../types/game'
+import { type PlatformFamily } from '../../constants/platforms'
 
 export const STORAGE_KEY = 'vg-collection:v1'
 
 const VALID_PLATFORMS: Platform[] = [
+  'nes',
+  'snes',
+  'nintendo-64',
+  'gamecube',
+  'wii',
+  'wii-u',
+  'switch',
+  'switch-2',
+  'game-boy',
+  'game-boy-color',
+  'game-boy-advance',
+  'nintendo-ds',
+  'nintendo-3ds',
+  'ps1',
+  'ps2',
+  'ps3',
+  'ps4',
+  'ps5',
+  'psp',
+  'ps-vita',
+  'xbox',
+  'xbox-360',
+  'xbox-one',
+  'xbox-series-xs',
+  'master-system',
+  'mega-drive-genesis',
+  'sega-cd',
+  'sega-32x',
+  'saturn',
+  'dreamcast',
+  'game-gear',
+  'atari-2600',
+  'atari-5200',
+  'atari-7800',
+  'atari-lynx',
+  'atari-jaguar',
+  'commodore-64',
+  'amiga',
   'pc',
   'playstation',
-  'xbox',
-  'switch',
   'mobile',
   'other',
+]
+
+const VALID_PLATFORM_FAMILIES: PlatformFamily[] = [
+  'nintendo',
+  'playstation',
+  'microsoft',
+  'sega',
+  'atari',
+  'commodore',
+  'pc',
 ]
 
 const VALID_STATUSES: GameStatus[] = [
@@ -27,6 +75,45 @@ const VALID_STATUSES: GameStatus[] = [
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
+}
+
+function isValidIgdbMetadata(value: unknown): value is GameIgdbMetadata {
+  if (!isRecord(value)) {
+    return false
+  }
+
+  if (typeof value.id !== 'number' || !Number.isInteger(value.id) || value.id <= 0) {
+    return false
+  }
+
+  if (typeof value.slug !== 'string' || value.slug.length === 0) {
+    return false
+  }
+
+  if (value.name !== undefined && typeof value.name !== 'string') {
+    return false
+  }
+
+  if (value.coverUrl !== undefined && typeof value.coverUrl !== 'string') {
+    return false
+  }
+
+  if (value.summary !== undefined && typeof value.summary !== 'string') {
+    return false
+  }
+
+  if (value.firstReleaseDate !== undefined && typeof value.firstReleaseDate !== 'string') {
+    return false
+  }
+
+  if (
+    value.genres !== undefined &&
+    (!Array.isArray(value.genres) || value.genres.some((genre) => typeof genre !== 'string'))
+  ) {
+    return false
+  }
+
+  return true
 }
 
 function isValidGame(value: unknown): value is Game {
@@ -71,6 +158,17 @@ function isValidGame(value: unknown): value is Game {
     return false
   }
 
+  if (
+    value.platformFamily !== undefined &&
+    !VALID_PLATFORM_FAMILIES.includes(value.platformFamily as PlatformFamily)
+  ) {
+    return false
+  }
+
+  if (value.igdb !== undefined && !isValidIgdbMetadata(value.igdb)) {
+    return false
+  }
+
   return true
 }
 
@@ -111,6 +209,17 @@ function migrateStoredGame(value: unknown): Game | null {
   }
 
   if (value.notes !== undefined && typeof value.notes !== 'string') {
+    return null
+  }
+
+  if (
+    value.platformFamily !== undefined &&
+    !VALID_PLATFORM_FAMILIES.includes(value.platformFamily as PlatformFamily)
+  ) {
+    return null
+  }
+
+  if (value.igdb !== undefined && !isValidIgdbMetadata(value.igdb)) {
     return null
   }
 
