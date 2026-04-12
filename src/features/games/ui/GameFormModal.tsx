@@ -1,6 +1,7 @@
-import { Form, Input, InputNumber, Modal, Select } from 'antd'
-import { useEffect } from 'react'
+import { Alert, Button, Form, Input, InputNumber, Modal, Select, Space, Typography } from 'antd'
+import { useEffect, useState } from 'react'
 
+import { searchIgdbGames, type IgdbGameDto } from '../api/igdbApi'
 import type { Game, GameStatus, Platform } from '../../../shared/types/game'
 
 const platformOptions: Array<{ label: string; value: Platform }> = [
@@ -48,6 +49,34 @@ const initialValues: Partial<GameFormValues> = {
 
 export function GameFormModal({ open, mode, game, onCancel, onSubmit }: GameFormModalProps) {
   const [form] = Form.useForm<GameFormValues>()
+  const [isSearchingIgdb, setIsSearchingIgdb] = useState(false)
+  const [igdbError, setIgdbError] = useState<string | null>(null)
+  const [lastSearchTerm, setLastSearchTerm] = useState('')
+  const [igdbSearchResults, setIgdbSearchResults] = useState<IgdbGameDto[]>([])
+
+  const handleSearchIgdb = async (rawValue: string) => {
+    const query = rawValue.trim()
+
+    if (query.length === 0) {
+      setIgdbError(null)
+      setIgdbSearchResults([])
+      return
+    }
+
+    setIsSearchingIgdb(true)
+    setIgdbError(null)
+    setLastSearchTerm(query)
+
+    try {
+      const results = await searchIgdbGames(query)
+      setIgdbSearchResults(results)
+    } catch {
+      setIgdbSearchResults([])
+      setIgdbError('No se pudo buscar en IGDB. Puedes reintentar o completar manualmente.')
+    } finally {
+      setIsSearchingIgdb(false)
+    }
+  }
 
   useEffect(() => {
     if (!open) {
@@ -70,6 +99,9 @@ export function GameFormModal({ open, mode, game, onCancel, onSubmit }: GameForm
     }
 
     form.setFieldsValue(initialValues)
+    setIgdbError(null)
+    setLastSearchTerm('')
+    setIgdbSearchResults([])
   }, [form, game, mode, open])
 
   return (
@@ -86,8 +118,27 @@ export function GameFormModal({ open, mode, game, onCancel, onSubmit }: GameForm
     >
       <Form form={form} layout="vertical" initialValues={initialValues} onFinish={onSubmit}>
         <Form.Item label="Buscar en IGDB" name="igdbSearch">
-          <Input.Search aria-label="Buscar en IGDB" placeholder="Ej. Zelda" enterButton="Buscar" />
+          <Input.Search
+            aria-label="Buscar en IGDB"
+            placeholder="Ej. Zelda"
+            enterButton="Buscar"
+            loading={isSearchingIgdb}
+            onSearch={handleSearchIgdb}
+          />
         </Form.Item>
+
+        {igdbError !== null && (
+          <Space direction="vertical" size={8} style={{ width: '100%', marginBottom: 12 }}>
+            <Alert type="error" message={igdbError} showIcon />
+            <Button onClick={() => void handleSearchIgdb(lastSearchTerm)}>Reintentar</Button>
+          </Space>
+        )}
+
+        {!isSearchingIgdb && igdbError === null && lastSearchTerm.length > 0 && igdbSearchResults.length === 0 && (
+          <Typography.Text type="secondary" style={{ display: 'block', marginBottom: 12 }}>
+            Sin resultados en IGDB. Puedes completar los campos manualmente.
+          </Typography.Text>
+        )}
 
         <Form.Item
           label="Titulo"

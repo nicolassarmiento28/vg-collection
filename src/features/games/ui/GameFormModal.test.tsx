@@ -2,7 +2,13 @@ import { fireEvent, render, screen, waitFor, within } from '@testing-library/rea
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 
+import { searchIgdbGames } from '../api/igdbApi'
 import { GameFormModal } from './GameFormModal'
+
+vi.mock('../api/igdbApi', () => ({
+  searchIgdbGames: vi.fn(),
+  fetchIgdbGameById: vi.fn(),
+}))
 
 if (!window.matchMedia) {
   Object.defineProperty(window, 'matchMedia', {
@@ -56,6 +62,34 @@ describe('GameFormModal', () => {
 
     expect(modal.getByLabelText('Buscar en IGDB')).toBeInTheDocument()
     expect(modal.getByRole('button', { name: 'Buscar' })).toBeInTheDocument()
+  })
+
+  it('shows IGDB error and allows retry fallback', async () => {
+    const user = userEvent.setup()
+    const mockedSearch = vi.mocked(searchIgdbGames)
+    mockedSearch
+      .mockRejectedValueOnce(new Error('network down'))
+      .mockResolvedValueOnce([{ id: 1, name: 'Halo' }])
+
+    const modal = await renderModal({
+      open: true,
+      mode: 'create',
+      onCancel: () => {},
+      onSubmit: vi.fn(),
+    })
+
+    await user.type(modal.getByRole('searchbox', { name: 'Buscar en IGDB' }), 'halo')
+    await user.click(modal.getByRole('button', { name: 'Buscar' }))
+
+    expect(await modal.findByText('No se pudo buscar en IGDB. Puedes reintentar o completar manualmente.')).toBeInTheDocument()
+
+    await user.click(modal.getByRole('button', { name: 'Reintentar' }))
+
+    await waitFor(() => {
+      expect(mockedSearch).toHaveBeenCalledTimes(2)
+    })
+
+    expect(modal.queryByText('No se pudo buscar en IGDB. Puedes reintentar o completar manualmente.')).not.toBeInTheDocument()
   })
 
   it('shows required validations and blocks submit for empty form', async () => {

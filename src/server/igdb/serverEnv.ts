@@ -16,5 +16,10 @@ export function setServerEnvForTests(name: string, value: string | undefined): v
     return
   }
 
+  if (value === undefined) {
+    delete processLike.env[name]
+    return
+  }
+
   processLike.env[name] = value
 }
