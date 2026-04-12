@@ -16,6 +16,14 @@ This template provides a minimal setup to get React working in Vite with HMR and
 - Never commit `.env` files or real credentials to git.
 - IGDB calls must always stay server-side; do not expose secrets in frontend code.
 
+## Frontend Login (Demo)
+
+- Login is frontend-only and intended for demo/testing flows.
+- Demo credentials:
+  - Email: `demo@vg.com`
+  - Contrasena: `Demo1234`
+- Session is persisted in localStorage (no password persistence).
+
 ## MVP Verification Notes
 
 Automated checks completed:

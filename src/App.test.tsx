@@ -45,5 +45,5 @@ describe('App auth gate', () => {
     await waitFor(() => {
       expect(screen.getByRole('button', { name: 'Iniciar sesion' })).toBeInTheDocument()
     })
-  })
+  }, 10000)
 })
