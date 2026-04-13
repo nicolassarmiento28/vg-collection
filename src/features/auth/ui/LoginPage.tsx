@@ -20,8 +20,8 @@ function useMatrixRain(canvasRef: React.RefObject<HTMLCanvasElement | null>): vo
     if (!ctx) return
 
     const fontSize = 14
-    let animationId: number
-    let columns: number[]
+    let animationId: number = 0
+    let columns: number[] = []
 
     function resize(): void {
       if (!canvas) return
@@ -71,7 +71,8 @@ function useMatrixRain(canvasRef: React.RefObject<HTMLCanvasElement | null>): vo
       cancelAnimationFrame(animationId)
       window.removeEventListener('resize', resize)
     }
-  }, [canvasRef])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 }
 
 export function LoginPage() {
