@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 
 import App from './App'
@@ -7,13 +8,15 @@ import { AuthProvider } from './features/auth/state/AuthContext'
 import { AUTH_STORAGE_KEY } from './features/auth/lib/storage/authStorage'
 import { GamesProvider } from './features/games/state/GamesContext'
 
-function renderWithProviders() {
+function renderWithProviders(initialPath = '/') {
   return render(
-    <AuthProvider>
-      <GamesProvider>
-        <App />
-      </GamesProvider>
-    </AuthProvider>,
+    <MemoryRouter initialEntries={[initialPath]}>
+      <AuthProvider>
+        <GamesProvider>
+          <App />
+        </GamesProvider>
+      </AuthProvider>
+    </MemoryRouter>,
   )
 }
 
@@ -36,7 +39,7 @@ describe('App auth gate', () => {
       }),
     )
 
-    renderWithProviders()
+    renderWithProviders('/')
 
     expect(screen.getByRole('button', { name: 'Cerrar sesion' })).toBeInTheDocument()
 
