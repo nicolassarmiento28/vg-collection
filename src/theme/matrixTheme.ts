@@ -7,10 +7,10 @@ export const matrixTheme: ThemeConfig = {
     colorWarning: '#cc8800',
     colorError: '#cc2200',
     colorInfo: '#39ff14',
-    colorText: '#22cc00',
-    colorTextSecondary: '#1a9900',
-    colorTextTertiary: '#1a9900',
-    colorTextQuaternary: '#14aa00',
+    colorText: '#a0a0a0',
+    colorTextSecondary: '#707070',
+    colorTextTertiary: '#606060',
+    colorTextQuaternary: '#505050',
     colorBgBase: '#050f05',
     colorBgContainer: '#0a1f0a',
     colorBgElevated: '#0a1f0a',
@@ -40,9 +40,10 @@ export const matrixTheme: ThemeConfig = {
     },
     Button: {
       primaryColor: '#000000',
-      defaultBorderColor: '#1a4a1a',
-      defaultColor: '#22cc00',
-      defaultBg: '#050f05',
+      defaultBorderColor: 'rgba(57, 255, 20, 0.4)',
+      defaultColor: '#39ff14',
+      defaultBg: 'rgba(57, 255, 20, 0.08)',
+      defaultHoverBg: 'rgba(57, 255, 20, 0.15)',
     },
     Input: {
       colorBgContainer: '#000000',
@@ -66,14 +67,14 @@ export const matrixTheme: ThemeConfig = {
       colorBorderSecondary: '#1a4a1a',
     },
     Form: {
-      labelColor: '#22cc00',
+      labelColor: '#a0a0a0',
     },
     Alert: {
-      colorText: '#22cc00',
+      colorText: '#a0a0a0',
     },
     Tag: {
       defaultBg: '#050f05',
-      defaultColor: '#22cc00',
+      defaultColor: '#a0a0a0',
     },
     InputNumber: {
       colorBgContainer: '#000000',

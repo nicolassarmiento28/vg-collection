@@ -10,7 +10,7 @@
 
   font: 15px/150% var(--matrix-font);
   letter-spacing: 0.5px;
-  color: var(--matrix-primary);
+  color: #a0a0a0;
   background: var(--matrix-bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
