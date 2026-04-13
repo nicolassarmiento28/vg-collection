@@ -56,7 +56,7 @@ describe('GameDetailPage', () => {
   it('shows loading spinner while fetching', () => {
     mockFetch.mockReturnValue(new Promise(() => {}))
     renderGameDetail('1')
-    expect(document.querySelector('.ant-spin')).toBeInTheDocument()
+    expect(screen.getByTestId('loading-spinner')).toBeInTheDocument()
   })
 
   it('shows game info after fetch resolves', async () => {
@@ -134,7 +134,6 @@ describe('GameDetailPage', () => {
   })
 
   it('shows error when igdbId is not a valid number', () => {
-    mockFetch.mockResolvedValue({ id: 0, name: 'x', slug: 'x' })
     renderGameDetail('not-a-number')
     expect(screen.getByText('Juego no encontrado')).toBeInTheDocument()
   })

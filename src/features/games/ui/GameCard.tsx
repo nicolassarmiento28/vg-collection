@@ -10,7 +10,7 @@ interface GameCardProps {
 export function GameCard({ game }: GameCardProps) {
   const navigate = useNavigate()
   const year = game.firstReleaseDate !== undefined
-    ? new Date(game.firstReleaseDate).getFullYear()
+    ? new Date(game.firstReleaseDate).getUTCFullYear()
     : undefined
   const platform = game.platforms?.[0]
 

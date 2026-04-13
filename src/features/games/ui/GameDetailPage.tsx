@@ -80,7 +80,7 @@ export function GameDetailPage() {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', padding: 80 }}>
+      <div data-testid="loading-spinner" style={{ display: 'flex', justifyContent: 'center', padding: 80 }}>
         <Spin size="large" />
       </div>
     )
@@ -96,7 +96,7 @@ export function GameDetailPage() {
   }
 
   const year = game.firstReleaseDate
-    ? new Date(game.firstReleaseDate).getFullYear()
+    ? new Date(game.firstReleaseDate).getUTCFullYear()
     : undefined
 
   const handleConfirmAdd = () => {
@@ -109,13 +109,13 @@ export function GameDetailPage() {
       title: game.name,
       platform: form.platform,
       status: form.status,
-      genre: game.genres?.[0] ?? '',
+      genre: game.genres?.[0] ?? '', // Use first genre or empty string if not available
       year: year ?? new Date().getFullYear(),
       rating: form.rating,
       notes: form.notes || undefined,
       igdb: {
         id: game.id,
-        slug: game.slug ?? '',
+        slug: game.slug ?? '', // IGDB always provides slug for valid games
         name: game.name,
         coverUrl: game.coverUrl,
         summary: game.summary,
@@ -128,7 +128,7 @@ export function GameDetailPage() {
 
     dispatch({ type: 'addGame', payload: newGame })
     setModalOpen(false)
-    void navigate('/')
+    navigate('/')
   }
 
   return (
@@ -182,8 +182,8 @@ export function GameDetailPage() {
           <h1 style={{ color: '#a0a0a0', marginBottom: 12 }}>{game.name}</h1>
 
           <div style={{ marginBottom: 12, color: '#606060', fontSize: 13 }}>
-            {[year, ...(game.genres ?? [])].filter(Boolean).map((item, i) => (
-              <Tag key={i} style={{ marginBottom: 4 }}>
+            {[year, ...(game.genres ?? [])].filter(Boolean).map((item) => (
+              <Tag key={String(item)} style={{ marginBottom: 4 }}>
                 {item}
               </Tag>
             ))}
