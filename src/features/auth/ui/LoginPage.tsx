@@ -19,6 +19,8 @@ function useMatrixRain(canvasRef: React.RefObject<HTMLCanvasElement | null>): vo
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
     const fontSize = 14
     let animationId: number = 0
     let columns: number[] = []
@@ -96,6 +98,7 @@ export function LoginPage() {
       {/* Rain canvas */}
       <canvas
         ref={canvasRef}
+        aria-hidden="true"
         style={{
           position: 'fixed',
           top: 0,
