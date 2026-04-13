@@ -1,5 +1,6 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { Button, Form, Input, Typography } from 'antd'
+import { useNavigate } from 'react-router-dom'
 
 import { useAuthContext } from '../state/useAuthContext'
 
@@ -8,80 +9,15 @@ interface LoginFormValues {
   password: string
 }
 
-const MATRIX_CHARS =
-  'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-
-function useMatrixRain(canvasRef: React.RefObject<HTMLCanvasElement | null>): void {
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-
-    const fontSize = 14
-    let animationId: number = 0
-    let columns: number[] = []
-
-    function resize(): void {
-      if (!canvas) return
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
-      const colCount = Math.floor(canvas.width / fontSize)
-      columns = Array.from({ length: colCount }, () => Math.floor(Math.random() * -100))
-    }
-
-    function draw(): void {
-      if (!canvas || !ctx) return
-
-      ctx.fillStyle = 'rgba(5, 15, 5, 0.05)'
-      ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-      ctx.fillStyle = '#39ff14'
-      ctx.font = `${fontSize}px 'Courier New', monospace`
-
-      for (let i = 0; i < columns.length; i++) {
-        const y = (columns[i] ?? 0) * fontSize
-        const char = MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)] ?? '0'
-
-        // Leading char is bright neon, rest fades
-        ctx.fillStyle = '#39ff14'
-        ctx.shadowColor = '#39ff14'
-        ctx.shadowBlur = 8
-        ctx.fillText(char, i * fontSize, y)
-
-        ctx.shadowBlur = 0
-
-        const col = columns[i] ?? 0
-        if (y > canvas.height && Math.random() > 0.975) {
-          columns[i] = 0
-        } else {
-          columns[i] = col + 1
-        }
-      }
-
-      animationId = requestAnimationFrame(draw)
-    }
-
-    resize()
-    window.addEventListener('resize', resize)
-    animationId = requestAnimationFrame(draw)
-
-    return () => {
-      cancelAnimationFrame(animationId)
-      window.removeEventListener('resize', resize)
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-}
-
 export function LoginPage() {
   const { state, login } = useAuthContext()
-  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const navigate = useNavigate()
 
-  useMatrixRain(canvasRef)
+  useEffect(() => {
+    if (state.session.isAuthenticated) {
+      navigate('/')
+    }
+  }, [state.session.isAuthenticated, navigate])
 
   return (
     <div
@@ -90,31 +26,11 @@ export function LoginPage() {
         display: 'grid',
         placeItems: 'center',
         background: '#050f05',
-        position: 'relative',
-        overflow: 'hidden',
         fontFamily: "'Courier New', Consolas, monospace",
       }}
     >
-      {/* Rain canvas */}
-      <canvas
-        ref={canvasRef}
-        aria-hidden="true"
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          zIndex: 0,
-          pointerEvents: 'none',
-        }}
-      />
-
-      {/* Login card */}
       <div
         style={{
-          position: 'relative',
-          zIndex: 1,
           background: 'rgba(5, 15, 5, 0.85)',
           border: '1px solid #39ff14',
           borderRadius: 6,
@@ -122,7 +38,6 @@ export function LoginPage() {
           width: 380,
           maxWidth: 'calc(100vw - 32px)',
           boxShadow: '0 0 24px #39ff1440, 0 0 60px #39ff1415',
-          backdropFilter: 'blur(4px)',
         }}
       >
         <div

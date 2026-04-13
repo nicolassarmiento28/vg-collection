@@ -1,19 +1,29 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 
 import { AuthProvider } from '../state/AuthContext'
 import { LoginPage } from './LoginPage'
 
+function renderLoginPage() {
+  return render(
+    <MemoryRouter initialEntries={['/login']}>
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/" element={<div>Collection page</div>} />
+        </Routes>
+      </AuthProvider>
+    </MemoryRouter>,
+  )
+}
+
 describe('LoginPage', () => {
   it('validates email and password rules', async () => {
     const user = userEvent.setup()
 
-    render(
-      <AuthProvider>
-        <LoginPage />
-      </AuthProvider>,
-    )
+    renderLoginPage()
 
     await user.click(screen.getByRole('button', { name: 'Iniciar sesion' }))
 
@@ -24,11 +34,7 @@ describe('LoginPage', () => {
   it('shows credential error for invalid login', async () => {
     const user = userEvent.setup()
 
-    render(
-      <AuthProvider>
-        <LoginPage />
-      </AuthProvider>,
-    )
+    renderLoginPage()
 
     await user.type(screen.getByLabelText('Email'), 'wrong@vg.com')
     await user.type(screen.getByLabelText('Contrasena'), 'Wrong1234')
@@ -37,5 +43,24 @@ describe('LoginPage', () => {
     await waitFor(() => {
       expect(screen.getByText('Credenciales invalidas')).toBeInTheDocument()
     })
+  }, 10000)
+
+  it('navigates to / on successful login', async () => {
+    const user = userEvent.setup()
+
+    renderLoginPage()
+
+    await user.type(screen.getByLabelText('Email'), 'demo@vg.com')
+    await user.type(screen.getByLabelText('Contrasena'), 'Demo1234')
+    await user.click(screen.getByRole('button', { name: 'Iniciar sesion' }))
+
+    await waitFor(() => {
+      expect(screen.getByText('Collection page')).toBeInTheDocument()
+    })
+  }, 10000)
+
+  it('does not render a canvas element', () => {
+    renderLoginPage()
+    expect(document.querySelector('canvas')).toBeNull()
   })
 })
