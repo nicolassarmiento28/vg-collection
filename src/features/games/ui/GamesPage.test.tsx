@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { normalizeOptionalRating } from './GamesPage'
+import { normalizeOptionalRating } from '../../../shared/utils/rating'
 
 describe('normalizeOptionalRating', () => {
   it('maps null to undefined', () => {

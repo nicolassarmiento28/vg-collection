@@ -3,27 +3,12 @@ import { ArrowLeftOutlined } from '@ant-design/icons'
 import { App as AntdApp, Button, Card, Divider, Grid, Tag, Typography } from 'antd'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { normalizeOptionalRating } from '../../games/ui/GamesPage'
+import { normalizeOptionalRating } from '../../../shared/utils/rating'
 import { GameFormModal, type GameFormValues } from '../../games/ui/GameFormModal'
 import { useGamesContext } from '../../games/state/GamesContext'
 import { PLATFORM_LABELS } from '../../../shared/types/game'
-import type { Game, GameStatus } from '../../../shared/types/game'
-
-const STATUS_LABELS: Record<GameStatus, string> = {
-  backlog: 'Backlog',
-  playing: 'Jugando',
-  completed: 'Completado',
-  paused: 'Pausado',
-  dropped: 'Abandonado',
-}
-
-const STATUS_COLORS: Record<GameStatus, string> = {
-  backlog: 'default',
-  playing: 'orange',
-  completed: 'green',
-  paused: 'blue',
-  dropped: 'red',
-}
+import type { Game } from '../../../shared/types/game'
+import { STATUS_LABELS, STATUS_TAG_COLORS } from '../../../shared/constants/gameStatus'
 
 function getInitials(title: string): string {
   return title
@@ -238,7 +223,7 @@ export function CollectionDetailPage() {
           </Typography.Text>
 
           <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
-            <Tag color={STATUS_COLORS[game.status]}>{STATUS_LABELS[game.status]}</Tag>
+            <Tag color={STATUS_TAG_COLORS[game.status]}>{STATUS_LABELS[game.status]}</Tag>
             {game.rating !== undefined && (
               <Tag color="gold">★ {game.rating}</Tag>
             )}

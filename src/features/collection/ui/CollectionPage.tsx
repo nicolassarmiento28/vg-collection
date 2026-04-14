@@ -6,19 +6,11 @@ import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../../auth/state/AuthContext'
 import { useGamesContext } from '../../games/state/GamesContext'
 import { GameFormModal, type GameFormValues } from '../../games/ui/GameFormModal'
-import { normalizeOptionalRating } from '../../games/ui/GamesPage'
+import { normalizeOptionalRating } from '../../../shared/utils/rating'
 import { useCollectionCovers } from '../hooks/useCollectionCovers'
 import { PLATFORM_LABELS } from '../../../shared/types/game'
 import type { Game, GameStatus, Platform } from '../../../shared/types/game'
-
-// --- Status badge colors ---
-const STATUS_COLORS: Record<GameStatus, { bg: string; text: string; label: string }> = {
-  backlog:   { bg: 'rgba(127,140,141,0.2)', text: '#7f8c8d', label: 'Backlog' },
-  playing:   { bg: 'rgba(230,126,34,0.2)',  text: '#e67e22', label: 'Jugando' },
-  completed: { bg: 'rgba(39,174,96,0.2)',   text: '#27ae60', label: 'Completado' },
-  paused:    { bg: 'rgba(52,152,219,0.2)',  text: '#3498db', label: 'Pausado' },
-  dropped:   { bg: 'rgba(192,57,43,0.2)',   text: '#c0392b', label: 'Abandonado' },
-}
+import { STATUS_BADGE_COLORS } from '../../../shared/constants/gameStatus'
 
 const STATUS_OPTIONS: Array<{ value: GameStatus | 'all'; label: string }> = [
   { value: 'all', label: 'Todos' },
@@ -92,7 +84,7 @@ interface CollectionCardProps {
 function CollectionCard({ game, igdbCoverUrl, onEdit, onComplete }: CollectionCardProps) {
   const [hovered, setHovered] = useState(false)
   const navigate = useNavigate()
-  const status = STATUS_COLORS[game.status]
+  const status = STATUS_BADGE_COLORS[game.status]
 
   // Prefer stored cover over live IGDB fetch
   const displayCover = game.coverBase64 ?? game.coverUrl ?? igdbCoverUrl

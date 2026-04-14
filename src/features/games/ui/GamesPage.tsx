@@ -4,15 +4,12 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { useGamesContext } from '../state/GamesContext'
 import type { Game } from '../../../shared/types/game'
+import { normalizeOptionalRating } from '../../../shared/utils/rating'
 import { GameFormModal, type GameFormValues } from './GameFormModal'
 import { GamesTable } from './GamesTable'
 import { GamesToolbar } from './GamesToolbar'
 
 type ModalMode = 'create' | 'edit'
-
-export function normalizeOptionalRating(rating: number | null | undefined): number | undefined {
-  return rating ?? undefined
-}
 
 export function GamesPage() {
   const { message } = AntdApp.useApp()

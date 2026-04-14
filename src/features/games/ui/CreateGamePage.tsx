@@ -7,7 +7,7 @@ import { useAuthContext } from '../../auth/state/AuthContext'
 import { useGamesContext } from '../state/GamesContext'
 import { GameFormFields } from './GameFormFields'
 import { type GameFormValues } from './GameFormModal'
-import { normalizeOptionalRating } from './GamesPage'
+import { normalizeOptionalRating } from '../../../shared/utils/rating'
 
 const initialValues: Partial<GameFormValues> = {
   title: '',
