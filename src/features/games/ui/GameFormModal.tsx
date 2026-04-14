@@ -5,10 +5,9 @@ import type { Game, GameStatus, Platform } from '../../../shared/types/game'
 
 const platformOptions: Array<{ label: string; value: Platform }> = [
   { label: 'PC', value: 'pc' },
-  { label: 'PlayStation', value: 'playstation' },
+  { label: 'PlayStation 4', value: 'ps4' },
   { label: 'Xbox', value: 'xbox' },
   { label: 'Switch', value: 'switch' },
-  { label: 'Mobile', value: 'mobile' },
   { label: 'Otra', value: 'other' },
 ]
 

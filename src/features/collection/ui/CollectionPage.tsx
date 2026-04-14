@@ -31,10 +31,9 @@ const STATUS_OPTIONS: Array<{ value: GameStatus | 'all'; label: string }> = [
 const PLATFORM_OPTIONS: Array<{ value: Platform | 'all'; label: string }> = [
   { value: 'all', label: 'Todas' },
   { value: 'pc', label: 'PC' },
-  { value: 'playstation', label: 'PlayStation' },
+  { value: 'ps4', label: 'PlayStation 4' },
   { value: 'xbox', label: 'Xbox' },
   { value: 'switch', label: 'Switch' },
-  { value: 'mobile', label: 'Mobile' },
   { value: 'other', label: 'Otra' },
 ]
 

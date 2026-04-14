@@ -9,11 +9,14 @@ import {
 export const STORAGE_KEY = 'vg-collection:v1'
 
 const VALID_PLATFORMS: Platform[] = [
+  'sega-ms', 'sega-md', 'sega-saturn', 'sega-dc',
+  'nes', 'snes', 'n64', 'gamecube', 'wii', 'wiiu', 'switch',
+  'gameboy', 'gbc', 'gba', 'nds', '3ds',
+  'ps1', 'ps2', 'ps3', 'ps4', 'ps5',
+  'psp', 'psvita',
+  'xbox', 'xbox360', 'xbone', 'xbsx',
   'pc',
-  'playstation',
-  'xbox',
-  'switch',
-  'mobile',
+  'c64', 'amiga',
   'other',
 ]
 

@@ -9,11 +9,11 @@ import type { GameFormPrefill, Platform } from '../../../shared/types/game'
 
 const IGDB_PLATFORM_MAP: Record<string, Platform> = {
   PC: 'pc',
-  PS1: 'playstation', PS2: 'playstation', PS3: 'playstation',
-  PS4: 'playstation', PS5: 'playstation',
-  XB: 'xbox', X360: 'xbox', XONE: 'xbox', XSX: 'xbox',
+  PS1: 'ps1', PS2: 'ps2', PS3: 'ps3',
+  PS4: 'ps4', PS5: 'ps5',
+  XB: 'xbox', X360: 'xbox360', XONE: 'xbone', XSX: 'xbsx',
   NS: 'switch',
-  iOS: 'mobile', Android: 'mobile',
+  iOS: 'other', Android: 'other',
 }
 
 function getCoverUrl(url: string): string {

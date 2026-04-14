@@ -1,10 +1,78 @@
 export type Platform =
-  | 'pc'
-  | 'playstation'
-  | 'xbox'
+  // Sega
+  | 'sega-ms'
+  | 'sega-md'
+  | 'sega-saturn'
+  | 'sega-dc'
+  // Nintendo — home
+  | 'nes'
+  | 'snes'
+  | 'n64'
+  | 'gamecube'
+  | 'wii'
+  | 'wiiu'
   | 'switch'
-  | 'mobile'
+  // Nintendo — portátiles
+  | 'gameboy'
+  | 'gbc'
+  | 'gba'
+  | 'nds'
+  | '3ds'
+  // PlayStation — home
+  | 'ps1'
+  | 'ps2'
+  | 'ps3'
+  | 'ps4'
+  | 'ps5'
+  // PlayStation — portátiles
+  | 'psp'
+  | 'psvita'
+  // Microsoft
+  | 'xbox'
+  | 'xbox360'
+  | 'xbone'
+  | 'xbsx'
+  // PC
+  | 'pc'
+  // Commodore
+  | 'c64'
+  | 'amiga'
+  // Otra
   | 'other'
+
+export const PLATFORM_LABELS: Record<Platform, string> = {
+  'sega-ms': 'Master System',
+  'sega-md': 'Mega Drive',
+  'sega-saturn': 'Saturn',
+  'sega-dc': 'Dreamcast',
+  nes: 'NES',
+  snes: 'SNES',
+  n64: 'Nintendo 64',
+  gamecube: 'GameCube',
+  wii: 'Wii',
+  wiiu: 'Wii U',
+  switch: 'Nintendo Switch',
+  gameboy: 'Game Boy',
+  gbc: 'Game Boy Color',
+  gba: 'Game Boy Advance',
+  nds: 'Nintendo DS',
+  '3ds': 'Nintendo 3DS',
+  ps1: 'PlayStation 1',
+  ps2: 'PlayStation 2',
+  ps3: 'PlayStation 3',
+  ps4: 'PlayStation 4',
+  ps5: 'PlayStation 5',
+  psp: 'PSP',
+  psvita: 'PS Vita',
+  xbox: 'Xbox',
+  xbox360: 'Xbox 360',
+  xbone: 'Xbox One',
+  xbsx: 'Xbox Series X/S',
+  pc: 'PC',
+  c64: 'Commodore 64',
+  amiga: 'Amiga',
+  other: 'Otra',
+}
 
 export type GameStatus = 'backlog' | 'playing' | 'completed' | 'paused' | 'dropped'
 
@@ -17,6 +85,7 @@ export interface Game {
   year: number
   rating?: number
   notes?: string
+  igdbId?: number
   createdAt: string
   updatedAt: string
 }
@@ -26,6 +95,7 @@ export interface GameFormPrefill {
   title: string
   year: number
   platform: Platform
+  igdbId?: number
 }
 
 export interface GamesState {
