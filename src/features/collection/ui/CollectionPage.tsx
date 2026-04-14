@@ -29,28 +29,16 @@ const STATUS_OPTIONS: Array<{ value: GameStatus | 'all'; label: string }> = [
   { value: 'dropped', label: 'Abandonado' },
 ]
 
-type PlatformGroup = 'all' | 'sega' | 'nintendo' | 'playstation' | 'microsoft' | 'pc' | 'commodore' | 'other'
+type PlatformFilter = Platform | 'all'
 
-const PLATFORM_GROUPS: Record<PlatformGroup, Platform[] | 'all'> = {
-  all: 'all',
-  sega: ['sega-ms', 'sega-md', 'sega-saturn', 'sega-dc'],
-  nintendo: ['nes', 'snes', 'n64', 'gamecube', 'wii', 'wiiu', 'switch', 'gameboy', 'gbc', 'gba', 'nds', '3ds'],
-  playstation: ['ps1', 'ps2', 'ps3', 'ps4', 'ps5', 'psp', 'psvita'],
-  microsoft: ['xbox', 'xbox360', 'xbone', 'xbsx'],
-  pc: ['pc'],
-  commodore: ['c64', 'amiga'],
-  other: ['other'],
-}
-
-const PLATFORM_GROUP_OPTIONS: Array<{ value: PlatformGroup; label: string }> = [
-  { value: 'all', label: 'Todas' },
-  { value: 'sega', label: 'Sega' },
-  { value: 'nintendo', label: 'Nintendo' },
-  { value: 'playstation', label: 'PlayStation' },
-  { value: 'microsoft', label: 'Microsoft' },
-  { value: 'pc', label: 'PC' },
-  { value: 'commodore', label: 'Commodore' },
-  { value: 'other', label: 'Otra' },
+const PLATFORM_FILTER_GROUPS: Array<{ label: string; platforms: Platform[] }> = [
+  { label: 'Sega',        platforms: ['sega-ms', 'sega-md', 'sega-saturn', 'sega-dc'] },
+  { label: 'Nintendo',    platforms: ['nes', 'snes', 'n64', 'gamecube', 'wii', 'wiiu', 'switch', 'gameboy', 'gbc', 'gba', 'nds', '3ds'] },
+  { label: 'PlayStation', platforms: ['ps1', 'ps2', 'ps3', 'ps4', 'ps5', 'psp', 'psvita'] },
+  { label: 'Microsoft',   platforms: ['xbox', 'xbox360', 'xbone', 'xbsx'] },
+  { label: 'PC',          platforms: ['pc'] },
+  { label: 'Commodore',   platforms: ['c64', 'amiga'] },
+  { label: 'Otra',        platforms: ['other'] },
 ]
 
 // --- Chip component ---
@@ -281,7 +269,7 @@ export function CollectionPage() {
 
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<GameStatus | 'all'>('all')
-  const [platformFilter, setPlatformFilter] = useState<PlatformGroup>('all')
+  const [platformFilter, setPlatformFilter] = useState<PlatformFilter>('all')
 
   // Edit modal state
   const [editingGame, setEditingGame] = useState<Game | undefined>(undefined)
@@ -294,11 +282,7 @@ export function CollectionPage() {
     return state.games.filter((g) => {
       const matchSearch = q.length === 0 || g.title.toLowerCase().includes(q)
       const matchStatus = statusFilter === 'all' || g.status === statusFilter
-      const platformValues = PLATFORM_GROUPS[platformFilter]
-      const matchPlatform =
-        platformFilter === 'all' ||
-        platformValues === 'all' ||
-        (Array.isArray(platformValues) && platformValues.includes(g.platform))
+      const matchPlatform = platformFilter === 'all' || g.platform === platformFilter
       return matchSearch && matchStatus && matchPlatform
     })
   }, [state.games, search, statusFilter, platformFilter])
@@ -403,14 +387,41 @@ export function CollectionPage() {
       </div>
 
       {/* Platform chips */}
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 24 }}>
-        {PLATFORM_GROUP_OPTIONS.map((opt) => (
+      <div style={{ marginBottom: 24 }}>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 8 }}>
           <Chip
-            key={opt.value}
-            label={opt.label}
-            active={platformFilter === opt.value}
-            onClick={() => setPlatformFilter(platformFilter === opt.value && opt.value !== 'all' ? 'all' : opt.value)}
+            label="Todas"
+            active={platformFilter === 'all'}
+            onClick={() => setPlatformFilter('all')}
           />
+        </div>
+        {PLATFORM_FILTER_GROUPS.map((group) => (
+          <div key={group.label} style={{ marginBottom: 8 }}>
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: 'var(--text-muted)',
+                letterSpacing: 1,
+                textTransform: 'uppercase',
+                marginBottom: 4,
+              }}
+            >
+              {group.label}
+            </div>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+              {group.platforms.map((platform) => (
+                <Chip
+                  key={platform}
+                  label={PLATFORM_LABELS[platform]}
+                  active={platformFilter === platform}
+                  onClick={() =>
+                    setPlatformFilter(platformFilter === platform ? 'all' : platform)
+                  }
+                />
+              ))}
+            </div>
+          </div>
         ))}
       </div>
 
