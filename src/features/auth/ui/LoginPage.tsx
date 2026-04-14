@@ -58,7 +58,7 @@ export function LoginPage() {
         <Alert
           type="info"
           showIcon
-          message="Cuenta demo"
+          title="Cuenta demo"
           description={
             <>
               <div>Email: <span>demo@vg.com</span></div>
