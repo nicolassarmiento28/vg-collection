@@ -95,7 +95,7 @@ export function GameFormFields({ form }: GameFormFieldsProps) {
           </Form.Item>
           {typeof coverUrlPreview === 'string' && coverUrlPreview.startsWith('http') && (
             <img
-              src={coverUrlValue}
+              src={coverUrlPreview}
               alt="Vista previa"
               style={{ marginTop: 8, maxHeight: 120, borderRadius: 4, display: 'block' }}
             />
