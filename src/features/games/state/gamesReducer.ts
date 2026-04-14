@@ -15,6 +15,7 @@ export type GamesAction =
   | { type: 'setStatusFilter'; payload: GameStatus | 'all' }
   | { type: 'openCreateModal'; payload: Partial<GameFormPrefill> | undefined }
   | { type: 'closeCreateModal' }
+  | { type: 'removeGame'; payload: { id: string } }
 
 export function gamesReducer(state: GamesState, action: GamesAction): GamesState {
   switch (action.type) {
@@ -56,6 +57,11 @@ export function gamesReducer(state: GamesState, action: GamesAction): GamesState
       return { ...state, isCreateModalOpen: true, createModalPrefill: action.payload }
     case 'closeCreateModal':
       return { ...state, isCreateModalOpen: false, createModalPrefill: undefined }
+    case 'removeGame':
+      return {
+        ...state,
+        games: state.games.filter((game) => game.id !== action.payload.id),
+      }
     default:
       return state
   }

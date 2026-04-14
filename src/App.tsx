@@ -10,6 +10,7 @@ import { GameDetailPage } from './features/games/ui/GameDetailPage'
 import { GameFormModal, type GameFormValues } from './features/games/ui/GameFormModal'
 import { normalizeOptionalRating } from './features/games/ui/GamesPage'
 import { CollectionPage } from './features/collection/ui/CollectionPage'
+import { CollectionDetailPage } from './features/collection/ui/CollectionDetailPage'
 import { CreateGamePage } from './features/games/ui/CreateGamePage'
 import { AppLayout } from './shared/ui/AppLayout'
 
@@ -68,6 +69,7 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/coleccion" element={<CollectionPage />} />
+        <Route path="/coleccion/:id" element={<CollectionDetailPage />} />
         <Route path="/crear" element={<CreateGamePage />} />
         <Route path="/juego/:id" element={<GameDetailPage />} />
       </Routes>
