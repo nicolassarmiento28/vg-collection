@@ -63,4 +63,10 @@ describe('LoginPage', () => {
     renderLoginPage()
     expect(document.querySelector('canvas')).toBeNull()
   })
+
+  it('shows demo credentials hint', () => {
+    renderLoginPage()
+    expect(screen.getByText('demo@vg.com')).toBeInTheDocument()
+    expect(screen.getByText('Demo1234')).toBeInTheDocument()
+  })
 })
