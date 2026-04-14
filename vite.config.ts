@@ -13,23 +13,27 @@ export default defineConfig({
         configure: (proxy) => {
           let cachedToken: string | null = null
 
-          async function getToken(): Promise<string> {
-            if (cachedToken) return cachedToken
-            const res = await fetch(
+          function fetchToken(): Promise<string> {
+            return fetch(
               `https://id.twitch.tv/oauth2/token?client_id=${process.env.VITE_IGDB_CLIENT_ID}&client_secret=${process.env.VITE_IGDB_CLIENT_SECRET}&grant_type=client_credentials`,
               { method: 'POST' },
             )
-            const data = (await res.json()) as { access_token: string }
-            cachedToken = data.access_token
-            return cachedToken
+              .then((r) => r.json() as Promise<{ access_token: string }>)
+              .then((d) => {
+                cachedToken = d.access_token
+                return cachedToken
+              })
           }
+
+          // Pre-warm the token so it's cached before the first request arrives
+          void fetchToken()
 
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           proxy.on('proxyReq', (proxyReq: any) => {
-            void getToken().then((token) => {
+            if (cachedToken) {
               proxyReq.setHeader('Client-ID', process.env.VITE_IGDB_CLIENT_ID ?? '')
-              proxyReq.setHeader('Authorization', `Bearer ${token}`)
-            })
+              proxyReq.setHeader('Authorization', `Bearer ${cachedToken}`)
+            }
           })
         },
       },
