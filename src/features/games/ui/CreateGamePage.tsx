@@ -1,6 +1,6 @@
 // src/features/games/ui/CreateGamePage.tsx
 import { LockOutlined } from '@ant-design/icons'
-import { App as AntdApp, Button, Form, Typography } from 'antd'
+import { App as AntdApp, Button, Form, Grid, Typography } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
 import { useAuthContext } from '../../auth/state/AuthContext'
@@ -23,6 +23,8 @@ export function CreateGamePage() {
   const navigate = useNavigate()
   const { message } = AntdApp.useApp()
   const [form] = Form.useForm<GameFormValues>()
+  const screens = Grid.useBreakpoint()
+  const isMobile = screens.md === false
 
   if (!authState.isLoggedIn) {
     return (
@@ -73,7 +75,7 @@ export function CreateGamePage() {
   }
 
   return (
-    <div style={{ maxWidth: 560 }}>
+    <div style={{ maxWidth: isMobile ? '100%' : 560, width: '100%' }}>
       <Typography.Title
         level={2}
         style={{

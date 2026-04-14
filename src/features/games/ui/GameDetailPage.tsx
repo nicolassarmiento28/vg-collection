@@ -1,6 +1,6 @@
 // src/features/games/ui/GameDetailPage.tsx
 import { useNavigate, useParams } from 'react-router-dom'
-import { Button, Tag } from 'antd'
+import { Button, Grid, Tag } from 'antd'
 import { ArrowLeftOutlined, CheckCircleFilled } from '@ant-design/icons'
 import { useIgdbGameDetail } from '../hooks/useIgdbGameDetail'
 import { useGamesContext } from '../state/GamesContext'
@@ -69,6 +69,8 @@ export function GameDetailPage() {
   const { game, loading, error } = useIgdbGameDetail(id ?? '')
   const { state: gamesState, dispatch } = useGamesContext()
   const { state: authState, dispatch: authDispatch } = useAuthContext()
+  const screens = Grid.useBreakpoint()
+  const isMobile = screens.md === false
 
   if (loading) return <GameDetailSkeleton />
 
@@ -155,9 +157,9 @@ export function GameDetailPage() {
           style={{
             position: 'absolute',
             bottom: -20,
-            left: 32,
-            width: 120,
-            height: 170,
+            left: isMobile ? 12 : 32,
+            width: isMobile ? 80 : 120,
+            height: isMobile ? 110 : 170,
             borderRadius: 6,
             boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
             overflow: 'hidden',
@@ -192,8 +194,8 @@ export function GameDetailPage() {
           style={{
             position: 'absolute',
             bottom: 20,
-            left: 176,
-            right: 24,
+            left: isMobile ? 108 : 176,
+            right: isMobile ? 12 : 24,
           }}
         >
           <h1
@@ -215,7 +217,7 @@ export function GameDetailPage() {
       </div>
 
       {/* Body — con padding para dejar espacio a la portada superpuesta */}
-      <div style={{ paddingLeft: 32, maxWidth: 800 }}>
+      <div style={{ paddingLeft: isMobile ? 0 : 32, maxWidth: isMobile ? '100%' : 800 }}>
         {/* Descripción */}
         {game.summary && (
           <div style={{ marginBottom: 28, marginTop: 0 }}>
