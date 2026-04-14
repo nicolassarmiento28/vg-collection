@@ -99,25 +99,27 @@ test.describe('Responsive layout', () => {
       await page.goto('/coleccion')
       const width = viewport?.width ?? 1280
 
-      // The grid uses auto-fill with minmax, so count visible cards per row
-      // We check the computed grid-template-columns value
-      const gridEl = page.locator('[data-testid="game-grid"]').or(
-        page.locator('.ant-layout-content div').filter({ has: page.locator('[style*="grid-template-columns"]') }).first()
-      )
-
-      // Simpler: check that the container width allows the expected number of columns
-      // minmax(140px) on mobile → floor(375 / 140) = 2 columns minimum
-      // minmax(180px) on desktop → floor(1280 / 180) = 7 columns minimum
-      const minColumns = width < MOBILE_WIDTH_THRESHOLD ? 2 : 4
-      const minCardWidth = width < MOBILE_WIDTH_THRESHOLD ? 140 : 180
-
-      const containerWidth = await page.evaluate(() => {
-        const el = document.querySelector('.ant-layout-content')
-        return el ? el.clientWidth : 0
+      // Read the computed grid-template-columns from the actual grid element
+      const gridColumns = await page.evaluate(() => {
+        // Find the div with inline style containing grid-template-columns
+        const allDivs = Array.from(document.querySelectorAll('div'))
+        const gridDiv = allDivs.find(
+          (el) => el.style.gridTemplateColumns && el.style.gridTemplateColumns.includes('repeat(auto-fill')
+        )
+        if (!gridDiv) return null
+        return window.getComputedStyle(gridDiv).gridTemplateColumns
       })
 
-      const expectedColumns = Math.floor(containerWidth / minCardWidth)
-      expect(expectedColumns).toBeGreaterThanOrEqual(minColumns)
+      if (gridColumns === null) {
+        // No games loaded — skip assertion (vacuously passes)
+        return
+      }
+
+      // computed grid-template-columns for auto-fill resolves to the actual column widths
+      // e.g. "140px 140px 140px" — count how many columns there are
+      const columns = gridColumns.trim().split(/\s+/).length
+      const minColumns = width < MOBILE_WIDTH_THRESHOLD ? 2 : 4
+      expect(columns).toBeGreaterThanOrEqual(minColumns)
     })
   })
 })

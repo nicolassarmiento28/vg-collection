@@ -73,7 +73,7 @@ export function HeaderSearch() {
       onSelect={handleSelect}
       onSearch={setInputValue}
       style={{ width: '100%', maxWidth: 380 }}
-      popupMatchSelectWidth={380}
+      popupMatchSelectWidth={true}
     >
       <Input
         placeholder="Buscar juegos, géneros, plataformas…"
