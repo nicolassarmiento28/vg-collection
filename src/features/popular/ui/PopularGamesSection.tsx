@@ -33,14 +33,6 @@ export function PopularGamesSection({ title, layout, hook }: PopularGamesSection
 
   return (
     <section style={{ marginBottom: 40 }}>
-      {/* Shimmer keyframe defined once for all skeleton cards */}
-      <style>{`
-        @keyframes shimmer {
-          0% { background-position: 200% 0; }
-          100% { background-position: -200% 0; }
-        }
-      `}</style>
-
       <h2
         style={{
           fontFamily: 'var(--font-display)',
