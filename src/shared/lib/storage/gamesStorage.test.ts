@@ -248,6 +248,31 @@ describe('gamesStorage', () => {
     expect(result.games[0].cons).toBeUndefined()
   })
 
+  it('falls back to default state when coverUrl field is not a string', () => {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        games: [
+          {
+            id: 'g-bad2',
+            title: 'Bad Game',
+            platform: 'pc',
+            status: 'backlog',
+            genre: 'Action',
+            year: 2020,
+            coverUrl: null,
+            createdAt: '2026-01-01T00:00:00.000Z',
+            updatedAt: '2026-01-02T00:00:00.000Z',
+          },
+        ],
+        search: '',
+        platformFilter: 'all',
+        statusFilter: 'all',
+      }),
+    )
+    expect(loadGamesState()).toEqual(defaultGamesState)
+  })
+
   it('falls back to default state when pros field is not a string', () => {
     window.localStorage.setItem(
       STORAGE_KEY,
@@ -261,6 +286,56 @@ describe('gamesStorage', () => {
             genre: 'Action',
             year: 2020,
             pros: 42,
+            createdAt: '2026-01-01T00:00:00.000Z',
+            updatedAt: '2026-01-02T00:00:00.000Z',
+          },
+        ],
+        search: '',
+        platformFilter: 'all',
+        statusFilter: 'all',
+      }),
+    )
+    expect(loadGamesState()).toEqual(defaultGamesState)
+  })
+
+  it('falls back to default state when cons field is not a string', () => {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        games: [
+          {
+            id: 'g-bad3',
+            title: 'Bad Game',
+            platform: 'pc',
+            status: 'backlog',
+            genre: 'Action',
+            year: 2020,
+            cons: [],
+            createdAt: '2026-01-01T00:00:00.000Z',
+            updatedAt: '2026-01-02T00:00:00.000Z',
+          },
+        ],
+        search: '',
+        platformFilter: 'all',
+        statusFilter: 'all',
+      }),
+    )
+    expect(loadGamesState()).toEqual(defaultGamesState)
+  })
+
+  it('falls back to default state when coverBase64 field is not a string', () => {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        games: [
+          {
+            id: 'g-bad4',
+            title: 'Bad Game',
+            platform: 'pc',
+            status: 'backlog',
+            genre: 'Action',
+            year: 2020,
+            coverBase64: 123,
             createdAt: '2026-01-01T00:00:00.000Z',
             updatedAt: '2026-01-02T00:00:00.000Z',
           },
