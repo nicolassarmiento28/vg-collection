@@ -84,16 +84,18 @@ function getInitials(title: string): string {
 // --- CollectionCard ---
 interface CollectionCardProps {
   game: Game
-  coverUrl: string | undefined
-  igdbId: number | undefined
+  igdbCoverUrl: string | undefined
   onEdit: (game: Game) => void
   onComplete: (id: string) => void
 }
 
-function CollectionCard({ game, coverUrl, igdbId, onEdit, onComplete }: CollectionCardProps) {
+function CollectionCard({ game, igdbCoverUrl, onEdit, onComplete }: CollectionCardProps) {
   const [hovered, setHovered] = useState(false)
   const navigate = useNavigate()
   const status = STATUS_COLORS[game.status]
+
+  // Prefer stored cover over live IGDB fetch
+  const displayCover = game.coverBase64 ?? game.coverUrl ?? igdbCoverUrl
 
   return (
     <div
@@ -114,9 +116,9 @@ function CollectionCard({ game, coverUrl, igdbId, onEdit, onComplete }: Collecti
     >
       {/* Cover image / fallback */}
       <div style={{ width: 180, height: 240, position: 'relative', overflow: 'hidden' }}>
-        {coverUrl ? (
+        {displayCover ? (
           <img
-            src={coverUrl}
+            src={displayCover}
             alt={game.title}
             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
             loading="lazy"
@@ -176,11 +178,9 @@ function CollectionCard({ game, coverUrl, igdbId, onEdit, onComplete }: Collecti
             <Button size="small" block onClick={() => onEdit(game)}>
               Editar
             </Button>
-            {igdbId !== undefined && (
-              <Button size="small" block onClick={() => navigate(`/juego/${igdbId}`)}>
-                Ver detalle
-              </Button>
-            )}
+            <Button size="small" block onClick={() => navigate(`/coleccion/${game.id}`)}>
+              Ver detalle
+            </Button>
             {game.status !== 'completed' && (
               <Button size="small" block type="primary" onClick={() => onComplete(game.id)}>
                 Completar
@@ -464,8 +464,7 @@ export function CollectionPage() {
             <CollectionCard
               key={game.id}
               game={game}
-              coverUrl={coverEntry?.coverUrl}
-              igdbId={coverEntry?.igdbId}
+              igdbCoverUrl={coverEntry?.coverUrl}
               onEdit={handleEdit}
               onComplete={handleComplete}
             />
