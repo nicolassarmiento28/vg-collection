@@ -99,6 +99,21 @@ export function LoginModal() {
                 <div style={{ color: 'var(--text-muted)' }}>
                   Contraseña: <span style={{ color: 'var(--text)' }}>demo1234</span>
                 </div>
+                <div style={{ marginTop: 10 }}>
+                  <Button
+                    size="small"
+                    type="link"
+                    style={{ color: 'var(--accent)', padding: 0, height: 'auto', fontSize: 12 }}
+                    onClick={() =>
+                      loginForm.setFieldsValue({
+                        email: 'demo@vgcollection.app',
+                        password: 'demo1234',
+                      })
+                    }
+                  >
+                    Usar demo →
+                  </Button>
+                </div>
               </div>
             }
           />
