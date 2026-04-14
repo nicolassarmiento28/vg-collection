@@ -1,68 +1,45 @@
-import { LockOutlined } from '@ant-design/icons'
-import { Button, Typography } from 'antd'
-import { AuthProvider, useAuthContext } from './features/auth/state/AuthContext'
+// src/App.tsx
+import { App as AntdApp } from 'antd'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { AuthProvider } from './features/auth/state/AuthContext'
 import { LoginModal } from './features/auth/ui/LoginModal'
-import { GamesPage } from './features/games/ui/GamesPage'
-import { PopularGamesSection } from './features/popular/ui/PopularGamesSection'
+import { HomePage } from './features/home/ui/HomePage'
+import { GamesProvider } from './features/games/state/GamesContext'
 import { AppLayout } from './shared/ui/AppLayout'
 
-function CollectionGatePlaceholder() {
-  const { dispatch } = useAuthContext()
-  return (
-    <>
-      <h2
-        style={{
-          fontFamily: 'var(--font-display)',
-          fontSize: 28,
-          color: 'var(--text-h)',
-          letterSpacing: 3,
-          marginBottom: 16,
-        }}
-      >
-        <span style={{ color: 'var(--accent)', marginRight: 8 }}>▸</span>
-        TU COLECCIÓN
-      </h2>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 16,
-          padding: '64px 24px',
-          border: '1px solid var(--border)',
-          borderRadius: 8,
-          background: 'var(--bg-surface)',
-        }}
-      >
-        <LockOutlined style={{ fontSize: 40, color: 'var(--text-muted)' }} />
-        <Typography.Text style={{ color: 'var(--text-muted)', fontSize: 15 }}>
-          Inicia sesión para ver tu colección
-        </Typography.Text>
-        <Button type="primary" onClick={() => dispatch({ type: 'openModal' })}>
-          Iniciar sesión
-        </Button>
-      </div>
-    </>
-  )
+// Lazy placeholders — replaced in later tasks
+function CollectionPagePlaceholder() {
+  return <div style={{ color: 'var(--text-muted)', padding: 40 }}>Mi Colección — próximamente</div>
 }
 
-function AppInner() {
-  const { state } = useAuthContext()
+function GameDetailPagePlaceholder() {
+  return <div style={{ color: 'var(--text-muted)', padding: 40 }}>Detalle de juego — próximamente</div>
+}
+
+function AppRoutes() {
   return (
     <AppLayout>
-      <PopularGamesSection />
-      {state.isLoggedIn ? <GamesPage /> : <CollectionGatePlaceholder />}
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/coleccion" element={<CollectionPagePlaceholder />} />
+        <Route path="/juego/:id" element={<GameDetailPagePlaceholder />} />
+      </Routes>
     </AppLayout>
   )
 }
 
 function App() {
   return (
-    <AuthProvider>
-      <AppInner />
-      <LoginModal />
-    </AuthProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <GamesProvider>
+          <AntdApp>
+            <AppRoutes />
+            <LoginModal />
+          </AntdApp>
+        </GamesProvider>
+      </AuthProvider>
+    </BrowserRouter>
   )
 }
 
