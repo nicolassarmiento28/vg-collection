@@ -34,6 +34,7 @@ interface GameFormModalProps {
   open: boolean
   mode: 'create' | 'edit'
   game?: Game
+  prefill?: Partial<GameFormValues>
   onCancel: () => void
   onSubmit: (values: GameFormValues) => void
 }
@@ -46,7 +47,7 @@ const initialValues: Partial<GameFormValues> = {
   notes: '',
 }
 
-export function GameFormModal({ open, mode, game, onCancel, onSubmit }: GameFormModalProps) {
+export function GameFormModal({ open, mode, game, prefill, onCancel, onSubmit }: GameFormModalProps) {
   const [form] = Form.useForm<GameFormValues>()
 
   useEffect(() => {
@@ -70,7 +71,10 @@ export function GameFormModal({ open, mode, game, onCancel, onSubmit }: GameForm
     }
 
     form.setFieldsValue(initialValues)
-  }, [form, game, mode, open])
+    if (prefill !== undefined) {
+      form.setFieldsValue(prefill)
+    }
+  }, [form, game, mode, open, prefill])
 
   return (
     <Modal

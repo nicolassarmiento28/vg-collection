@@ -21,11 +21,20 @@ export interface Game {
   updatedAt: string
 }
 
+// Prefill shape — mirrors GameFormValues from GameFormModal (title, year, platform)
+export interface GameFormPrefill {
+  title: string
+  year: number
+  platform: Platform
+}
+
 export interface GamesState {
   games: Game[]
   search: string
   platformFilter: Platform | 'all'
   statusFilter: GameStatus | 'all'
+  isCreateModalOpen: boolean
+  createModalPrefill: Partial<GameFormPrefill> | undefined
 }
 
 export const defaultGamesState: GamesState = {
@@ -33,4 +42,6 @@ export const defaultGamesState: GamesState = {
   search: '',
   platformFilter: 'all',
   statusFilter: 'all',
+  isCreateModalOpen: false,
+  createModalPrefill: undefined,
 }

@@ -1,4 +1,4 @@
-import type { Game, GameStatus, GamesState, Platform } from '../../../shared/types/game'
+import type { Game, GameFormPrefill, GameStatus, GamesState, Platform } from '../../../shared/types/game'
 
 export type GamesAction =
   | { type: 'addGame'; payload: Game }
@@ -13,6 +13,8 @@ export type GamesAction =
   | { type: 'setSearch'; payload: string }
   | { type: 'setPlatformFilter'; payload: Platform | 'all' }
   | { type: 'setStatusFilter'; payload: GameStatus | 'all' }
+  | { type: 'openCreateModal'; payload: Partial<GameFormPrefill> | undefined }
+  | { type: 'closeCreateModal' }
 
 export function gamesReducer(state: GamesState, action: GamesAction): GamesState {
   switch (action.type) {
@@ -50,6 +52,10 @@ export function gamesReducer(state: GamesState, action: GamesAction): GamesState
         ...state,
         statusFilter: action.payload,
       }
+    case 'openCreateModal':
+      return { ...state, isCreateModalOpen: true, createModalPrefill: action.payload }
+    case 'closeCreateModal':
+      return { ...state, isCreateModalOpen: false, createModalPrefill: undefined }
     default:
       return state
   }

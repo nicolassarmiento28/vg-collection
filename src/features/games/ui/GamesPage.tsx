@@ -18,9 +18,17 @@ export function GamesPage() {
   const { message } = AntdApp.useApp()
   const { state, dispatch } = useGamesContext()
 
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  // Context-driven modal state (triggered by IGDB search)
+  const isContextModalOpen = state.isCreateModalOpen
+  const contextPrefill = state.createModalPrefill
+
+  // Local modal state (triggered by "Crear juego" toolbar button or edit)
+  const [isLocalModalOpen, setIsLocalModalOpen] = useState(false)
   const [modalMode, setModalMode] = useState<ModalMode>('create')
   const [editingGame, setEditingGame] = useState<Game | undefined>(undefined)
+
+  // Combine: modal is open if either local or context-triggered
+  const isModalOpen = isLocalModalOpen || isContextModalOpen
 
   const filteredGames = useMemo(() => {
     const searchValue = state.search.trim().toLowerCase()
@@ -37,20 +45,23 @@ export function GamesPage() {
   }, [state.games, state.platformFilter, state.search, state.statusFilter])
 
   const closeModal = () => {
-    setIsModalOpen(false)
+    setIsLocalModalOpen(false)
     setEditingGame(undefined)
+    if (isContextModalOpen) {
+      dispatch({ type: 'closeCreateModal' })
+    }
   }
 
   const handleCreate = () => {
     setModalMode('create')
     setEditingGame(undefined)
-    setIsModalOpen(true)
+    setIsLocalModalOpen(true)
   }
 
   const handleEdit = (game: Game) => {
     setModalMode('edit')
     setEditingGame(game)
-    setIsModalOpen(true)
+    setIsLocalModalOpen(true)
   }
 
   const handleComplete = (id: string) => {
@@ -61,7 +72,7 @@ export function GamesPage() {
   const handleSubmit = (values: GameFormValues) => {
     const rating = normalizeOptionalRating(values.rating)
 
-    if (modalMode === 'create') {
+    if (modalMode === 'create' || isContextModalOpen) {
       const now = new Date().toISOString()
 
       dispatch({
@@ -143,8 +154,9 @@ export function GamesPage() {
 
         <GameFormModal
           open={isModalOpen}
-          mode={modalMode}
-          game={editingGame}
+          mode={isContextModalOpen ? 'create' : modalMode}
+          game={isContextModalOpen ? undefined : editingGame}
+          prefill={isContextModalOpen ? contextPrefill : undefined}
           onCancel={closeModal}
           onSubmit={handleSubmit}
         />
