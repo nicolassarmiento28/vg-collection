@@ -5,11 +5,15 @@ export function PopularGamesSection() {
   const { games, loading, error } = useIgdbPopularGames()
 
   return (
-    <section
-      style={{
-        marginBottom: 40,
-      }}
-    >
+    <section style={{ marginBottom: 40 }}>
+      {/* Shimmer keyframe defined once for all skeleton cards */}
+      <style>{`
+        @keyframes shimmer {
+          0% { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
+        }
+      `}</style>
+
       <h2
         style={{
           fontFamily: 'var(--font-display)',
@@ -38,7 +42,11 @@ export function PopularGamesSection() {
       >
         {loading
           ? Array.from({ length: 8 }, (_, i) => <PopularGameCardSkeleton key={i} />)
-          : games.map((game) => <PopularGameCard key={game.id} game={game} />)}
+          : games.map((game) => (
+              <div key={game.id} style={{ scrollSnapAlign: 'start' }}>
+                <PopularGameCard game={game} />
+              </div>
+            ))}
       </div>
     </section>
   )

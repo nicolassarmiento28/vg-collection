@@ -32,7 +32,9 @@ export function useIgdbPopularGames(): UseIgdbPopularGamesResult {
           body: IGDB_QUERY,
         })
         if (!res.ok) throw new Error(`IGDB error ${res.status}`)
-        const data = (await res.json()) as IgdbGame[]
+        const raw = (await res.json()) as unknown
+        if (!Array.isArray(raw)) throw new Error('Unexpected IGDB response shape')
+        const data = raw as IgdbGame[]
         if (!cancelled) setGames(data)
       } catch {
         if (!cancelled) setError('No se pudo cargar juegos populares')

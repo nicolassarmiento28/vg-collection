@@ -5,4 +5,5 @@ export interface IgdbGame {
   first_release_date?: number // Unix timestamp in seconds
   platforms?: Array<{ abbreviation: string }>
   total_rating?: number
+  total_rating_count?: number
 }

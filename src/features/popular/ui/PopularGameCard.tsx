@@ -92,7 +92,7 @@ export function PopularGameCardSkeleton() {
     <div
       style={{
         width: 180,
-        height: 260,
+        height: 240,
         flexShrink: 0,
         borderRadius: 8,
         background: 'var(--bg-surface)',
@@ -115,12 +115,6 @@ export function PopularGameCardSkeleton() {
           animation: 'shimmer 1.5s infinite',
         }}
       />
-      <style>{`
-        @keyframes shimmer {
-          0% { background-position: 200% 0; }
-          100% { background-position: -200% 0; }
-        }
-      `}</style>
     </div>
   )
 }
