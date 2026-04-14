@@ -218,17 +218,29 @@ export function GameDetailPage() {
       <div style={{ paddingLeft: 32, maxWidth: 800 }}>
         {/* Descripción */}
         {game.summary && (
-          <p
-            style={{
-              color: 'var(--text)',
-              fontSize: 15,
-              lineHeight: 1.7,
-              marginBottom: 28,
-              marginTop: 0,
-            }}
-          >
-            {game.summary}
-          </p>
+          <div style={{ marginBottom: 28, marginTop: 0 }}>
+            <div
+              style={{
+                fontSize: 11,
+                color: 'var(--text-muted)',
+                textTransform: 'uppercase',
+                letterSpacing: 1,
+                marginBottom: 8,
+              }}
+            >
+              Descripción
+            </div>
+            <p
+              style={{
+                color: 'var(--text)',
+                fontSize: 15,
+                lineHeight: 1.7,
+                margin: 0,
+              }}
+            >
+              {game.summary}
+            </p>
+          </div>
         )}
 
         {/* Stats grid 2×2 */}
