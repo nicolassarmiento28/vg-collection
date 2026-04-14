@@ -6,19 +6,9 @@ import { v4 as uuidv4 } from 'uuid'
 import { useAuthContext } from '../../auth/state/AuthContext'
 import { useGamesContext } from '../state/GamesContext'
 import { GameFormFields } from './GameFormFields'
-import type { GameStatus, Platform } from '../../../shared/types/game'
+import { GameFormValues } from './GameFormModal'
 
-interface CreateGameFormValues {
-  title: string
-  platform: Platform
-  status: GameStatus
-  genre: string
-  year: number
-  rating?: number
-  notes?: string
-}
-
-const initialValues: Partial<CreateGameFormValues> = {
+const initialValues: Partial<GameFormValues> = {
   title: '',
   genre: '',
   year: undefined,
@@ -30,7 +20,7 @@ export function CreateGamePage() {
   const { state: authState, dispatch: authDispatch } = useAuthContext()
   const { dispatch } = useGamesContext()
   const navigate = useNavigate()
-  const [form] = Form.useForm<CreateGameFormValues>()
+  const [form] = Form.useForm<GameFormValues>()
 
   if (!authState.isLoggedIn) {
     return (
@@ -43,12 +33,15 @@ export function CreateGamePage() {
           padding: '80px 24px',
           gap: 16,
           textAlign: 'center',
+          border: '1px solid var(--border)',
+          borderRadius: 8,
+          background: 'var(--bg-surface)',
         }}
       >
         <LockOutlined style={{ fontSize: 48, color: 'var(--text-muted)' }} />
-        <div style={{ color: 'var(--text-muted)', fontSize: 15 }}>
+        <Typography.Text style={{ color: 'var(--text-muted)', fontSize: 15 }}>
           Inicia sesión para crear juegos en tu colección
-        </div>
+        </Typography.Text>
         <Button type="primary" onClick={() => authDispatch({ type: 'openModal' })}>
           Iniciar sesión
         </Button>
@@ -56,7 +49,7 @@ export function CreateGamePage() {
     )
   }
 
-  function handleFinish(values: CreateGameFormValues) {
+  function handleFinish(values: GameFormValues) {
     const now = new Date().toISOString()
     dispatch({
       type: 'addGame',
