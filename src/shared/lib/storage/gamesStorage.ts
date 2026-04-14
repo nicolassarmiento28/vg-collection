@@ -74,6 +74,22 @@ function isValidGame(value: unknown): value is Game {
     return false
   }
 
+  if (value.coverUrl !== undefined && typeof value.coverUrl !== 'string') {
+    return false
+  }
+
+  if (value.coverBase64 !== undefined && typeof value.coverBase64 !== 'string') {
+    return false
+  }
+
+  if (value.pros !== undefined && typeof value.pros !== 'string') {
+    return false
+  }
+
+  if (value.cons !== undefined && typeof value.cons !== 'string') {
+    return false
+  }
+
   return true
 }
 
@@ -114,6 +130,22 @@ function migrateStoredGame(value: unknown): Game | null {
   }
 
   if (value.notes !== undefined && typeof value.notes !== 'string') {
+    return null
+  }
+
+  if (value.coverUrl !== undefined && typeof value.coverUrl !== 'string') {
+    return null
+  }
+
+  if (value.coverBase64 !== undefined && typeof value.coverBase64 !== 'string') {
+    return null
+  }
+
+  if (value.pros !== undefined && typeof value.pros !== 'string') {
+    return null
+  }
+
+  if (value.cons !== undefined && typeof value.cons !== 'string') {
     return null
   }
 

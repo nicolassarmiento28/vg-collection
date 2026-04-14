@@ -195,4 +195,81 @@ describe('gamesStorage', () => {
 
     expect(() => saveGamesState(defaultGamesState)).not.toThrow()
   })
+
+  it('loads game with all four new optional fields', () => {
+    const state = {
+      games: [
+        {
+          id: 'g-new',
+          title: 'Super Mario World',
+          platform: 'snes',
+          status: 'completed',
+          genre: 'Platform',
+          year: 1990,
+          coverUrl: 'https://example.com/cover.jpg',
+          coverBase64: 'data:image/png;base64,abc',
+          pros: 'Great controls\nBeautiful levels',
+          cons: 'Too easy',
+          createdAt: '2026-01-01T00:00:00.000Z',
+          updatedAt: '2026-01-02T00:00:00.000Z',
+        },
+      ],
+      search: '',
+      platformFilter: 'all',
+      statusFilter: 'all',
+    }
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+    expect(loadGamesState()).toEqual(state)
+  })
+
+  it('loads game without new optional fields (they remain undefined)', () => {
+    const stored = {
+      games: [
+        {
+          id: 'g-old',
+          title: 'Tetris',
+          platform: 'gameboy',
+          status: 'completed',
+          genre: 'Puzzle',
+          year: 1989,
+          createdAt: '2026-01-01T00:00:00.000Z',
+          updatedAt: '2026-01-02T00:00:00.000Z',
+        },
+      ],
+      search: '',
+      platformFilter: 'all',
+      statusFilter: 'all',
+    }
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(stored))
+    const result = loadGamesState()
+    expect(result.games[0].coverUrl).toBeUndefined()
+    expect(result.games[0].coverBase64).toBeUndefined()
+    expect(result.games[0].pros).toBeUndefined()
+    expect(result.games[0].cons).toBeUndefined()
+  })
+
+  it('falls back to default state when pros field is not a string', () => {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        games: [
+          {
+            id: 'g-bad',
+            title: 'Bad Game',
+            platform: 'pc',
+            status: 'backlog',
+            genre: 'Action',
+            year: 2020,
+            pros: 42,
+            createdAt: '2026-01-01T00:00:00.000Z',
+            updatedAt: '2026-01-02T00:00:00.000Z',
+          },
+        ],
+        search: '',
+        platformFilter: 'all',
+        statusFilter: 'all',
+      }),
+    )
+    expect(loadGamesState()).toEqual(defaultGamesState)
+  })
 })
