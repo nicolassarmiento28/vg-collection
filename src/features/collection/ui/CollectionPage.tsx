@@ -8,6 +8,7 @@ import { useGamesContext } from '../../games/state/GamesContext'
 import { GameFormModal, type GameFormValues } from '../../games/ui/GameFormModal'
 import { normalizeOptionalRating } from '../../games/ui/GamesPage'
 import { useCollectionCovers } from '../hooks/useCollectionCovers'
+import { PLATFORM_LABELS } from '../../../shared/types/game'
 import type { Game, GameStatus, Platform } from '../../../shared/types/game'
 
 // --- Status badge colors ---
@@ -28,12 +29,27 @@ const STATUS_OPTIONS: Array<{ value: GameStatus | 'all'; label: string }> = [
   { value: 'dropped', label: 'Abandonado' },
 ]
 
-const PLATFORM_OPTIONS: Array<{ value: Platform | 'all'; label: string }> = [
+type PlatformGroup = 'all' | 'sega' | 'nintendo' | 'playstation' | 'microsoft' | 'pc' | 'commodore' | 'other'
+
+const PLATFORM_GROUPS: Record<PlatformGroup, Platform[] | 'all'> = {
+  all: 'all',
+  sega: ['sega-ms', 'sega-md', 'sega-saturn', 'sega-dc'],
+  nintendo: ['nes', 'snes', 'n64', 'gamecube', 'wii', 'wiiu', 'switch', 'gameboy', 'gbc', 'gba', 'nds', '3ds'],
+  playstation: ['ps1', 'ps2', 'ps3', 'ps4', 'ps5', 'psp', 'psvita'],
+  microsoft: ['xbox', 'xbox360', 'xbone', 'xbsx'],
+  pc: ['pc'],
+  commodore: ['c64', 'amiga'],
+  other: ['other'],
+}
+
+const PLATFORM_GROUP_OPTIONS: Array<{ value: PlatformGroup; label: string }> = [
   { value: 'all', label: 'Todas' },
+  { value: 'sega', label: 'Sega' },
+  { value: 'nintendo', label: 'Nintendo' },
+  { value: 'playstation', label: 'PlayStation' },
+  { value: 'microsoft', label: 'Microsoft' },
   { value: 'pc', label: 'PC' },
-  { value: 'ps4', label: 'PlayStation 4' },
-  { value: 'xbox', label: 'Xbox' },
-  { value: 'switch', label: 'Switch' },
+  { value: 'commodore', label: 'Commodore' },
   { value: 'other', label: 'Otra' },
 ]
 
@@ -203,7 +219,7 @@ function CollectionCard({ game, coverUrl, igdbId, onEdit, onComplete }: Collecti
           {game.title}
         </div>
         <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-          {game.platform} · {game.year}
+          {PLATFORM_LABELS[game.platform]} · {game.year}
         </div>
         {game.rating !== undefined && (
           <div style={{ fontSize: 12, color: '#f39c12', marginTop: 2 }}>
@@ -265,7 +281,7 @@ export function CollectionPage() {
 
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<GameStatus | 'all'>('all')
-  const [platformFilter, setPlatformFilter] = useState<Platform | 'all'>('all')
+  const [platformFilter, setPlatformFilter] = useState<PlatformGroup>('all')
 
   // Edit modal state
   const [editingGame, setEditingGame] = useState<Game | undefined>(undefined)
@@ -278,7 +294,11 @@ export function CollectionPage() {
     return state.games.filter((g) => {
       const matchSearch = q.length === 0 || g.title.toLowerCase().includes(q)
       const matchStatus = statusFilter === 'all' || g.status === statusFilter
-      const matchPlatform = platformFilter === 'all' || g.platform === platformFilter
+      const platformValues = PLATFORM_GROUPS[platformFilter]
+      const matchPlatform =
+        platformFilter === 'all' ||
+        platformValues === 'all' ||
+        (Array.isArray(platformValues) && platformValues.includes(g.platform))
       return matchSearch && matchStatus && matchPlatform
     })
   }, [state.games, search, statusFilter, platformFilter])
@@ -384,7 +404,7 @@ export function CollectionPage() {
 
       {/* Platform chips */}
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 24 }}>
-        {PLATFORM_OPTIONS.map((opt) => (
+        {PLATFORM_GROUP_OPTIONS.map((opt) => (
           <Chip
             key={opt.value}
             label={opt.label}
