@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Button, Form, Input, Typography } from 'antd'
+import { Alert, Button, Form, Input, Typography } from 'antd'
 import { useNavigate } from 'react-router-dom'
 
 import { useAuthContext } from '../state/useAuthContext'
@@ -54,6 +54,19 @@ export function LoginPage() {
         >
           INICIAR SESION
         </div>
+
+        <Alert
+          type="info"
+          showIcon
+          message="Cuenta demo"
+          description={
+            <>
+              <div>Email: <span>demo@vg.com</span></div>
+              <div>Contrasena: <span>Demo1234</span></div>
+            </>
+          }
+          style={{ marginBottom: 20 }}
+        />
 
         <Form<LoginFormValues>
           layout="vertical"

@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 
 import { AuthProvider } from '../state/AuthContext'
 import { LoginPage } from './LoginPage'
@@ -20,6 +20,9 @@ function renderLoginPage() {
 }
 
 describe('LoginPage', () => {
+  beforeEach(() => {
+    localStorage.clear()
+  })
   it('validates email and password rules', async () => {
     const user = userEvent.setup()
 
