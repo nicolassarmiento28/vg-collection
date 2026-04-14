@@ -72,7 +72,7 @@ export function HeaderSearch() {
       options={[...options, ...noResultsOption]}
       onSelect={handleSelect}
       onSearch={setInputValue}
-      style={{ width: 380 }}
+      style={{ width: '100%', maxWidth: 380 }}
       popupMatchSelectWidth={380}
     >
       <Input

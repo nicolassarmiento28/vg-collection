@@ -47,7 +47,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           zIndex: 100,
           display: 'flex',
           alignItems: 'center',
-          gap: isMobile ? 12 : 24,
+          gap: isMobile ? 12 : screens.lg ? 24 : 12,
           background: 'var(--bg-surface)',
           borderBottom: '1px solid var(--border)',
           height: isMobile ? 56 : 64,
@@ -67,7 +67,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           }}
         >
           <span style={{ color: 'var(--accent)', fontSize: 20, lineHeight: 1 }}>▸</span>
-          {!isMobile && (
+          {screens.lg && (
             <span
               style={{
                 fontFamily: 'var(--font-display)',
@@ -84,7 +84,7 @@ export function AppLayout({ children }: AppLayoutProps) {
 
         {/* Nav links — desktop/tablet only */}
         {!isMobile && (
-          <div style={{ display: 'flex', gap: 28, alignItems: 'center', flexShrink: 0 }}>
+          <div style={{ display: 'flex', gap: screens.lg ? 28 : 16, alignItems: 'center', flexShrink: 0 }}>
             <NavLink to="/" end style={navLinkStyle}>
               Inicio
             </NavLink>
@@ -99,7 +99,7 @@ export function AppLayout({ children }: AppLayoutProps) {
 
         {/* Search — desktop/tablet only */}
         {!isMobile && (
-          <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+          <div style={{ flex: 1, minWidth: 0, display: 'flex', justifyContent: 'center', overflow: 'hidden' }}>
             <HeaderSearch />
           </div>
         )}
