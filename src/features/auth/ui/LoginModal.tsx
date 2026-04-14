@@ -1,4 +1,4 @@
-import { App as AntdApp, Button, Form, Input, Modal, Typography } from 'antd'
+import { Alert, App as AntdApp, Button, Form, Input, Modal, Typography } from 'antd'
 import { useState } from 'react'
 import { useAuthContext } from '../state/AuthContext'
 
@@ -76,44 +76,71 @@ export function LoginModal() {
       </div>
 
       {view === 'login' ? (
-        <Form form={loginForm} layout="vertical" onFinish={handleLoginSubmit}>
-          <Form.Item
-            label="Email"
-            name="email"
-            rules={[
-              { required: true, message: 'El email es obligatorio' },
-              { type: 'email', message: 'Ingresa un email válido' },
-            ]}
-          >
-            <Input placeholder="tu@email.com" />
-          </Form.Item>
+        <>
+          <Alert
+            type="info"
+            showIcon={false}
+            style={{
+              marginBottom: 20,
+              background: 'rgba(255,255,255,0.04)',
+              border: 'none',
+              borderLeft: '4px solid var(--accent)',
+              borderRadius: 4,
+              padding: '10px 14px',
+            }}
+            message={
+              <div style={{ fontFamily: 'var(--font-body)', fontSize: 13 }}>
+                <div style={{ fontWeight: 600, color: 'var(--text-h)', marginBottom: 4 }}>
+                  Usuario demo
+                </div>
+                <div style={{ color: 'var(--text-muted)' }}>
+                  Email: <span style={{ color: 'var(--text)' }}>demo@vgcollection.app</span>
+                </div>
+                <div style={{ color: 'var(--text-muted)' }}>
+                  Contraseña: <span style={{ color: 'var(--text)' }}>demo1234</span>
+                </div>
+              </div>
+            }
+          />
+          <Form form={loginForm} layout="vertical" onFinish={handleLoginSubmit}>
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[
+                { required: true, message: 'El email es obligatorio' },
+                { type: 'email', message: 'Ingresa un email válido' },
+              ]}
+            >
+              <Input placeholder="tu@email.com" />
+            </Form.Item>
 
-          <Form.Item
-            label="Contraseña"
-            name="password"
-            rules={[{ required: true, message: 'La contraseña es obligatoria' }]}
-          >
-            <Input.Password placeholder="••••••••" />
-          </Form.Item>
+            <Form.Item
+              label="Contraseña"
+              name="password"
+              rules={[{ required: true, message: 'La contraseña es obligatoria' }]}
+            >
+              <Input.Password placeholder="••••••••" />
+            </Form.Item>
 
-          <Form.Item style={{ marginBottom: 8 }}>
-            <Button type="primary" htmlType="submit" block>
-              Iniciar sesión
-            </Button>
-          </Form.Item>
+            <Form.Item style={{ marginBottom: 8 }}>
+              <Button type="primary" htmlType="submit" block>
+                Iniciar sesión
+              </Button>
+            </Form.Item>
 
-          <div style={{ textAlign: 'center' }}>
-            <Typography.Text style={{ color: 'var(--text)', fontSize: 13 }}>
-              ¿No tienes cuenta?{' '}
-              <Typography.Link
-                onClick={() => setView('register')}
-                style={{ color: 'var(--accent)' }}
-              >
-                Regístrate
-              </Typography.Link>
-            </Typography.Text>
-          </div>
-        </Form>
+            <div style={{ textAlign: 'center' }}>
+              <Typography.Text style={{ color: 'var(--text)', fontSize: 13 }}>
+                ¿No tienes cuenta?{' '}
+                <Typography.Link
+                  onClick={() => setView('register')}
+                  style={{ color: 'var(--accent)' }}
+                >
+                  Regístrate
+                </Typography.Link>
+              </Typography.Text>
+            </div>
+          </Form>
+        </>
       ) : (
         <Form form={registerForm} layout="vertical" onFinish={handleRegisterSubmit}>
           <Form.Item
