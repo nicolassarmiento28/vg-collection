@@ -23,7 +23,9 @@ export function GameFormFields({ form }: GameFormFieldsProps) {
   const [coverTab, setCoverTab] = useState<'file' | 'url'>('file')
   const [previewBase64, setPreviewBase64] = useState<string | undefined>(undefined)
   const [fileList, setFileList] = useState<UploadFile[]>([])
-  const [coverUrlPreview, setCoverUrlPreview] = useState<string | undefined>(undefined)
+
+  // Read current URL value from form for preview
+  const coverUrlValue: string | undefined = Form.useWatch('coverUrl', form)
 
   function handleFileChange({ fileList: newList }: { fileList: UploadFile[] }) {
     setFileList(newList)
@@ -43,10 +45,8 @@ export function GameFormFields({ form }: GameFormFieldsProps) {
     reader.readAsDataURL(file)
   }
 
-  function handleUrlChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const url = e.target.value
-    // Update local preview state and clear base64 when user types a URL
-    setCoverUrlPreview(url)
+  function handleUrlChange() {
+    // Clear base64 when user types a URL
     setPreviewBase64(undefined)
     setFileList([])
     form.setFieldValue('coverBase64', undefined)
@@ -89,13 +89,13 @@ export function GameFormFields({ form }: GameFormFieldsProps) {
           <Form.Item name="coverUrl" noStyle>
             <Input
               placeholder="https://..."
-              onChange={handleUrlChange}
+              onChange={() => handleUrlChange()}
               aria-label="URL de portada"
             />
           </Form.Item>
-          {typeof coverUrlPreview === 'string' && coverUrlPreview.startsWith('http') && (
+          {typeof coverUrlValue === 'string' && coverUrlValue.startsWith('http') && (
             <img
-              src={coverUrlPreview}
+              src={coverUrlValue}
               alt="Vista previa"
               style={{ marginTop: 8, maxHeight: 120, borderRadius: 4, display: 'block' }}
             />

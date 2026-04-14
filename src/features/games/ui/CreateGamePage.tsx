@@ -66,6 +66,10 @@ export function CreateGamePage() {
         year: values.year,
         rating: normalizeOptionalRating(values.rating),
         notes: values.notes,
+        coverUrl: values.coverUrl,
+        coverBase64: values.coverBase64,
+        pros: values.pros,
+        cons: values.cons,
         createdAt: now,
         updatedAt: now,
       },
@@ -94,7 +98,7 @@ export function CreateGamePage() {
         initialValues={initialValues}
         onFinish={handleFinish}
       >
-        <GameFormFields />
+        <GameFormFields form={form} />
 
         <Form.Item style={{ marginTop: 8 }}>
           <Button type="primary" htmlType="submit" size="large" style={{ width: '100%' }}>
