@@ -14,6 +14,10 @@ interface GameFormValues {
   rating?: number
   notes?: string
   igdbId?: number
+  coverUrl?: string
+  coverBase64?: string
+  pros?: string
+  cons?: string
 }
 
 interface GameFormModalProps {
@@ -31,6 +35,10 @@ const initialValues: Partial<GameFormValues> = {
   year: undefined,
   rating: undefined,
   notes: '',
+  coverUrl: undefined,
+  coverBase64: undefined,
+  pros: '',
+  cons: '',
 }
 
 export function GameFormModal({ open, mode, game, prefill, onCancel, onSubmit }: GameFormModalProps) {
@@ -55,6 +63,10 @@ export function GameFormModal({ open, mode, game, prefill, onCancel, onSubmit }:
         rating: game.rating ?? undefined,
         notes: game.notes ?? '',
         igdbId: game.igdbId,
+        coverUrl: game.coverUrl ?? undefined,
+        coverBase64: game.coverBase64 ?? undefined,
+        pros: game.pros ?? '',
+        cons: game.cons ?? '',
       })
       return
     }
@@ -85,6 +97,7 @@ export function GameFormModal({ open, mode, game, prefill, onCancel, onSubmit }:
         <Form.Item name="igdbId" hidden>
           <InputNumber />
         </Form.Item>
+        {/* coverBase64 is managed via form.setFieldValue in GameFormFields — no hidden element needed */}
       </Form>
     </Modal>
   )
