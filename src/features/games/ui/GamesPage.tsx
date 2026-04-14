@@ -111,30 +111,44 @@ export function GamesPage() {
   }
 
   return (
-    <Card>
-      <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-        <GamesToolbar
-          search={state.search}
-          platformFilter={state.platformFilter}
-          statusFilter={state.statusFilter}
-          onSearchChange={(value) => dispatch({ type: 'setSearch', payload: value })}
-          onPlatformFilterChange={(value) =>
-            dispatch({ type: 'setPlatformFilter', payload: value })
-          }
-          onStatusFilterChange={(value) => dispatch({ type: 'setStatusFilter', payload: value })}
-          onCreate={handleCreate}
+    <>
+      <h2
+        style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: 28,
+          color: 'var(--text-h)',
+          letterSpacing: 3,
+          marginBottom: 16,
+        }}
+      >
+        <span style={{ color: 'var(--accent)', marginRight: 8 }}>▸</span>
+        TU COLECCIÓN
+      </h2>
+      <Card>
+        <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+          <GamesToolbar
+            search={state.search}
+            platformFilter={state.platformFilter}
+            statusFilter={state.statusFilter}
+            onSearchChange={(value) => dispatch({ type: 'setSearch', payload: value })}
+            onPlatformFilterChange={(value) =>
+              dispatch({ type: 'setPlatformFilter', payload: value })
+            }
+            onStatusFilterChange={(value) => dispatch({ type: 'setStatusFilter', payload: value })}
+            onCreate={handleCreate}
+          />
+
+          <GamesTable games={filteredGames} onEdit={handleEdit} onComplete={handleComplete} />
+        </Space>
+
+        <GameFormModal
+          open={isModalOpen}
+          mode={modalMode}
+          game={editingGame}
+          onCancel={closeModal}
+          onSubmit={handleSubmit}
         />
-
-        <GamesTable games={filteredGames} onEdit={handleEdit} onComplete={handleComplete} />
-      </Space>
-
-      <GameFormModal
-        open={isModalOpen}
-        mode={modalMode}
-        game={editingGame}
-        onCancel={closeModal}
-        onSubmit={handleSubmit}
-      />
-    </Card>
+      </Card>
+    </>
   )
 }
