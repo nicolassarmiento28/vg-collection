@@ -1,8 +1,35 @@
+import type React from 'react'
 import { useIgdbPopularGames } from '../hooks/useIgdbPopularGames'
+import { useIgdbRecentGames } from '../hooks/useIgdbRecentGames'
 import { PopularGameCard, PopularGameCardSkeleton } from './PopularGameCard'
 
-export function PopularGamesSection() {
-  const { games, loading, error } = useIgdbPopularGames()
+interface PopularGamesSectionProps {
+  title: string
+  layout: 'carousel' | 'grid'
+  hook: 'popular' | 'recent'
+}
+
+export function PopularGamesSection({ title, layout, hook }: PopularGamesSectionProps) {
+  const popular = useIgdbPopularGames()
+  const recent = useIgdbRecentGames()
+
+  const { games, loading, error } = hook === 'popular' ? popular : recent
+
+  const listStyle: React.CSSProperties =
+    layout === 'carousel'
+      ? {
+          display: 'flex',
+          gap: 16,
+          overflowX: 'auto',
+          scrollSnapType: 'x mandatory',
+          scrollbarWidth: 'none',
+          paddingBottom: 8,
+        }
+      : {
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+          gap: 16,
+        }
 
   return (
     <section style={{ marginBottom: 40 }}>
@@ -23,30 +50,33 @@ export function PopularGamesSection() {
           marginBottom: 16,
         }}
       >
-        POPULAR AHORA
+        {title}
       </h2>
 
       {error !== null && (
         <p style={{ color: 'var(--text)', fontSize: 14, marginBottom: 8 }}>{error}</p>
       )}
 
-      <div
-        style={{
-          display: 'flex',
-          gap: 16,
-          overflowX: 'auto',
-          scrollSnapType: 'x mandatory',
-          scrollbarWidth: 'none',
-          paddingBottom: 8,
-        }}
-      >
+      <div style={listStyle}>
         {loading
-          ? Array.from({ length: 8 }, (_, i) => <PopularGameCardSkeleton key={i} />)
-          : games.map((game) => (
-              <div key={game.id} style={{ scrollSnapAlign: 'start' }}>
-                <PopularGameCard game={game} />
-              </div>
-            ))}
+          ? Array.from({ length: 8 }, (_, i) =>
+              layout === 'carousel' ? (
+                <div key={i} style={{ scrollSnapAlign: 'start' }}>
+                  <PopularGameCardSkeleton />
+                </div>
+              ) : (
+                <PopularGameCardSkeleton key={i} />
+              )
+            )
+          : games.map((game) =>
+              layout === 'carousel' ? (
+                <div key={game.id} style={{ scrollSnapAlign: 'start' }}>
+                  <PopularGameCard game={game} />
+                </div>
+              ) : (
+                <PopularGameCard key={game.id} game={game} />
+              )
+            )}
       </div>
     </section>
   )
