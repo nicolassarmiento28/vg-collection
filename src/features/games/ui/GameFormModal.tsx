@@ -1,5 +1,5 @@
 // src/features/games/ui/GameFormModal.tsx
-import { Form, InputNumber, Modal } from 'antd'
+import { Form, Grid, InputNumber, Modal } from 'antd'
 import { useEffect } from 'react'
 
 import type { Game, GameStatus, Platform } from '../../../shared/types/game'
@@ -34,6 +34,8 @@ const initialValues: Partial<GameFormValues> = {
 }
 
 export function GameFormModal({ open, mode, game, prefill, onCancel, onSubmit }: GameFormModalProps) {
+  const screens = Grid.useBreakpoint()
+  const isMobile = !screens.md
   const [form] = Form.useForm<GameFormValues>()
 
   useEffect(() => {
@@ -74,6 +76,7 @@ export function GameFormModal({ open, mode, game, prefill, onCancel, onSubmit }:
         form.submit()
       }}
       destroyOnHidden
+      width={isMobile ? '95vw' : 520}
     >
       <Form form={form} layout="vertical" initialValues={initialValues} onFinish={onSubmit}>
         <GameFormFields />
