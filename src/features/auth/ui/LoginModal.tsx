@@ -31,11 +31,13 @@ export function LoginModal() {
 
   function handleLoginSubmit(values: LoginFormValues) {
     dispatch({ type: 'login', payload: { email: values.email } })
+    setView('login')
     void message.success('¡Bienvenido!')
   }
 
   function handleRegisterSubmit(values: RegisterFormValues) {
     dispatch({ type: 'login', payload: { email: values.email } })
+    setView('login')
     void message.success('¡Bienvenido!')
   }
 
