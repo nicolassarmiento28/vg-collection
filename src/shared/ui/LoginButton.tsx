@@ -1,8 +1,10 @@
 import { Avatar, Button } from 'antd'
+import { useState } from 'react'
 import { useAuthContext } from '../../features/auth/state/AuthContext'
 
 export function LoginButton() {
   const { state, dispatch } = useAuthContext()
+  const [hovered, setHovered] = useState(false)
 
   if (state.isLoggedIn && state.user !== null) {
     const initial = (state.user.email[0] ?? '?').toUpperCase()
@@ -27,10 +29,12 @@ export function LoginButton() {
   return (
     <Button
       onClick={() => dispatch({ type: 'openModal' })}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       style={{
         borderColor: 'var(--accent)',
-        color: 'var(--accent)',
-        background: 'transparent',
+        color: hovered ? 'var(--text-h)' : 'var(--accent)',
+        background: hovered ? 'var(--accent)' : 'transparent',
         borderRadius: 20,
         fontFamily: 'var(--font-body)',
         fontWeight: 500,
@@ -38,18 +42,8 @@ export function LoginButton() {
         flexShrink: 0,
         transition: 'background 150ms, color 150ms',
       }}
-      onMouseEnter={(e) => {
-        const el = e.currentTarget
-        el.style.background = 'var(--accent)'
-        el.style.color = 'var(--text-h)'
-      }}
-      onMouseLeave={(e) => {
-        const el = e.currentTarget
-        el.style.background = 'transparent'
-        el.style.color = 'var(--accent)'
-      }}
     >
-      Login
+      Iniciar sesión
     </Button>
   )
 }

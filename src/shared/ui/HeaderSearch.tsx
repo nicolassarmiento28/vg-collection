@@ -11,10 +11,7 @@ export function HeaderSearch() {
       onSearch={(value) => dispatch({ type: 'setSearch', payload: value })}
       placeholder="Buscar juegos, géneros, plataformas…"
       allowClear
-      style={{
-        width: 380,
-        borderRadius: 24,
-      }}
+      style={{ width: 380 }}
       styles={{
         root: {
           background: 'var(--bg-elevated)',
