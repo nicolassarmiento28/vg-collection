@@ -1,8 +1,15 @@
 import { defineConfig } from 'vitest/config'
+import { loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => {
+  // Load all env vars (including those without VITE_ prefix) for server-side use
+  const env = loadEnv(mode, process.cwd(), '')
+  const clientId = env.TWITCH_CLIENT_ID ?? ''
+  const clientSecret = env.TWITCH_CLIENT_SECRET ?? ''
+
+  return {
   plugins: [react()],
   server: {
     proxy: {
@@ -15,7 +22,7 @@ export default defineConfig({
 
           function fetchToken(): Promise<string> {
             return fetch(
-              `https://id.twitch.tv/oauth2/token?client_id=${process.env.VITE_IGDB_CLIENT_ID}&client_secret=${process.env.VITE_IGDB_CLIENT_SECRET}&grant_type=client_credentials`,
+              `https://id.twitch.tv/oauth2/token?client_id=${clientId}&client_secret=${clientSecret}&grant_type=client_credentials`,
               { method: 'POST' },
             )
               .then((r) => r.json() as Promise<{ access_token: string }>)
@@ -31,7 +38,7 @@ export default defineConfig({
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           proxy.on('proxyReq', (proxyReq: any) => {
             if (cachedToken) {
-              proxyReq.setHeader('Client-ID', process.env.VITE_IGDB_CLIENT_ID ?? '')
+              proxyReq.setHeader('Client-ID', clientId)
               proxyReq.setHeader('Authorization', `Bearer ${cachedToken}`)
             }
           })
@@ -45,4 +52,5 @@ export default defineConfig({
     globals: true,
     css: true,
   },
+  }
 })
