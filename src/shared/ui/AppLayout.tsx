@@ -27,16 +27,20 @@ export function AppLayout({ children }: AppLayoutProps) {
         }}
       >
         {/* Logo — left */}
-        <div
+        <button
+          type="button"
+          aria-label="Ir al inicio"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: 6,
             cursor: 'pointer',
             flexShrink: 0,
-            textDecoration: 'none',
+            background: 'none',
+            border: 'none',
+            padding: 0,
           }}
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
           <span
             style={{
@@ -58,7 +62,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           >
             VG COLLECTION
           </span>
-        </div>
+        </button>
 
         {/* Spacer — pushes search to center */}
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
