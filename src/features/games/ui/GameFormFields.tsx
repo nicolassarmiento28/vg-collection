@@ -1,5 +1,10 @@
 // src/features/games/ui/GameFormFields.tsx
-import { Form, Input, InputNumber, Select } from 'antd'
+import { InboxOutlined } from '@ant-design/icons'
+import { Form, Input, InputNumber, Select, Tabs, Upload } from 'antd'
+import type { UploadFile } from 'antd'
+import { useState } from 'react'
+import type { FormInstance } from 'antd'
+import type { GameFormValues } from './GameFormModal'
 import type { GameStatus } from '../../../shared/types/game'
 
 const statusOptions: Array<{ label: string; value: GameStatus }> = [
@@ -10,7 +15,96 @@ const statusOptions: Array<{ label: string; value: GameStatus }> = [
   { label: 'Abandonado', value: 'dropped' },
 ]
 
-export function GameFormFields() {
+interface GameFormFieldsProps {
+  form: FormInstance<GameFormValues>
+}
+
+export function GameFormFields({ form }: GameFormFieldsProps) {
+  const [coverTab, setCoverTab] = useState<'file' | 'url'>('file')
+  const [previewBase64, setPreviewBase64] = useState<string | undefined>(undefined)
+  const [fileList, setFileList] = useState<UploadFile[]>([])
+  const [coverUrlPreview, setCoverUrlPreview] = useState<string | undefined>(undefined)
+
+  function handleFileChange({ fileList: newList }: { fileList: UploadFile[] }) {
+    setFileList(newList)
+    const file = newList[0]?.originFileObj
+    if (file == null) {
+      setPreviewBase64(undefined)
+      form.setFieldValue('coverBase64', undefined)
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const result = e.target?.result as string | undefined
+      setPreviewBase64(result)
+      form.setFieldValue('coverBase64', result)
+      form.setFieldValue('coverUrl', undefined)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  function handleUrlChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const url = e.target.value
+    // Update local preview state and clear base64 when user types a URL
+    setCoverUrlPreview(url)
+    setPreviewBase64(undefined)
+    setFileList([])
+    form.setFieldValue('coverBase64', undefined)
+  }
+
+  const coverItems = [
+    {
+      key: 'file',
+      label: 'Subir archivo',
+      children: (
+        <div>
+          <Upload.Dragger
+            accept="image/*"
+            maxCount={1}
+            beforeUpload={() => false}
+            fileList={fileList}
+            onChange={handleFileChange}
+            showUploadList={false}
+          >
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined />
+            </p>
+            <p className="ant-upload-text">Hacé clic o arrastrá una imagen</p>
+          </Upload.Dragger>
+          {previewBase64 != null && (
+            <img
+              src={previewBase64}
+              alt="Vista previa"
+              style={{ marginTop: 8, maxHeight: 120, borderRadius: 4, display: 'block' }}
+            />
+          )}
+        </div>
+      ),
+    },
+    {
+      key: 'url',
+      label: 'Pegar URL',
+      children: (
+        <div>
+          <Form.Item name="coverUrl" noStyle>
+            <Input
+              placeholder="https://..."
+              onChange={handleUrlChange}
+              aria-label="URL de portada"
+            />
+          </Form.Item>
+          {typeof coverUrlPreview === 'string' && coverUrlPreview.startsWith('http') && (
+            <img
+              src={coverUrlValue}
+              alt="Vista previa"
+              style={{ marginTop: 8, maxHeight: 120, borderRadius: 4, display: 'block' }}
+            />
+          )}
+        </div>
+      ),
+    },
+  ]
+
   return (
     <>
       <Form.Item
@@ -112,6 +206,33 @@ export function GameFormFields() {
 
       <Form.Item label="Notas" name="notes">
         <Input.TextArea rows={3} />
+      </Form.Item>
+
+      {/* Cover image section */}
+      <Form.Item label="Portada">
+        <Tabs
+          activeKey={coverTab}
+          onChange={(key) => setCoverTab(key as 'file' | 'url')}
+          items={coverItems}
+          size="small"
+        />
+      </Form.Item>
+
+      {/* Pros / Cons */}
+      <Form.Item label="Puntos positivos" name="pros">
+        <Input.TextArea
+          rows={3}
+          placeholder="Un punto por línea"
+          aria-label="Puntos positivos"
+        />
+      </Form.Item>
+
+      <Form.Item label="Puntos negativos" name="cons">
+        <Input.TextArea
+          rows={3}
+          placeholder="Un punto por línea"
+          aria-label="Puntos negativos"
+        />
       </Form.Item>
     </>
   )

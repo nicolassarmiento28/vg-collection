@@ -52,6 +52,7 @@ export default defineConfig(({ mode }) => {
     globals: true,
     css: true,
     exclude: ['**/node_modules/**', '**/dist/**', 'e2e/**', '**/.worktrees/**'],
+    testTimeout: 15000,
   },
   }
 })

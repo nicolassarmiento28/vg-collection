@@ -91,7 +91,7 @@ export function GameFormModal({ open, mode, game, prefill, onCancel, onSubmit }:
       width={isMobile ? '95vw' : 520}
     >
       <Form form={form} layout="vertical" initialValues={initialValues} onFinish={onSubmit}>
-        <GameFormFields />
+        <GameFormFields form={form} />
 
         {/* Hidden field — carries igdbId from prefill (create) or game (edit) so it gets submitted */}
         <Form.Item name="igdbId" hidden>
