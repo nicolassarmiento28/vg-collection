@@ -1,5 +1,4 @@
 import { Tag } from 'antd'
-
 import type { GameStatus } from '../types/game'
 
 const statusLabels: Record<GameStatus, string> = {
@@ -10,12 +9,13 @@ const statusLabels: Record<GameStatus, string> = {
   dropped: 'Abandonado',
 }
 
+// Hex colors that work on the dark ember theme background
 const statusColors: Record<GameStatus, string> = {
-  backlog: 'default',
-  playing: 'processing',
-  completed: 'success',
-  paused: 'warning',
-  dropped: 'error',
+  backlog: '#3a3836',    // dark warm gray
+  playing: '#e07a2f',   // ember orange
+  completed: '#2e7d52', // forest green
+  paused: '#8a7a2f',    // muted gold
+  dropped: '#7a2e2e',   // muted crimson
 }
 
 interface StatusTagProps {
@@ -23,5 +23,12 @@ interface StatusTagProps {
 }
 
 export function StatusTag({ status }: StatusTagProps) {
-  return <Tag color={statusColors[status]}>{statusLabels[status]}</Tag>
+  return (
+    <Tag
+      color={statusColors[status]}
+      style={{ fontFamily: 'var(--font-body)', fontSize: 12, border: 'none' }}
+    >
+      {statusLabels[status]}
+    </Tag>
+  )
 }
