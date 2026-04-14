@@ -6,4 +6,8 @@ export interface IgdbGame {
   platforms?: Array<{ abbreviation: string }>
   total_rating?: number
   total_rating_count?: number
+  // Extended fields used by GameDetailPage
+  summary?: string
+  genres?: Array<{ name: string }>
+  involved_companies?: Array<{ company: { name: string }; developer: boolean }>
 }

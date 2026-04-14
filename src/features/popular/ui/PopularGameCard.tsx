@@ -1,3 +1,5 @@
+// src/features/popular/ui/PopularGameCard.tsx
+import { useNavigate } from 'react-router-dom'
 import type { IgdbGame } from '../types'
 
 /** Converts IGDB cover URL from t_thumb to t_cover_big (264×374) */
@@ -10,6 +12,7 @@ interface PopularGameCardProps {
 }
 
 export function PopularGameCard({ game }: PopularGameCardProps) {
+  const navigate = useNavigate()
   const coverUrl = getCoverUrl(game.cover.url)
   const year = game.first_release_date
     ? new Date(game.first_release_date * 1000).getFullYear()
@@ -17,6 +20,11 @@ export function PopularGameCard({ game }: PopularGameCardProps) {
 
   return (
     <div
+      role="button"
+      tabIndex={0}
+      aria-label={`Ver detalle de ${game.name}`}
+      onClick={() => navigate(`/juego/${game.id}`)}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate(`/juego/${game.id}`) }}
       style={{
         width: 180,
         flexShrink: 0,
@@ -25,7 +33,7 @@ export function PopularGameCard({ game }: PopularGameCardProps) {
         background: 'var(--bg-surface)',
         border: '1px solid var(--border)',
         position: 'relative',
-        cursor: 'default',
+        cursor: 'pointer',
         transition: 'transform 200ms ease, box-shadow 200ms ease',
       }}
       onMouseEnter={(e) => {
