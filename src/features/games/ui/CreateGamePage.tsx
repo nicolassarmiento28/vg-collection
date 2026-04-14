@@ -1,12 +1,13 @@
 // src/features/games/ui/CreateGamePage.tsx
 import { LockOutlined } from '@ant-design/icons'
-import { Button, Form, Typography } from 'antd'
+import { App as AntdApp, Button, Form, Typography } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
 import { useAuthContext } from '../../auth/state/AuthContext'
 import { useGamesContext } from '../state/GamesContext'
 import { GameFormFields } from './GameFormFields'
-import { GameFormValues } from './GameFormModal'
+import { type GameFormValues } from './GameFormModal'
+import { normalizeOptionalRating } from './GamesPage'
 
 const initialValues: Partial<GameFormValues> = {
   title: '',
@@ -20,6 +21,7 @@ export function CreateGamePage() {
   const { state: authState, dispatch: authDispatch } = useAuthContext()
   const { dispatch } = useGamesContext()
   const navigate = useNavigate()
+  const { message } = AntdApp.useApp()
   const [form] = Form.useForm<GameFormValues>()
 
   if (!authState.isLoggedIn) {
@@ -60,12 +62,13 @@ export function CreateGamePage() {
         status: values.status,
         genre: values.genre,
         year: values.year,
-        rating: values.rating,
+        rating: normalizeOptionalRating(values.rating),
         notes: values.notes,
         createdAt: now,
         updatedAt: now,
       },
     })
+    void message.success('Juego creado correctamente')
     navigate('/coleccion')
   }
 
