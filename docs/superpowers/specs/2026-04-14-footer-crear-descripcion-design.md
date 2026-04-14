@@ -60,9 +60,13 @@ Para evitar duplicar la lógica de los campos, se extrae el conjunto de `Form.It
 src/features/games/ui/GameFormFields.tsx
 ```
 
-`GameFormFields` recibe opcionalmente las mismas props que necesite (ninguna o `formInstance` si se necesita). Es un componente presentacional puro: solo renderiza los campos `Form.Item`. No tiene estado propio.
+`GameFormFields` es un componente presentacional puro: solo renderiza los campos `Form.Item` sin estado propio. No recibe props.
 
-`GameFormModal` refactorizado para usar `GameFormFields` internamente — sin cambio de comportamiento externo.
+Campos incluidos en `GameFormFields`: Titulo, Plataforma, Estado, Genero, Anio, Nota, Notas.
+
+El campo hidden `igdbId` **NO** se incluye en `GameFormFields` — permanece exclusivamente en `GameFormModal`, donde es necesario para el prefill de búsquedas IGDB. `CreateGamePage` no necesita `igdbId`.
+
+`GameFormModal` refactorizado para usar `GameFormFields` internamente para los 7 campos comunes, manteniendo el campo hidden `igdbId` directamente — sin cambio de comportamiento externo.
 
 ### Nueva página
 
@@ -76,7 +80,7 @@ src/features/games/ui/GameFormFields.tsx
   1. Genera nuevo `id` con `uuidv4()`.
   2. Llama `dispatch({ type: 'addGame', payload: { ...values, id } })`.
   3. Navega a `/coleccion` con `navigate('/coleccion')`.
-- El campo `igdbId` no se muestra (no aplica en creación manual).
+- No incluye `igdbId` (no aplica en creación manual — ese campo vive solo en `GameFormModal`).
 - Auth-gate: si el usuario no está logueado, mostrar placeholder con botón de login (igual al patrón de `CollectionPage`).
 
 ### Navegación
