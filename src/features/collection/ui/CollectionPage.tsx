@@ -268,7 +268,7 @@ export function CollectionPage() {
   const { message } = AntdApp.useApp()
 
   const screens = Grid.useBreakpoint()
-  const isMobile = !screens.md  // < 768px
+  const isMobile = screens.md === false  // < 768px
 
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<GameStatus | 'all'>('all')

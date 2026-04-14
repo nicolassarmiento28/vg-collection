@@ -31,7 +31,7 @@ function navLinkStyle({ isActive }: { isActive: boolean }): React.CSSProperties 
 
 export function AppLayout({ children }: AppLayoutProps) {
   const screens = useBreakpoint()
-  const isMobile = !screens.md  // true for xs and sm (< 768px)
+  const isMobile = screens.md === false  // true for xs and sm (< 768px)
   const [drawerOpen, setDrawerOpen] = useState(false)
 
   useEffect(() => {

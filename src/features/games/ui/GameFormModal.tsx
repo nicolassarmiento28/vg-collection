@@ -35,7 +35,7 @@ const initialValues: Partial<GameFormValues> = {
 
 export function GameFormModal({ open, mode, game, prefill, onCancel, onSubmit }: GameFormModalProps) {
   const screens = Grid.useBreakpoint()
-  const isMobile = !screens.md
+  const isMobile = screens.md === false
   const [form] = Form.useForm<GameFormValues>()
 
   useEffect(() => {
