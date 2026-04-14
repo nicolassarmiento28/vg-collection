@@ -58,6 +58,7 @@ export function GameFormModal({ open, mode, game, prefill, onCancel, onSubmit }:
         year: game.year,
         rating: game.rating ?? undefined,
         notes: game.notes ?? '',
+        igdbId: game.igdbId,
       })
       return
     }
@@ -182,7 +183,7 @@ export function GameFormModal({ open, mode, game, prefill, onCancel, onSubmit }:
           <Input.TextArea rows={3} />
         </Form.Item>
 
-        {/* Hidden field — carries igdbId from prefill so it gets submitted */}
+        {/* Hidden field — carries igdbId from prefill (create) or game (edit) so it gets submitted */}
         <Form.Item name="igdbId" hidden>
           <InputNumber />
         </Form.Item>

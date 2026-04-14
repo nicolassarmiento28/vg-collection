@@ -166,4 +166,35 @@ describe('GameFormModal', () => {
       expect(modal.getByRole('spinbutton', { name: 'Anio' })).toHaveValue('2017')
     })
   })
+
+  it('preserves igdbId in edit mode submission', async () => {
+    const onSubmit = vi.fn()
+
+    const modal = await renderModal({
+      open: true,
+      mode: 'edit',
+      game: {
+        id: 'game-4',
+        title: 'Sonic the Hedgehog',
+        platform: 'sega-md',
+        status: 'completed',
+        genre: 'Platformer',
+        year: 1991,
+        igdbId: 3526,
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+      },
+      onCancel: () => {},
+      onSubmit,
+    })
+
+    fireEvent.click(modal.getByRole('button', { name: 'Guardar' }))
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1)
+    })
+
+    const [submittedValues] = onSubmit.mock.calls[0] as [Record<string, unknown>]
+    expect(submittedValues.igdbId).toBe(3526)
+  })
 })
