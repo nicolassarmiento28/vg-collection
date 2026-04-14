@@ -6,6 +6,7 @@
   --accent-dim: rgba(224, 60, 47, 0.15);
   --text: #c9c2b8;
   --text-h: #f5f0ea;
+  --text-muted: #6b6560;
   --border: #2e2b28;
 
   --font-display: 'Bebas Neue', sans-serif;
@@ -21,6 +22,17 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+:root[data-theme="light"] {
+  --bg:         #f5f2ee;
+  --bg-surface: #ffffff;
+  --bg-elevated:#eae6e1;
+  --text:       #3a3530;
+  --text-h:     #1a1714;
+  --text-muted: #7a736b;
+  --border:     #d4cfc9;
+  --accent-dim: rgba(224, 60, 47, 0.10);
 }
 
 *,
