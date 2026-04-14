@@ -1,5 +1,7 @@
+// src/shared/ui/AppLayout.tsx
 import { Layout } from 'antd'
 import type { ReactNode } from 'react'
+import { Link, NavLink } from 'react-router-dom'
 import { HeaderSearch } from './HeaderSearch'
 import { LoginButton } from './LoginButton'
 
@@ -7,6 +9,19 @@ const { Header, Content } = Layout
 
 interface AppLayoutProps {
   children: ReactNode
+}
+
+function navLinkStyle({ isActive }: { isActive: boolean }): React.CSSProperties {
+  return {
+    fontFamily: 'var(--font-body)',
+    fontSize: 14,
+    fontWeight: 500,
+    color: isActive ? 'var(--accent)' : 'var(--text-muted)',
+    borderBottom: isActive ? '2px solid var(--accent)' : '2px solid transparent',
+    paddingBottom: 2,
+    textDecoration: 'none',
+    transition: 'color 150ms, border-color 150ms',
+  }
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
@@ -19,7 +34,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           zIndex: 100,
           display: 'flex',
           alignItems: 'center',
-          gap: 16,
+          gap: 24,
           background: 'var(--bg-surface)',
           borderBottom: '1px solid var(--border)',
           height: 64,
@@ -27,30 +42,18 @@ export function AppLayout({ children }: AppLayoutProps) {
         }}
       >
         {/* Logo — left */}
-        <button
-          type="button"
+        <Link
+          to="/"
           aria-label="Ir al inicio"
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: 6,
-            cursor: 'pointer',
             flexShrink: 0,
-            background: 'none',
-            border: 'none',
-            padding: 0,
+            textDecoration: 'none',
           }}
         >
-          <span
-            style={{
-              color: 'var(--accent)',
-              fontSize: 20,
-              lineHeight: 1,
-            }}
-          >
-            ▸
-          </span>
+          <span style={{ color: 'var(--accent)', fontSize: 20, lineHeight: 1 }}>▸</span>
           <span
             style={{
               fontFamily: 'var(--font-display)',
@@ -62,9 +65,19 @@ export function AppLayout({ children }: AppLayoutProps) {
           >
             VG COLLECTION
           </span>
-        </button>
+        </Link>
 
-        {/* Spacer — pushes search to center */}
+        {/* Nav tabs — center-left */}
+        <div style={{ display: 'flex', gap: 28, alignItems: 'center', flexShrink: 0 }}>
+          <NavLink to="/" end style={navLinkStyle}>
+            Inicio
+          </NavLink>
+          <NavLink to="/coleccion" style={navLinkStyle}>
+            Mi Colección
+          </NavLink>
+        </div>
+
+        {/* Search — pushes to right center */}
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
           <HeaderSearch />
         </div>
