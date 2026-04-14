@@ -37,6 +37,7 @@ function GlobalGameFormModal() {
         year: values.year,
         rating,
         notes: values.notes,
+        igdbId: values.igdbId,
         createdAt: now,
         updatedAt: now,
       },

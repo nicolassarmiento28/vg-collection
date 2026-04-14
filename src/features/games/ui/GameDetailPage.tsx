@@ -9,10 +9,20 @@ import type { GameFormPrefill, Platform } from '../../../shared/types/game'
 
 const IGDB_PLATFORM_MAP: Record<string, Platform> = {
   PC: 'pc',
-  PS1: 'ps1', PS2: 'ps2', PS3: 'ps3',
-  PS4: 'ps4', PS5: 'ps5',
+  // PlayStation
+  PS1: 'ps1', PS2: 'ps2', PS3: 'ps3', PS4: 'ps4', PS5: 'ps5',
+  PSP: 'psp', 'PS Vita': 'psvita',
+  // Microsoft
   XB: 'xbox', X360: 'xbox360', XONE: 'xbone', XSX: 'xbsx',
-  NS: 'switch',
+  // Nintendo
+  NES: 'nes', SNES: 'snes', N64: 'n64', NGC: 'gamecube',
+  Wii: 'wii', WiiU: 'wiiu', NS: 'switch',
+  GB: 'gameboy', GBC: 'gbc', GBA: 'gba', NDS: 'nds', '3DS': '3ds',
+  // Sega
+  SMS: 'sega-ms', 'Mega Drive': 'sega-md', SAT: 'sega-saturn', DC: 'sega-dc',
+  // Commodore
+  C64: 'c64', AMI: 'amiga',
+  // Mobile (legacy)
   iOS: 'other', Android: 'other',
 }
 
@@ -91,7 +101,8 @@ export function GameDetailPage() {
 
   // Check if game already in collection (by title, case-insensitive)
   const alreadyInCollection = gamesState.games.some(
-    (g) => g.title.toLowerCase() === game.name.toLowerCase()
+    (g) => (g.igdbId !== undefined && g.igdbId === game.id)
+      || g.title.toLowerCase() === game.name.toLowerCase()
   )
 
   function handleAddToCollection() {
@@ -109,6 +120,7 @@ export function GameDetailPage() {
       title: game.name,
       ...(year !== null ? { year } : {}),
       platform,
+      igdbId: game.id,
     }
 
     dispatch({ type: 'openCreateModal', payload: prefill })
