@@ -1,6 +1,6 @@
 // src/features/collection/ui/CollectionPage.tsx
 import { LockOutlined, PlusOutlined } from '@ant-design/icons'
-import { App as AntdApp, Button, Input, Typography } from 'antd'
+import { App as AntdApp, Button, Grid, Input, Typography } from 'antd'
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../../auth/state/AuthContext'
@@ -267,6 +267,9 @@ export function CollectionPage() {
   const { state, dispatch } = useGamesContext()
   const { message } = AntdApp.useApp()
 
+  const screens = Grid.useBreakpoint()
+  const isMobile = !screens.md  // < 768px
+
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<GameStatus | 'all'>('all')
   const [platformFilter, setPlatformFilter] = useState<PlatformFilter>('all')
@@ -370,7 +373,8 @@ export function CollectionPage() {
           background: 'var(--bg-elevated)',
           borderColor: 'var(--border)',
           borderRadius: 8,
-          maxWidth: 400,
+          width: isMobile ? '100%' : undefined,
+          maxWidth: isMobile ? undefined : 400,
         }}
       />
 
@@ -409,7 +413,7 @@ export function CollectionPage() {
             >
               {group.label}
             </div>
-            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: 6, flexWrap: isMobile ? 'nowrap' : 'wrap', overflowX: isMobile ? 'auto' : undefined, paddingBottom: isMobile ? 4 : 0 }}>
               {group.platforms.map((platform) => (
                 <Chip
                   key={platform}
@@ -446,8 +450,8 @@ export function CollectionPage() {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
-          gap: 20,
+          gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? 140 : 180}px, 1fr))`,
+          gap: isMobile ? 12 : 20,
         }}
       >
         {filteredGames.map((game) => {
