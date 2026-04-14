@@ -9,12 +9,8 @@ import { GamesProvider, useGamesContext } from './features/games/state/GamesCont
 import { GameDetailPage } from './features/games/ui/GameDetailPage'
 import { GameFormModal, type GameFormValues } from './features/games/ui/GameFormModal'
 import { normalizeOptionalRating } from './features/games/ui/GamesPage'
+import { CollectionPage } from './features/collection/ui/CollectionPage'
 import { AppLayout } from './shared/ui/AppLayout'
-
-// Lazy placeholder — replaced in Task 7
-function CollectionPagePlaceholder() {
-  return <div style={{ color: 'var(--text-muted)', padding: 40 }}>Mi Colección — próximamente</div>
-}
 
 function GlobalGameFormModal() {
   const { message } = AntdApp.useApp()
@@ -65,7 +61,7 @@ function AppRoutes() {
     <AppLayout>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/coleccion" element={<CollectionPagePlaceholder />} />
+        <Route path="/coleccion" element={<CollectionPage />} />
         <Route path="/juego/:id" element={<GameDetailPage />} />
       </Routes>
     </AppLayout>
