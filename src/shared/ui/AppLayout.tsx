@@ -2,6 +2,7 @@
 import { Layout } from 'antd'
 import type { ReactNode } from 'react'
 import { Link, NavLink } from 'react-router-dom'
+import { AppFooter } from './AppFooter'
 import { HeaderSearch } from './HeaderSearch'
 import { LoginButton } from './LoginButton'
 
@@ -75,6 +76,9 @@ export function AppLayout({ children }: AppLayoutProps) {
           <NavLink to="/coleccion" style={navLinkStyle}>
             Mi Colección
           </NavLink>
+          <NavLink to="/crear" style={navLinkStyle}>
+            Crear Juego
+          </NavLink>
         </div>
 
         {/* Search — pushes to right center */}
@@ -89,6 +93,8 @@ export function AppLayout({ children }: AppLayoutProps) {
       <Content style={{ padding: 24, background: 'var(--bg)' }}>
         {children}
       </Content>
+
+      <AppFooter />
     </Layout>
   )
 }
