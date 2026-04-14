@@ -86,16 +86,21 @@ export interface Game {
   rating?: number
   notes?: string
   igdbId?: number
+  coverUrl?: string      // URL string (IGDB CDN or user-pasted)
+  coverBase64?: string   // base64 data-URI (user file upload)
+  pros?: string          // newline-separated positive points
+  cons?: string          // newline-separated negative points
   createdAt: string
   updatedAt: string
 }
 
-// Prefill shape — mirrors GameFormValues from GameFormModal (title, year, platform)
+// Prefill shape — mirrors GameFormValues from GameFormModal
 export interface GameFormPrefill {
   title: string
   year: number
   platform: Platform
   igdbId?: number
+  coverUrl?: string
 }
 
 export interface GamesState {
