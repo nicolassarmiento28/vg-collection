@@ -1,95 +1,222 @@
-# React + TypeScript + Vite
+# VG Collection
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicacion web para gestionar tu coleccion de videojuegos retro y modernos.
 
-## Scripts
+Permite explorar juegos populares/recientes desde IGDB, ver detalle de cada juego, agregarlos a tu coleccion y administrarlos (crear, editar, completar, eliminar), con persistencia en localStorage.
 
-- `npm run dev`
-- `npm run build`
-- `npm run preview`
-- `npm run test`
+## Stack Tecnologico
 
-## MVP Verification Notes
+- React 19 + TypeScript
+- Vite 8
+- Ant Design 6
+- React Router 7
+- Vitest + Testing Library (tests unitarios)
+- Playwright (tests E2E/responsive)
 
-Automated checks completed:
+## Aplicaciones o Modulos Principales
 
-- [x] `npm run test` passes (23 tests)
-- [x] `npm run build` passes
+1. Inicio
+- Muestra secciones de juegos mejor valorados y lanzamientos recientes.
+- Consume IGDB a traves del proxy de desarrollo en Vite.
 
-Manual browser checks pending user verification after starting `npm run dev`:
+2. Busqueda global
+- Autocompletado en header con resultados de IGDB.
+- Permite navegar directo al detalle de un juego externo.
 
-- [ ] Add a game and refresh page (data persists)
-- [ ] Edit a game and confirm values update
-- [ ] Mark game as completed from table action
-- [ ] Combine search and filters
-- [ ] Check mobile width behavior
+3. Detalle de juego (IGDB)
+- Muestra portada, descripcion, rating, plataformas, lanzamiento y genero.
+- Boton para agregar a la coleccion (abre modal de creacion con datos precargados).
 
-Currently, two official plugins are available:
+4. Mi coleccion
+- Vista tipo galeria con filtros por estado/plataforma y busqueda.
+- Acciones por juego: editar, ver detalle, marcar completado.
+- Requiere iniciar sesion.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+5. Detalle de juego en coleccion
+- Vista completa del juego guardado.
+- Gestion de notas, puntos positivos/negativos.
+- Permite editar y eliminar.
 
-## React Compiler
+6. Crear juego
+- Formulario manual para agregar un juego personalizado.
+- Requiere iniciar sesion.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+7. Autenticacion (demo local)
+- Modal de login/registro en cliente.
+- Usuario demo disponible para pruebas rapidas.
 
-## Expanding the ESLint configuration
+8. Tema visual
+- Toggle de tema oscuro/claro.
+- Layout responsive con menu lateral en mobile.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Requisitos Previos
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- Node.js 20 o superior recomendado
+- npm 9 o superior
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Configuracion Paso a Paso
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1. Clonar o abrir proyecto
+```bash
+cd vg-collection
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+2. Instalar dependencias
+```bash
+npm install
 ```
+
+3. Crear variables de entorno para IGDB
+
+Crea un archivo .env.local en la raiz del proyecto con:
+
+```env
+TWITCH_CLIENT_ID=tu_client_id
+TWITCH_CLIENT_SECRET=tu_client_secret
+```
+
+Notas:
+- Estas variables las usa el proxy de Vite en servidor de desarrollo.
+- Si no configuras estas credenciales, las secciones conectadas a IGDB pueden fallar o mostrar errores.
+
+4. Levantar entorno de desarrollo
+```bash
+npm run dev
+```
+
+5. Abrir en navegador
+
+Por defecto Vite inicia en:
+
+http://localhost:5173
+
+## Uso Paso a Paso de la Aplicacion
+
+1. Abre la pagina de inicio (/)
+- Revisa carruseles de juegos populares y recientes.
+
+2. Prueba la busqueda global
+- Escribe al menos 2 caracteres en el buscador del header.
+- Selecciona un resultado para abrir su detalle.
+
+3. Inicia sesion
+- Usa el boton de login.
+- Credenciales demo sugeridas en el modal:
+  - Email: demo@vgcollection.app
+  - Password: demo1234
+
+4. Agrega un juego desde detalle IGDB
+- En la vista detalle, pulsa Agregar a mi coleccion.
+- Completa o ajusta datos y guarda.
+
+5. Crea un juego manual
+- Ve a /crear.
+- Completa formulario y guarda.
+
+6. Administra tu coleccion
+- Ve a /coleccion.
+- Usa filtros de estado, plataforma y busqueda.
+- Edita juegos, marcalos como completados o entra al detalle.
+
+7. Verifica persistencia
+- Recarga la pagina.
+- Tus juegos deben mantenerse (localStorage).
+
+## Comandos Mas Importantes
+
+### Desarrollo
+
+```bash
+npm run dev
+```
+Inicia servidor de desarrollo con HMR.
+
+### Build de produccion
+
+```bash
+npm run build
+```
+Compila TypeScript y genera build en dist.
+
+### Previsualizar build
+
+```bash
+npm run preview
+```
+Sirve localmente el build generado.
+
+### Linter
+
+```bash
+npm run lint
+```
+Ejecuta ESLint en todo el proyecto.
+
+### Tests unitarios (Vitest)
+
+```bash
+npm run test
+```
+Ejecuta tests en modo run.
+
+### Tests unitarios en modo watch
+
+```bash
+npm run test:watch
+```
+Ejecuta tests en modo interactivo/watch.
+
+### Tests E2E (Playwright)
+
+```bash
+npm run test:e2e
+```
+Ejecuta pruebas E2E/responsive usando Playwright.
+
+Primera vez con Playwright (si aplica):
+```bash
+npx playwright install
+```
+
+## Estructura Principal del Proyecto
+
+```text
+src/
+  features/
+    auth/        # login/registro en cliente
+    popular/     # hooks y UI de juegos de IGDB
+    home/        # pagina de inicio
+    games/       # formularios, detalle IGDB, estado global de juegos
+    collection/  # vista y detalle de coleccion
+  shared/
+    ui/          # layout, header search, footer, toggle tema
+    lib/storage/ # persistencia localStorage
+    types/       # tipos compartidos
+```
+
+## Flujo Tecnico Clave
+
+1. La app inicia con proveedores globales de auth y juegos.
+2. El estado de juegos se carga desde localStorage.
+3. Cada cambio en coleccion se persiste automaticamente.
+4. IGDB se consume desde frontend contra /api/igdb/*.
+5. Vite proxy agrega headers OAuth con token de Twitch en desarrollo.
+
+## Solucion de Problemas Rapida
+
+1. No cargan juegos populares/recientes
+- Revisa .env.local (Client ID y Secret).
+- Reinicia npm run dev tras cambiar variables.
+
+2. No se guardan juegos
+- Verifica permisos de localStorage en el navegador.
+- Prueba en ventana normal (no privada/estricta).
+
+3. Falla test:e2e por navegadores
+- Ejecuta npx playwright install.
+
+## Estado Actual del Proyecto
+
+- Base funcional completa para MVP de coleccion.
+- Incluye tests unitarios y pruebas E2E responsive.
+- Lista para evolucionar hacia backend real y autenticacion persistente.
