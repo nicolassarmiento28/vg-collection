@@ -69,7 +69,7 @@ export function GameFormFields({ form }: GameFormFieldsProps) {
             <p className="ant-upload-drag-icon">
               <InboxOutlined />
             </p>
-            <p className="ant-upload-text">Hacé clic o arrastrá una imagen</p>
+            <p className="ant-upload-text">Hace click o arrastra una imagen</p>
           </Upload.Dragger>
           {previewBase64 != null && (
             <img
