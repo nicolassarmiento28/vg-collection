@@ -190,14 +190,14 @@ export function GameFormFields({ form }: GameFormFieldsProps) {
       </Form.Item>
 
       <Form.Item
-        label="Anio"
+        label="Año"
         name="year"
         rules={[
-          { required: true, message: 'El anio es obligatorio' },
-          { type: 'number', min: 1970, max: 2100, message: 'El anio debe estar entre 1970 y 2100' },
+          { required: true, message: 'El año es obligatorio' },
+          { type: 'number', min: 1970, max: 2100, message: 'El año debe estar entre 1970 y 2100' },
         ]}
       >
-        <InputNumber aria-label="Anio" style={{ width: '100%' }} />
+        <InputNumber aria-label="Año" style={{ width: '100%' }} />
       </Form.Item>
 
       <Form.Item label="Nota" name="rating">
