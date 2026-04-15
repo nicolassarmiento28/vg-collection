@@ -76,7 +76,7 @@ export function HeaderSearch() {
       popupMatchSelectWidth={true}
     >
       <Input
-        placeholder="Buscar juegos, géneros, plataformas…"
+        placeholder="Buscar juegos..."
         suffix={
           loading
             ? <LoadingOutlined style={{ color: 'var(--accent)' }} />
