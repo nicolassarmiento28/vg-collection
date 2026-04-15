@@ -63,7 +63,7 @@ describe('GameFormModal', () => {
     expect(await modal.findByText((_, e) => getErrorText('La plataforma es obligatoria', e))).toBeInTheDocument()
     expect(await modal.findByText((_, e) => getErrorText('El estado es obligatorio', e))).toBeInTheDocument()
     expect(await modal.findByText((_, e) => getErrorText('El genero es obligatorio', e))).toBeInTheDocument()
-    expect(await modal.findByText((_, e) => getErrorText('El anio es obligatorio', e))).toBeInTheDocument()
+    expect(await modal.findByText((_, e) => getErrorText('El año es obligatorio', e))).toBeInTheDocument()
     expect(onSubmit).not.toHaveBeenCalled()
   })
 
@@ -88,11 +88,11 @@ describe('GameFormModal', () => {
     })
 
     fireEvent.change(modal.getByRole('textbox', { name: 'Genero' }), { target: { value: 'R' } })
-    fireEvent.change(modal.getByRole('spinbutton', { name: 'Anio' }), { target: { value: '1969' } })
+    fireEvent.change(modal.getByRole('spinbutton', { name: 'Año' }), { target: { value: '1969' } })
 
     fireEvent.click(modal.getByRole('button', { name: 'Guardar' }))
 
-    expect(await modal.findByText((_, e) => getErrorText('El anio debe estar entre 1970 y 2100', e))).toBeInTheDocument()
+    expect(await modal.findByText((_, e) => getErrorText('El año debe estar entre 1970 y 2100', e))).toBeInTheDocument()
     expect(onSubmit).not.toHaveBeenCalled()
   })
 
@@ -117,7 +117,7 @@ describe('GameFormModal', () => {
     })
 
     fireEvent.change(modal.getByRole('textbox', { name: 'Genero' }), { target: { value: 'M' } })
-    fireEvent.change(modal.getByRole('spinbutton', { name: 'Anio' }), { target: { value: '2017' } })
+    fireEvent.change(modal.getByRole('spinbutton', { name: 'Año' }), { target: { value: '2017' } })
 
     fireEvent.click(modal.getByRole('button', { name: 'Guardar' }))
 
@@ -163,7 +163,7 @@ describe('GameFormModal', () => {
 
     await waitFor(() => {
       expect(modal.getByRole('textbox', { name: 'Genero' })).toHaveValue('RPG')
-      expect(modal.getByRole('spinbutton', { name: 'Anio' })).toHaveValue('2017')
+      expect(modal.getByRole('spinbutton', { name: 'Año' })).toHaveValue('2017')
     })
   })
 

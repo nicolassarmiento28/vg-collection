@@ -36,7 +36,11 @@ describe('gamesStorage', () => {
 
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
 
-    expect(loadGamesState()).toEqual(state)
+    expect(loadGamesState()).toEqual({
+      ...state,
+      isCreateModalOpen: false,
+      createModalPrefill: undefined,
+    })
   })
 
   it('falls back to default state when stored search is not a string', () => {
@@ -160,6 +164,8 @@ describe('gamesStorage', () => {
       search: '',
       platformFilter: 'all',
       statusFilter: 'all',
+      isCreateModalOpen: false,
+      createModalPrefill: undefined,
     })
   })
 
@@ -219,7 +225,11 @@ describe('gamesStorage', () => {
       statusFilter: 'all',
     }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
-    expect(loadGamesState()).toEqual(state)
+    expect(loadGamesState()).toEqual({
+      ...state,
+      isCreateModalOpen: false,
+      createModalPrefill: undefined,
+    })
   })
 
   it('loads game without new optional fields (they remain undefined)', () => {
