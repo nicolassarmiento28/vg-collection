@@ -218,6 +218,8 @@ export function loadGamesState(): GamesState {
       search: parsed.search,
       platformFilter: parsed.platformFilter as GamesState['platformFilter'],
       statusFilter: parsed.statusFilter as GamesState['statusFilter'],
+      isCreateModalOpen: false,
+      createModalPrefill: undefined,
     }
 
     return isValidGamesState(migratedState) ? migratedState : defaultGamesState

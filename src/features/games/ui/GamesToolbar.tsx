@@ -5,10 +5,10 @@ import type { GameStatus, Platform } from '../../../shared/types/game'
 const platformOptions: Array<{ label: string; value: Platform | 'all' }> = [
   { label: 'Todas las plataformas', value: 'all' },
   { label: 'PC', value: 'pc' },
-  { label: 'PlayStation', value: 'playstation' },
+  { label: 'PlayStation 5', value: 'ps5' },
   { label: 'Xbox', value: 'xbox' },
   { label: 'Switch', value: 'switch' },
-  { label: 'Mobile', value: 'mobile' },
+  { label: 'Nintendo DS', value: 'nds' },
   { label: 'Otra', value: 'other' },
 ]
 

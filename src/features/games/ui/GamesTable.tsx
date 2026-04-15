@@ -2,16 +2,8 @@ import { Button, Empty, Space, Table, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 
 import { StatusTag } from '../../../shared/ui/StatusTag'
+import { PLATFORM_LABELS } from '../../../shared/types/game'
 import type { Game, Platform } from '../../../shared/types/game'
-
-const platformLabels: Record<Platform, string> = {
-  pc: 'PC',
-  playstation: 'PlayStation',
-  xbox: 'Xbox',
-  switch: 'Switch',
-  mobile: 'Mobile',
-  other: 'Otra',
-}
 
 interface GamesTableProps {
   games: Game[]
@@ -31,7 +23,7 @@ export function GamesTable({ games, onEdit, onComplete }: GamesTableProps) {
       title: 'Plataforma',
       dataIndex: 'platform',
       key: 'platform',
-      render: (value: Platform) => platformLabels[value],
+      render: (value: Platform) => PLATFORM_LABELS[value],
     },
     {
       title: 'Estado',

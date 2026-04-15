@@ -87,24 +87,26 @@ export function GameDetailPage() {
     )
   }
 
-  const coverUrl = game.cover?.url ? getCoverUrl(game.cover.url) : null
-  const year = game.first_release_date
-    ? new Date(game.first_release_date * 1000).getFullYear()
+  const gameData = game
+
+  const coverUrl = gameData.cover?.url ? getCoverUrl(gameData.cover.url) : null
+  const year = gameData.first_release_date
+    ? new Date(gameData.first_release_date * 1000).getFullYear()
     : null
 
-  const developer = game.involved_companies?.find((c) => c.developer)?.company.name ?? null
+  const developer = gameData.involved_companies?.find((c) => c.developer)?.company.name ?? null
 
-  const rating = game.total_rating !== undefined
-    ? Math.round(game.total_rating * 10) / 10
+  const rating = gameData.total_rating !== undefined
+    ? Math.round(gameData.total_rating * 10) / 10
     : null
 
-  const platformLabels = game.platforms?.map((p) => p.abbreviation).join(', ') ?? null
-  const genreLabels = game.genres?.map((g) => g.name).join(', ') ?? null
+  const platformLabels = gameData.platforms?.map((p) => p.abbreviation).join(', ') ?? null
+  const genreLabels = gameData.genres?.map((g) => g.name).join(', ') ?? null
 
   // Check if game already in collection (by title, case-insensitive)
   const alreadyInCollection = gamesState.games.some(
-    (g) => (g.igdbId !== undefined && g.igdbId === game.id)
-      || g.title.toLowerCase() === game.name.toLowerCase()
+    (g) => (g.igdbId !== undefined && g.igdbId === gameData.id)
+      || g.title.toLowerCase() === gameData.name.toLowerCase()
   )
 
   function handleAddToCollection() {
@@ -114,15 +116,15 @@ export function GameDetailPage() {
     }
 
     const platform: Platform =
-      game.platforms
+      gameData.platforms
         ?.map((p) => IGDB_PLATFORM_MAP[p.abbreviation])
         .find((p) => p !== undefined) ?? 'other'
 
     const prefill: Partial<GameFormPrefill> = {
-      title: game.name,
+      title: gameData.name,
       ...(year !== null ? { year } : {}),
       platform,
-      igdbId: game.id,
+      igdbId: gameData.id,
     }
 
     dispatch({ type: 'openCreateModal', payload: prefill })
@@ -169,7 +171,7 @@ export function GameDetailPage() {
           {coverUrl ? (
             <img
               src={coverUrl}
-              alt={game.name}
+              alt={gameData.name}
               style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
             />
           ) : (
@@ -208,7 +210,7 @@ export function GameDetailPage() {
               lineHeight: 1.2,
             }}
           >
-            {game.name}
+            {gameData.name}
           </h1>
           <div style={{ color: 'var(--text-muted)', fontSize: 14, marginTop: 4 }}>
             {[developer, year].filter(Boolean).join(' · ')}
@@ -219,7 +221,7 @@ export function GameDetailPage() {
       {/* Body — con padding para dejar espacio a la portada superpuesta */}
       <div style={{ paddingLeft: isMobile ? 0 : 32, maxWidth: isMobile ? '100%' : 800 }}>
         {/* Descripción */}
-        {game.summary && (
+        {gameData.summary && (
           <div style={{ marginBottom: 28, marginTop: 0 }}>
             <div
               style={{
@@ -240,7 +242,7 @@ export function GameDetailPage() {
                 margin: 0,
               }}
             >
-              {game.summary}
+              {gameData.summary}
             </p>
           </div>
         )}
@@ -276,9 +278,9 @@ export function GameDetailPage() {
         </div>
 
         {/* Plataformas como tags */}
-        {game.platforms && game.platforms.length > 0 && (
+        {gameData.platforms && gameData.platforms.length > 0 && (
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 28 }}>
-            {game.platforms.map((p) => (
+            {gameData.platforms.map((p) => (
               <Tag key={p.abbreviation} style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: 'var(--text-muted)' }}>
                 {p.abbreviation}
               </Tag>

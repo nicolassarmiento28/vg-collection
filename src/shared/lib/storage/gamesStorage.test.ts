@@ -242,10 +242,15 @@ describe('gamesStorage', () => {
     }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(stored))
     const result = loadGamesState()
-    expect(result.games[0].coverUrl).toBeUndefined()
-    expect(result.games[0].coverBase64).toBeUndefined()
-    expect(result.games[0].pros).toBeUndefined()
-    expect(result.games[0].cons).toBeUndefined()
+    const loadedGame = result.games[0]
+    expect(loadedGame).toBeDefined()
+    if (loadedGame === undefined) {
+      throw new Error('Expected one migrated game in storage state')
+    }
+    expect(loadedGame.coverUrl).toBeUndefined()
+    expect(loadedGame.coverBase64).toBeUndefined()
+    expect(loadedGame.pros).toBeUndefined()
+    expect(loadedGame.cons).toBeUndefined()
   })
 
   it('falls back to default state when coverUrl field is not a string', () => {
