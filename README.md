@@ -1,4 +1,4 @@
-# VG Collection
+# Gestor de Colección de Videojuegos
 
 Aplicación SPA desarrollada con React para gestión y visualización de colecciones de videojuegos retro y modernos. La aplicación permite explorar juegos populares y recientes mediante integración con la API de IGDB, visualizar detalles de cada título y administrar colecciones personalizadas.
 
