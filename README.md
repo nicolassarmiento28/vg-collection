@@ -1,8 +1,9 @@
 # VG Collection
 
-Aplicacion web para gestionar tu coleccion de videojuegos retro y modernos.
+Aplicación SPA desarrollada con React para gestión y visualización de colecciones de videojuegos retro y modernos. La aplicación permite explorar juegos populares y recientes mediante integración con la API de IGDB, visualizar detalles de cada título y administrar colecciones personalizadas.
 
-Permite explorar juegos populares/recientes desde IGDB, ver detalle de cada juego, agregarlos a tu coleccion y administrarlos (crear, editar, completar, eliminar), con persistencia en localStorage.
+Implementé renderizado dinámico, manejo de estado y una interfaz moderna orientada a organización de contenido y navegación rápida. El proyecto incluye funcionalidades CRUD para crear, editar, completar y eliminar registros, además de persistencia de datos utilizando localStorage.
+
 
 ## Stack Tecnologico
 
