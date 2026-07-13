@@ -1,13 +1,15 @@
 // src/features/collection/ui/CollectionPage.tsx
-import { LockOutlined, PlusOutlined } from '@ant-design/icons'
+import { DownloadOutlined, LockOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons'
 import { App as AntdApp, Button, Grid, Input, Typography } from 'antd'
-import { useMemo, useState } from 'react'
+import type React from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../../auth/state/AuthContext'
 import { useGamesContext } from '../../games/state/GamesContext'
 import { GameFormModal, type GameFormValues } from '../../games/ui/GameFormModal'
 import { normalizeOptionalRating } from '../../../shared/utils/rating'
 import { useCollectionCovers } from '../hooks/useCollectionCovers'
+import { downloadCollection, parseImportedCollection } from '../lib/importExport'
 import { PLATFORM_LABELS } from '../../../shared/types/game'
 import type { Game, GameStatus, Platform } from '../../../shared/types/game'
 import { STATUS_BADGE_COLORS } from '../../../shared/constants/gameStatus'
@@ -325,6 +327,33 @@ export function CollectionPage() {
     dispatch({ type: 'openCreateModal', payload: undefined })
   }
 
+  const importInputRef = useRef<HTMLInputElement>(null)
+
+  function handleExport() {
+    downloadCollection(state.games)
+  }
+
+  function handleImportClick() {
+    importInputRef.current?.click()
+  }
+
+  async function handleImportFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    e.target.value = '' // allow re-selecting the same file later
+    if (file === undefined) return
+
+    const text = await file.text()
+    const imported = parseImportedCollection(text)
+
+    if (imported === null) {
+      void message.error('El archivo no tiene el formato esperado de una colección exportada')
+      return
+    }
+
+    dispatch({ type: 'importGames', payload: imported })
+    void message.success(`Se importaron ${imported.length} juego(s)`)
+  }
+
   if (!authState.isLoggedIn) return <CollectionGatePlaceholder />
 
   return (
@@ -349,13 +378,28 @@ export function CollectionPage() {
           <span style={{ color: 'var(--accent)', marginRight: 8 }}>▸</span>
           MI COLECCIÓN
         </h2>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={handleAddGame}
-        >
-          Agregar juego
-        </Button>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <Button icon={<DownloadOutlined />} onClick={handleExport}>
+            Exportar colección
+          </Button>
+          <Button icon={<UploadOutlined />} onClick={handleImportClick}>
+            Importar colección
+          </Button>
+          <input
+            ref={importInputRef}
+            type="file"
+            accept="application/json"
+            style={{ display: 'none' }}
+            onChange={handleImportFileChange}
+          />
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={handleAddGame}
+          >
+            Agregar juego
+          </Button>
+        </div>
       </div>
 
       {/* Search */}

@@ -32,7 +32,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
 }
 
-function isValidGame(value: unknown): value is Game {
+export function isValidGame(value: unknown): value is Game {
   if (!isRecord(value)) {
     return false
   }

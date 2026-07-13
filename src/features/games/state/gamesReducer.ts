@@ -16,6 +16,7 @@ export type GamesAction =
   | { type: 'openCreateModal'; payload: Partial<GameFormPrefill> | undefined }
   | { type: 'closeCreateModal' }
   | { type: 'removeGame'; payload: { id: string } }
+  | { type: 'importGames'; payload: Game[] }
 
 export function gamesReducer(state: GamesState, action: GamesAction): GamesState {
   switch (action.type) {
@@ -62,6 +63,16 @@ export function gamesReducer(state: GamesState, action: GamesAction): GamesState
         ...state,
         games: state.games.filter((game) => game.id !== action.payload.id),
       }
+    case 'importGames': {
+      // Merge (not replace): keeps whatever the user already added since the
+      // export, and skips imported games whose id already exists locally.
+      const existingIds = new Set(state.games.map((game) => game.id))
+      const newGames = action.payload.filter((game) => !existingIds.has(game.id))
+      return {
+        ...state,
+        games: [...state.games, ...newGames],
+      }
+    }
     default:
       return state
   }

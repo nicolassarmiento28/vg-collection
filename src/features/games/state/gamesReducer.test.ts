@@ -89,4 +89,23 @@ describe('gamesReducer', () => {
 
     expect(nextState.statusFilter).toBe('completed')
   })
+
+  it('imports games by merging: adds new ids, skips existing ones', () => {
+    const initialState = {
+      ...defaultGamesState,
+      games: [baseGame],
+    }
+
+    const duplicateOfExisting: Game = { ...baseGame, title: 'Changed but same id' }
+    const newGame: Game = { ...baseGame, id: 'g-2', title: 'Metroid Prime' }
+
+    const nextState = gamesReducer(initialState, {
+      type: 'importGames',
+      payload: [duplicateOfExisting, newGame],
+    })
+
+    expect(nextState.games).toHaveLength(2)
+    expect(nextState.games.find((g) => g.id === 'g-1')).toEqual(baseGame) // untouched, not overwritten
+    expect(nextState.games.find((g) => g.id === 'g-2')).toEqual(newGame)
+  })
 })
