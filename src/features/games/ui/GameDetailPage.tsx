@@ -30,32 +30,30 @@ function getCoverUrl(url: string): string {
   return url.replace('t_thumb', 't_cover_big').replace(/^\/\//, 'https://')
 }
 
+function getInitials(title: string): string {
+  return title
+    .split(' ')
+    .slice(0, 2)
+    .map((w) => w[0] ?? '')
+    .join('')
+    .toUpperCase()
+}
+
 function GameDetailSkeleton() {
   return (
     <div>
       {/* Banner skeleton */}
       <div
-        style={{
-          height: 220,
-          background: 'linear-gradient(90deg, var(--bg-surface) 25%, var(--bg-elevated) 50%, var(--bg-surface) 75%)',
-          backgroundSize: '200% 100%',
-          animation: 'shimmer 1.5s infinite',
-          borderRadius: 8,
-          marginBottom: 40,
-        }}
+        className="skeleton-shimmer"
+        style={{ height: 220, borderRadius: 8, marginBottom: 40 }}
       />
       {/* Body skeleton */}
       <div style={{ maxWidth: 720, display: 'flex', flexDirection: 'column', gap: 12 }}>
         {[200, 400, 300].map((w, i) => (
           <div
             key={i}
-            style={{
-              height: 16,
-              width: w,
-              background: 'var(--bg-elevated)',
-              borderRadius: 4,
-              animation: 'shimmer 1.5s infinite',
-            }}
+            className="skeleton-shimmer"
+            style={{ height: 16, width: w, borderRadius: 4 }}
           />
         ))}
       </div>
@@ -179,14 +177,17 @@ export function GameDetailPage() {
               style={{
                 width: '100%',
                 height: '100%',
+                background: 'linear-gradient(135deg, var(--bg-elevated), var(--bg-surface))',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: 32,
+                fontSize: 28,
+                fontFamily: 'var(--font-display)',
                 color: 'var(--text-muted)',
+                letterSpacing: 1,
               }}
             >
-              🎮
+              {getInitials(gameData.name)}
             </div>
           )}
         </div>

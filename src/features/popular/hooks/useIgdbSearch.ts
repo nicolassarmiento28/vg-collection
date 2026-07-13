@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { sanitizeApicalypseTerm } from '../../../shared/utils/apicalypse'
 import type { IgdbGame } from '../types'
 
 interface UseIgdbSearchResult {
@@ -23,7 +24,7 @@ export function useIgdbSearch(query: string): UseIgdbSearchResult {
 
     debounceTimer = setTimeout(() => {
       setLoading(true)
-      const body = `search "${trimmed}"; fields name,cover.url,first_release_date,platforms.abbreviation; limit 8;`
+      const body = `search "${sanitizeApicalypseTerm(trimmed)}"; fields name,cover.url,first_release_date,platforms.abbreviation; limit 8;`
 
       fetch('/api/igdb/games', {
         method: 'POST',

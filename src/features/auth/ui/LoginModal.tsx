@@ -103,7 +103,7 @@ export function LoginModal() {
                   <Button
                     size="small"
                     type="link"
-                    style={{ color: 'var(--accent)', padding: 0, height: 'auto', fontSize: 12 }}
+                    style={{ color: 'var(--accent-text)', padding: 0, height: 'auto', fontSize: 12 }}
                     onClick={() =>
                       loginForm.setFieldsValue({
                         email: 'demo@vgcollection.app',
@@ -148,7 +148,7 @@ export function LoginModal() {
                 ¿No tienes cuenta?{' '}
                 <Typography.Link
                   onClick={() => setView('register')}
-                  style={{ color: 'var(--accent)' }}
+                  style={{ color: 'var(--accent-text)' }}
                 >
                   Regístrate
                 </Typography.Link>

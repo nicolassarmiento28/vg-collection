@@ -1,6 +1,7 @@
 type VercelRequest = {
   method?: string
   body?: unknown
+  headers?: Record<string, string | string[] | undefined>
 }
 
 type VercelResponse = {
@@ -63,10 +64,42 @@ function parseBody(body: unknown): string {
   return String(body)
 }
 
+const MAX_QUERY_LENGTH = 500
+// ponytail: allowlist of chars an APICalypse query needs; blocks control chars / query-breaking injection
+const VALID_QUERY_PATTERN = /^[\w\s"'.,;:=<>!&|()*_-]+$/
+
+function isValidQuery(query: string): boolean {
+  return query.length <= MAX_QUERY_LENGTH && VALID_QUERY_PATTERN.test(query)
+}
+
+// ponytail: in-memory sliding window, per-instance only; move to Vercel KV/Upstash if traffic outgrows a single instance
+const RATE_LIMIT_WINDOW_MS = 60_000
+const RATE_LIMIT_MAX_REQUESTS = 30
+const requestLog = new Map<string, number[]>()
+
+function getClientIp(req: VercelRequest): string {
+  const forwarded = req.headers?.['x-forwarded-for']
+  const value = Array.isArray(forwarded) ? forwarded[0] : forwarded
+  return value?.split(',')[0]?.trim() ?? 'unknown'
+}
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now()
+  const timestamps = (requestLog.get(ip) ?? []).filter((t) => now - t < RATE_LIMIT_WINDOW_MS)
+  timestamps.push(now)
+  requestLog.set(ip, timestamps)
+  return timestamps.length > RATE_LIMIT_MAX_REQUESTS
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST')
     res.status(405).json({ error: 'Method not allowed' })
+    return
+  }
+
+  if (isRateLimited(getClientIp(req))) {
+    res.status(429).json({ error: 'Demasiadas solicitudes, esperá un momento e intentá de nuevo' })
     return
   }
 
@@ -81,6 +114,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const query = parseBody(req.body).trim()
   if (query.length === 0) {
     res.status(400).json({ error: 'Empty IGDB query body' })
+    return
+  }
+
+  if (!isValidQuery(query)) {
+    res.status(400).json({ error: 'Invalid IGDB query body' })
     return
   }
 

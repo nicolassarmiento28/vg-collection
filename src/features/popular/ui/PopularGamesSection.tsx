@@ -99,6 +99,12 @@ export function PopularGamesSection({ title, layout, hook }: PopularGamesSection
         <p style={{ color: 'var(--text)', fontSize: 14, marginBottom: 8 }}>{error}</p>
       )}
 
+      {!loading && error === null && games.length === 0 && (
+        <p style={{ color: 'var(--text-muted)', fontSize: 14, marginBottom: 8 }}>
+          No encontramos juegos para mostrar acá por ahora. Probá recargar más tarde.
+        </p>
+      )}
+
       <div style={{ position: 'relative' }}>
         {layout === 'carousel' && (
           <button

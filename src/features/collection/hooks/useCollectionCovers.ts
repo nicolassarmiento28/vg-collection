@@ -1,5 +1,6 @@
 // src/features/collection/hooks/useCollectionCovers.ts
 import { useEffect, useState } from 'react'
+import { sanitizeApicalypseTerm } from '../../../shared/utils/apicalypse'
 import type { Game } from '../../../shared/types/game'
 
 interface CoverEntry {
@@ -10,7 +11,7 @@ interface CoverEntry {
 type CoversMap = Map<string, CoverEntry> // key: game.id
 
 async function fetchCoverForGame(game: Game): Promise<[string, CoverEntry | null]> {
-  const body = `search "${game.title.replace(/"/g, '')}"; fields name,cover.url,id; limit 1;`
+  const body = `search "${sanitizeApicalypseTerm(game.title)}"; fields name,cover.url,id; limit 1;`
   try {
     const res = await fetch('/api/igdb/games', {
       method: 'POST',

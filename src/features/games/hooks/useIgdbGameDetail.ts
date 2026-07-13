@@ -19,6 +19,12 @@ export function useIgdbGameDetail(id: string): UseIgdbGameDetailResult {
     setLoading(true)
     setError(null)
 
+    if (!/^\d+$/.test(id)) {
+      setError('Juego no encontrado')
+      setLoading(false)
+      return
+    }
+
     const body = [
       'fields name,cover.url,first_release_date,platforms.abbreviation,',
       'total_rating,total_rating_count,summary,genres.name,',

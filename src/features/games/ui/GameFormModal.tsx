@@ -89,6 +89,14 @@ export function GameFormModal({ open, mode, game, prefill, onCancel, onSubmit }:
       }}
       destroyOnHidden
       width={isMobile ? '95vw' : 520}
+      styles={{
+        container: {
+          background: 'var(--bg-surface)',
+          borderTop: '4px solid var(--accent)',
+          borderRadius: 8,
+        },
+        mask: { backdropFilter: 'blur(4px)' },
+      }}
     >
       <Form form={form} layout="vertical" initialValues={initialValues} onFinish={onSubmit}>
         <GameFormFields form={form} />

@@ -7,13 +7,22 @@ function getCoverUrl(url: string): string {
   return url.replace('t_thumb', 't_cover_big').replace(/^\/\//, 'https://')
 }
 
+function getInitials(title: string): string {
+  return title
+    .split(' ')
+    .slice(0, 2)
+    .map((w) => w[0] ?? '')
+    .join('')
+    .toUpperCase()
+}
+
 interface PopularGameCardProps {
   game: IgdbGame
 }
 
 export function PopularGameCard({ game }: PopularGameCardProps) {
   const navigate = useNavigate()
-  const coverUrl = getCoverUrl(game.cover.url)
+  const coverUrl = game.cover?.url ? getCoverUrl(game.cover.url) : null
   const year = game.first_release_date
     ? new Date(game.first_release_date * 1000).getFullYear()
     : null
@@ -47,14 +56,33 @@ export function PopularGameCard({ game }: PopularGameCardProps) {
         el.style.boxShadow = 'none'
       }}
     >
-      <img
-        src={coverUrl}
-        alt={game.name}
-        width={180}
-        height={240}
-        style={{ display: 'block', objectFit: 'cover', width: '100%', height: 240 }}
-        loading="lazy"
-      />
+      {coverUrl ? (
+        <img
+          src={coverUrl}
+          alt={game.name}
+          width={180}
+          height={240}
+          style={{ display: 'block', objectFit: 'cover', width: '100%', height: 240 }}
+          loading="lazy"
+        />
+      ) : (
+        <div
+          style={{
+            width: '100%',
+            height: 240,
+            background: 'linear-gradient(135deg, var(--bg-elevated), var(--bg-surface))',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 40,
+            fontFamily: 'var(--font-display)',
+            color: 'var(--text-muted)',
+            letterSpacing: 2,
+          }}
+        >
+          {getInitials(game.name)}
+        </div>
+      )}
       {/* Title overlay */}
       <div
         style={{
@@ -109,20 +137,7 @@ export function PopularGameCardSkeleton() {
         position: 'relative',
       }}
     >
-      <div
-        style={{
-          width: '100%',
-          height: '100%',
-          background: `linear-gradient(
-            90deg,
-            var(--bg-surface) 25%,
-            var(--bg-elevated) 50%,
-            var(--bg-surface) 75%
-          )`,
-          backgroundSize: '200% 100%',
-          animation: 'shimmer 1.5s infinite',
-        }}
-      />
+      <div className="skeleton-shimmer" style={{ width: '100%', height: '100%' }} />
     </div>
   )
 }
