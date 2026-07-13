@@ -13,6 +13,8 @@ import { CollectionPage } from './features/collection/ui/CollectionPage'
 import { CollectionDetailPage } from './features/collection/ui/CollectionDetailPage'
 import { CreateGamePage } from './features/games/ui/CreateGamePage'
 import { AppLayout } from './shared/ui/AppLayout'
+import { CommandPalette } from './shared/ui/CommandPalette'
+import { CommandPaletteProvider } from './shared/state/CommandPaletteContext'
 
 function GlobalGameFormModal() {
   const { message } = AntdApp.useApp()
@@ -82,11 +84,14 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <GamesProvider>
-          <AntdApp>
-            <AppRoutes />
-            <LoginModal />
-            <GlobalGameFormModal />
-          </AntdApp>
+          <CommandPaletteProvider>
+            <AntdApp>
+              <AppRoutes />
+              <LoginModal />
+              <GlobalGameFormModal />
+              <CommandPalette />
+            </AntdApp>
+          </CommandPaletteProvider>
         </GamesProvider>
       </AuthProvider>
     </BrowserRouter>

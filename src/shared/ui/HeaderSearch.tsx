@@ -5,6 +5,10 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { IgdbGame } from '../../features/popular/types'
 import { useIgdbSearch } from '../../features/popular/hooks/useIgdbSearch'
+import { useCommandPalette } from '../state/CommandPaletteContext'
+
+const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.userAgent)
+const shortcutHint = isMac ? '⌘K' : 'Ctrl K'
 
 function getCoverUrl(game: IgdbGame): string | undefined {
   if (!game.cover?.url) return undefined
@@ -19,6 +23,7 @@ export function HeaderSearch() {
   const [focused, setFocused] = useState(false)
   const { results, loading } = useIgdbSearch(inputValue)
   const navigate = useNavigate()
+  const { setOpen: setPaletteOpen } = useCommandPalette()
 
   const options = results.map((game) => {
     const coverUrl = getCoverUrl(game)
@@ -68,33 +73,54 @@ export function HeaderSearch() {
   }
 
   return (
-    <AutoComplete
-      value={inputValue}
-      options={[...options, ...noResultsOption]}
-      onSelect={handleSelect}
-      onSearch={setInputValue}
-      allowClear
-      style={{ width: '100%', minWidth: 160, maxWidth: 480 }}
-      popupMatchSelectWidth={true}
-    >
-      <Input
-        placeholder="Buscar juegos..."
-        aria-label="Buscar juegos"
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-        suffix={
-          loading
-            ? <LoadingOutlined aria-hidden="true" style={{ color: 'var(--accent)' }} />
-            : <SearchOutlined aria-hidden="true" style={{ color: 'var(--text-muted)' }} />
-        }
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', minWidth: 0 }}>
+      <AutoComplete
+        value={inputValue}
+        options={[...options, ...noResultsOption]}
+        onSelect={handleSelect}
+        onSearch={setInputValue}
+        allowClear
+        style={{ width: '100%', minWidth: 160, maxWidth: 480 }}
+        popupMatchSelectWidth={true}
+      >
+        <Input
+          placeholder="Buscar juegos..."
+          aria-label="Buscar juegos"
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          suffix={
+            loading
+              ? <LoadingOutlined aria-hidden="true" style={{ color: 'var(--accent)' }} />
+              : <SearchOutlined aria-hidden="true" style={{ color: 'var(--text-muted)' }} />
+          }
+          style={{
+            background: 'var(--bg-elevated)',
+            borderColor: focused ? 'var(--accent)' : 'var(--border)',
+            borderRadius: 24,
+            boxShadow: focused ? '0 0 0 3px var(--accent-dim)' : 'none',
+            transition: 'border-color 150ms, box-shadow 150ms',
+          }}
+        />
+      </AutoComplete>
+      <button
+        type="button"
+        onClick={() => setPaletteOpen(true)}
+        aria-label="Abrir command palette"
+        title="Abrir command palette"
         style={{
+          flexShrink: 0,
+          fontFamily: 'var(--font-mono)',
+          fontSize: 11,
+          color: 'var(--text-muted)',
           background: 'var(--bg-elevated)',
-          borderColor: focused ? 'var(--accent)' : 'var(--border)',
-          borderRadius: 24,
-          boxShadow: focused ? '0 0 0 3px var(--accent-dim)' : 'none',
-          transition: 'border-color 150ms, box-shadow 150ms',
+          border: '1px solid var(--border)',
+          borderRadius: 6,
+          padding: '3px 8px',
+          cursor: 'pointer',
         }}
-      />
-    </AutoComplete>
+      >
+        {shortcutHint}
+      </button>
+    </div>
   )
 }
