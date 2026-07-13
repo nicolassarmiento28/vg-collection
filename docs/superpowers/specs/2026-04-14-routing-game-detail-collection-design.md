@@ -1,11 +1,11 @@
-# Routing, Game Detail Page & Enriched Collection — Design Spec
+# Routing, Página de Detalle de Juego y Colección Enriquecida — Spec de Diseño
 
-**Date:** 2026-04-14
-**Status:** Approved
+**Fecha:** 2026-04-14
+**Estado:** Aprobado
 
 ---
 
-## Goal
+## Objetivo
 
 Three connected improvements to the app:
 
@@ -15,13 +15,13 @@ Three connected improvements to the app:
 
 ---
 
-## Architecture
+## Arquitectura
 
 ### Routing
 
 Instalar `react-router-dom` v7. El punto de entrada es `App.tsx` que monta un `<BrowserRouter>` con tres `<Route>`:
 
-| Ruta | Componente | Auth required |
+| Ruta | Componente | Requiere auth |
 |---|---|---|
 | `/` | `HomePage` | No |
 | `/coleccion` | `CollectionPage` | Sí (gate con placeholder) |
@@ -209,7 +209,7 @@ Hover sobre tarjeta muestra overlay con:
 
 ---
 
-## File Map
+## Mapa de archivos
 
 | Archivo | Acción | Propósito |
 |---|---|---|
@@ -228,7 +228,7 @@ Hover sobre tarjeta muestra overlay con:
 
 ---
 
-## Data Flow
+## Flujo de datos
 
 ```
 Usuario clicks PopularGameCard
@@ -253,7 +253,7 @@ Usuario va a /coleccion
 
 ---
 
-## Constraints
+## Restricciones
 
 - **No hay backend**: la colección sigue en `localStorage`. Los IGDB ids no se guardan en `Game` — la búsqueda de portadas es por título.
 - **Rate limiting IGDB**: `useCollectionCovers` limita a 5 fetches concurrentes para no saturar el proxy.
@@ -264,7 +264,7 @@ Usuario va a /coleccion
 
 ---
 
-## Out of Scope
+## Fuera de alcance
 
 - Favoritos (mencionado en opción C de navegación, no elegido)
 - Backend/persistencia remota

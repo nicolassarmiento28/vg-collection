@@ -1,38 +1,38 @@
-# Cover Image + Pros/Cons Implementation Plan
+# Plan de implementación: Imagen de portada + Pros/Contras
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Para trabajadores agénticos:** SUB-HABILIDAD REQUERIDA: usa superpowers:subagent-driven-development (recomendado) o superpowers:executing-plans para implementar este plan tarea por tarea. Los pasos usan sintaxis de checkbox (`- [ ]`) para el seguimiento.
 
-**Goal:** Add per-game cover images (IGDB auto-fill or user upload/URL) and a "Mi opinión" pros/cons card visible on a new dedicated collection detail page at `/coleccion/:id`.
+**Goal:** Agregar imágenes de portada por juego (autocompletado desde IGDB o subida/URL del usuario) y una tarjeta de "Mi opinión" con pros/contras visible en una nueva página dedicada de detalle de colección en `/coleccion/:id`.
 
-**Architecture:** Four new optional fields (`coverUrl`, `coverBase64`, `pros`, `cons`) are added to the `Game` type and stored in localStorage unchanged. The form gains a cover tab selector and two opinion textareas. A new `CollectionDetailPage` component handles the `/coleccion/:id` route and renders the cover, the pros/cons card, and notes. The collection card grid is updated to navigate to that detail page for all games.
+**Architecture:** Se agregan cuatro campos opcionales nuevos (`coverUrl`, `coverBase64`, `pros`, `cons`) al tipo `Game`, y se guardan en localStorage sin cambios. El formulario incorpora un selector de pestañas para la portada y dos áreas de texto de opinión. Un nuevo componente `CollectionDetailPage` maneja la ruta `/coleccion/:id` y renderiza la portada, la tarjeta de pros/contras y las notas. La grilla de tarjetas de la colección se actualiza para navegar a esa página de detalle para todos los juegos.
 
-**Tech Stack:** React 19, TypeScript strict, Vite, Ant Design 6, React Router v6, Vitest (unit), localStorage persistence.
+**Tech Stack:** React 19, TypeScript strict, Vite, Ant Design 6, React Router v6, Vitest (unitario), persistencia en localStorage.
 
 ---
 
-## File Map
+## Mapa de archivos
 
-| Action | File |
+| Acción | Archivo |
 |--------|------|
-| Modify | `src/shared/types/game.ts` |
-| Modify | `src/shared/lib/storage/gamesStorage.ts` |
-| Modify | `src/shared/lib/storage/gamesStorage.test.ts` |
-| Modify | `src/features/games/ui/GameFormModal.tsx` |
-| Modify | `src/features/games/ui/GameFormFields.tsx` |
-| Modify | `src/features/collection/ui/CollectionPage.tsx` |
-| Modify | `src/App.tsx` |
-| Create | `src/features/collection/ui/CollectionDetailPage.tsx` |
+| Modificar | `src/shared/types/game.ts` |
+| Modificar | `src/shared/lib/storage/gamesStorage.ts` |
+| Modificar | `src/shared/lib/storage/gamesStorage.test.ts` |
+| Modificar | `src/features/games/ui/GameFormModal.tsx` |
+| Modificar | `src/features/games/ui/GameFormFields.tsx` |
+| Modificar | `src/features/collection/ui/CollectionPage.tsx` |
+| Modificar | `src/App.tsx` |
+| Crear | `src/features/collection/ui/CollectionDetailPage.tsx` |
 
 ---
 
-## Task 1: Extend the `Game` type
+## Task 1: Extender el tipo `Game`
 
 **Files:**
 - Modify: `src/shared/types/game.ts`
 
-- [ ] **Step 1: Add four optional fields to `Game` and extend `GameFormPrefill`**
+- [ ] **Step 1: Agregar cuatro campos opcionales a `Game` y extender `GameFormPrefill`**
 
-In `src/shared/types/game.ts`, update the `Game` interface and `GameFormPrefill` interface:
+En `src/shared/types/game.ts`, actualiza la interfaz `Game` y la interfaz `GameFormPrefill`:
 
 ```ts
 export interface Game {
@@ -72,15 +72,15 @@ git commit -m "feat: extend Game type with coverUrl, coverBase64, pros, cons"
 
 ---
 
-## Task 2: Update storage validation
+## Task 2: Actualizar la validación de almacenamiento
 
 **Files:**
 - Modify: `src/shared/lib/storage/gamesStorage.ts`
 - Modify: `src/shared/lib/storage/gamesStorage.test.ts`
 
-- [ ] **Step 1: Write failing tests for new optional fields**
+- [ ] **Step 1: Escribir tests que fallen para los nuevos campos opcionales**
 
-Append three new test cases at the end of the `describe` block in `src/shared/lib/storage/gamesStorage.test.ts`:
+Agrega tres nuevos casos de test al final del bloque `describe` en `src/shared/lib/storage/gamesStorage.test.ts`:
 
 ```ts
   it('loads game with all four new optional fields', () => {
@@ -161,17 +161,17 @@ Append three new test cases at the end of the `describe` block in `src/shared/li
   })
 ```
 
-- [ ] **Step 2: Run tests and verify they fail**
+- [ ] **Step 2: Ejecutar los tests y verificar que fallen**
 
 ```bash
 npx vitest run src/shared/lib/storage/gamesStorage.test.ts
 ```
 
-Expected: the three new tests FAIL (the existing 11 tests still pass).
+Esperado: los tres tests nuevos FALLAN (los 11 tests existentes siguen pasando).
 
-- [ ] **Step 3: Update `isValidGame` to validate new optional string fields**
+- [ ] **Step 3: Actualizar `isValidGame` para validar los nuevos campos de texto opcionales**
 
-In `src/shared/lib/storage/gamesStorage.ts`, add four optional-field checks inside `isValidGame`, after the existing `notes` check (around line 73):
+En `src/shared/lib/storage/gamesStorage.ts`, agrega cuatro verificaciones de campo opcional dentro de `isValidGame`, después de la verificación existente de `notes` (cerca de la línea 73):
 
 ```ts
   if (value.coverUrl !== undefined && typeof value.coverUrl !== 'string') {
@@ -191,7 +191,7 @@ In `src/shared/lib/storage/gamesStorage.ts`, add four optional-field checks insi
   }
 ```
 
-Also add the same four checks inside `migrateStoredGame` (after the existing `notes` check around line 116):
+También agrega las mismas cuatro verificaciones dentro de `migrateStoredGame` (después de la verificación existente de `notes` cerca de la línea 116):
 
 ```ts
   if (value.coverUrl !== undefined && typeof value.coverUrl !== 'string') {
@@ -211,13 +211,13 @@ Also add the same four checks inside `migrateStoredGame` (after the existing `no
   }
 ```
 
-- [ ] **Step 4: Run all tests and verify they pass**
+- [ ] **Step 4: Ejecutar todos los tests y verificar que pasen**
 
 ```bash
 npx vitest run
 ```
 
-Expected: 27 tests pass (24 existing + 3 new).
+Esperado: pasan 27 tests (24 existentes + 3 nuevos).
 
 - [ ] **Step 5: Commit**
 
@@ -228,16 +228,16 @@ git commit -m "feat: validate new optional Game fields in storage layer"
 
 ---
 
-## Task 3: Extend the form — values, initialization, and submission
+## Task 3: Extender el formulario — valores, inicialización y envío
 
 **Files:**
 - Modify: `src/features/games/ui/GameFormModal.tsx`
 - Modify: `src/App.tsx`
 - Modify: `src/features/collection/ui/CollectionPage.tsx`
 
-- [ ] **Step 1: Add new fields to `GameFormValues` and update `GameFormModal`**
+- [ ] **Step 1: Agregar los nuevos campos a `GameFormValues` y actualizar `GameFormModal`**
 
-Replace the entire `src/features/games/ui/GameFormModal.tsx` with:
+Reemplaza el archivo completo `src/features/games/ui/GameFormModal.tsx` por:
 
 ```tsx
 // src/features/games/ui/GameFormModal.tsx
@@ -348,9 +348,9 @@ export function GameFormModal({ open, mode, game, prefill, onCancel, onSubmit }:
 export type { GameFormValues }
 ```
 
-- [ ] **Step 2: Update `GlobalGameFormModal` in `App.tsx` to pass new fields**
+- [ ] **Step 2: Actualizar `GlobalGameFormModal` en `App.tsx` para pasar los nuevos campos**
 
-In `src/App.tsx`, update the `handleSubmit` function inside `GlobalGameFormModal` to include the new fields:
+En `src/App.tsx`, actualiza la función `handleSubmit` dentro de `GlobalGameFormModal` para incluir los nuevos campos:
 
 ```tsx
   function handleSubmit(values: GameFormValues) {
@@ -381,9 +381,9 @@ In `src/App.tsx`, update the `handleSubmit` function inside `GlobalGameFormModal
   }
 ```
 
-- [ ] **Step 3: Update `handleEditSubmit` in `CollectionPage.tsx` to pass new fields**
+- [ ] **Step 3: Actualizar `handleEditSubmit` en `CollectionPage.tsx` para pasar los nuevos campos**
 
-In `src/features/collection/ui/CollectionPage.tsx`, update `handleEditSubmit`:
+En `src/features/collection/ui/CollectionPage.tsx`, actualiza `handleEditSubmit`:
 
 ```tsx
   function handleEditSubmit(values: GameFormValues) {
@@ -415,13 +415,13 @@ In `src/features/collection/ui/CollectionPage.tsx`, update `handleEditSubmit`:
   }
 ```
 
-- [ ] **Step 4: Run all tests**
+- [ ] **Step 4: Ejecutar todos los tests**
 
 ```bash
 npx vitest run
 ```
 
-Expected: 27 tests pass.
+Esperado: pasan 27 tests.
 
 - [ ] **Step 5: Commit**
 
@@ -432,14 +432,14 @@ git commit -m "feat: extend form values and submission handlers for new fields"
 
 ---
 
-## Task 4: Add cover image and pros/cons fields to the form UI
+## Task 4: Agregar los campos de imagen de portada y pros/contras a la UI del formulario
 
 **Files:**
 - Modify: `src/features/games/ui/GameFormFields.tsx`
 
-- [ ] **Step 1: Replace `GameFormFields.tsx` with the extended version**
+- [ ] **Step 1: Reemplazar `GameFormFields.tsx` por la versión extendida**
 
-Replace the entire file `src/features/games/ui/GameFormFields.tsx`:
+Reemplaza el archivo completo `src/features/games/ui/GameFormFields.tsx`:
 
 ```tsx
 // src/features/games/ui/GameFormFields.tsx
@@ -683,13 +683,13 @@ export function GameFormFields({ form }: GameFormFieldsProps) {
 }
 ```
 
-- [ ] **Step 2: Run all tests**
+- [ ] **Step 2: Ejecutar todos los tests**
 
 ```bash
 npx vitest run
 ```
 
-Expected: 27 tests pass.
+Esperado: pasan 27 tests.
 
 - [ ] **Step 3: Commit**
 
@@ -700,16 +700,16 @@ git commit -m "feat: add cover image tab selector and pros/cons textareas to gam
 
 ---
 
-## Task 5: Update collection card to prefer stored cover and navigate to detail page
+## Task 5: Actualizar la tarjeta de colección para preferir la portada guardada y navegar a la página de detalle
 
 **Files:**
 - Modify: `src/features/collection/ui/CollectionPage.tsx`
 
-- [ ] **Step 1: Update `CollectionCard` and the cover resolution logic**
+- [ ] **Step 1: Actualizar `CollectionCard` y la lógica de resolución de portada**
 
-In `src/features/collection/ui/CollectionPage.tsx`:
+En `src/features/collection/ui/CollectionPage.tsx`:
 
-1. Update the `CollectionCardProps` interface to remove `igdbId` (no longer needed) and the `coverUrl` prop will now be resolved inside the component using the stored fields:
+1. Actualiza la interfaz `CollectionCardProps` para quitar `igdbId` (ya no se necesita); la prop `coverUrl` ahora se resolverá dentro del componente usando los campos guardados:
 
 ```tsx
 interface CollectionCardProps {
@@ -720,7 +720,7 @@ interface CollectionCardProps {
 }
 ```
 
-2. Inside `CollectionCard`, resolve the cover to display:
+2. Dentro de `CollectionCard`, resuelve la portada a mostrar:
 
 ```tsx
 function CollectionCard({ game, igdbCoverUrl, onEdit, onComplete }: CollectionCardProps) {
@@ -732,7 +732,7 @@ function CollectionCard({ game, igdbCoverUrl, onEdit, onComplete }: CollectionCa
   const displayCover = game.coverBase64 ?? game.coverUrl ?? igdbCoverUrl
 ```
 
-3. Replace the hover overlay buttons:
+3. Reemplaza los botones del overlay al pasar el mouse:
 
 ```tsx
             <Button size="small" block onClick={() => onEdit(game)}>
@@ -748,7 +748,7 @@ function CollectionCard({ game, igdbCoverUrl, onEdit, onComplete }: CollectionCa
             )}
 ```
 
-4. Replace `coverUrl` with `displayCover` in the img/fallback rendering:
+4. Reemplaza `coverUrl` por `displayCover` en el renderizado de la imagen/fallback:
 
 ```tsx
         {displayCover ? (
@@ -761,7 +761,7 @@ function CollectionCard({ game, igdbCoverUrl, onEdit, onComplete }: CollectionCa
         ) : (
 ```
 
-5. Update the render site in `CollectionPage` (the `.map()` call) to pass `igdbCoverUrl` and drop `igdbId`:
+5. Actualiza el sitio de renderizado en `CollectionPage` (la llamada `.map()`) para pasar `igdbCoverUrl` y quitar `igdbId`:
 
 ```tsx
         {filteredGames.map((game) => {
@@ -778,13 +778,13 @@ function CollectionCard({ game, igdbCoverUrl, onEdit, onComplete }: CollectionCa
         })}
 ```
 
-- [ ] **Step 2: Run all tests**
+- [ ] **Step 2: Ejecutar todos los tests**
 
 ```bash
 npx vitest run
 ```
 
-Expected: 27 tests pass.
+Esperado: pasan 27 tests.
 
 - [ ] **Step 3: Commit**
 
@@ -795,15 +795,15 @@ git commit -m "feat: update collection card to prefer stored cover and navigate 
 
 ---
 
-## Task 6: Create `CollectionDetailPage` and add route
+## Task 6: Crear `CollectionDetailPage` y agregar la ruta
 
 **Files:**
 - Create: `src/features/collection/ui/CollectionDetailPage.tsx`
 - Modify: `src/App.tsx`
 
-- [ ] **Step 1: Create `CollectionDetailPage.tsx`**
+- [ ] **Step 1: Crear `CollectionDetailPage.tsx`**
 
-Create the file `src/features/collection/ui/CollectionDetailPage.tsx`:
+Crea el archivo `src/features/collection/ui/CollectionDetailPage.tsx`:
 
 ```tsx
 // src/features/collection/ui/CollectionDetailPage.tsx
@@ -1090,11 +1090,11 @@ export function CollectionDetailPage() {
 }
 ```
 
-- [ ] **Step 2: Add `removeGame` action to the reducer**
+- [ ] **Step 2: Agregar la acción `removeGame` al reducer**
 
-The detail page dispatches `removeGame`. Add it to `src/features/games/state/gamesReducer.ts`:
+La página de detalle despacha `removeGame`. Agrégala a `src/features/games/state/gamesReducer.ts`:
 
-At the top of the file, extend `GamesAction`:
+Al principio del archivo, extiende `GamesAction`:
 
 ```ts
 export type GamesAction =
@@ -1115,7 +1115,7 @@ export type GamesAction =
   | { type: 'closeCreateModal' }
 ```
 
-Add the case handler inside `gamesReducer`, after the `editGame` case:
+Agrega el manejador del case dentro de `gamesReducer`, después del case `editGame`:
 
 ```ts
     case 'removeGame':
@@ -1125,28 +1125,28 @@ Add the case handler inside `gamesReducer`, after the `editGame` case:
       }
 ```
 
-- [ ] **Step 3: Register the new route in `App.tsx`**
+- [ ] **Step 3: Registrar la nueva ruta en `App.tsx`**
 
-In `src/App.tsx`, add the import and route:
+En `src/App.tsx`, agrega el import y la ruta:
 
 ```tsx
 import { CollectionDetailPage } from './features/collection/ui/CollectionDetailPage'
 ```
 
-Inside `AppRoutes`:
+Dentro de `AppRoutes`:
 
 ```tsx
         <Route path="/coleccion" element={<CollectionPage />} />
         <Route path="/coleccion/:id" element={<CollectionDetailPage />} />
 ```
 
-- [ ] **Step 4: Run all tests**
+- [ ] **Step 4: Ejecutar todos los tests**
 
 ```bash
 npx vitest run
 ```
 
-Expected: 27 tests pass.
+Esperado: pasan 27 tests.
 
 - [ ] **Step 5: Commit**
 
@@ -1157,53 +1157,53 @@ git commit -m "feat: add CollectionDetailPage with cover, pros/cons card, and re
 
 ---
 
-## Task 7: Manual smoke test
+## Task 7: Prueba de humo manual
 
-- [ ] **Step 1: Start the dev server**
+- [ ] **Step 1: Iniciar el servidor de desarrollo**
 
 ```bash
 npm run dev
 ```
 
-Open `http://localhost:5173` in a browser.
+Abre `http://localhost:5173` en un navegador.
 
-- [ ] **Step 2: Smoke-test cover image via file upload**
-  1. Log in and navigate to Mi Colección
-  2. Click "Agregar juego" → fill required fields → go to the Portada section → click "Subir archivo" tab → upload any image
-  3. Verify the preview appears below the upload area
-  4. Save the game — the card in the grid should show the uploaded image
-  5. Click "Ver detalle" (hover the card) — the detail page shows the cover
+- [ ] **Step 2: Prueba de humo de la imagen de portada mediante subida de archivo**
+  1. Inicia sesión y navega a Mi Colección
+  2. Haz clic en "Agregar juego" → completa los campos obligatorios → ve a la sección Portada → haz clic en la pestaña "Subir archivo" → sube cualquier imagen
+  3. Verifica que la vista previa aparezca debajo del área de subida
+  4. Guarda el juego — la tarjeta en la grilla debería mostrar la imagen subida
+  5. Haz clic en "Ver detalle" (al pasar el mouse sobre la tarjeta) — la página de detalle muestra la portada
 
-- [ ] **Step 3: Smoke-test cover image via URL**
-  1. Add another game → Portada → "Pegar URL" tab → paste `https://images.igdb.com/igdb/image/upload/t_cover_big/co1r8e.webp`
-  2. Verify the preview appears
-  3. Save — card and detail page show the cover
+- [ ] **Step 3: Prueba de humo de la imagen de portada mediante URL**
+  1. Agrega otro juego → Portada → pestaña "Pegar URL" → pega `https://images.igdb.com/igdb/image/upload/t_cover_big/co1r8e.webp`
+  2. Verifica que la vista previa aparezca
+  3. Guarda — la tarjeta y la página de detalle muestran la portada
 
-- [ ] **Step 4: Smoke-test pros/cons**
-  1. Edit any game → fill "Puntos positivos" with `Buen gameplay\nGráficos hermosos` and "Puntos negativos" with `Historia corta`
-  2. Save — navigate to the detail page via "Ver detalle"
-  3. Verify the "Mi opinión" card appears with green pros and red cons
+- [ ] **Step 4: Prueba de humo de pros/contras**
+  1. Edita cualquier juego → completa "Puntos positivos" con `Buen gameplay\nGráficos hermosos` y "Puntos negativos" con `Historia corta`
+  2. Guarda — navega a la página de detalle mediante "Ver detalle"
+  3. Verifica que la tarjeta "Mi opinión" aparezca con los puntos positivos en verde y los negativos en rojo
 
-- [ ] **Step 5: Smoke-test empty opinion card (no pros/cons)**
-  1. Open the detail page for a game without pros/cons set
-  2. Verify no "Mi opinión" card appears
+- [ ] **Step 5: Prueba de humo de la tarjeta de opinión vacía (sin pros/contras)**
+  1. Abre la página de detalle de un juego sin pros/contras configurados
+  2. Verifica que no aparezca ninguna tarjeta "Mi opinión"
 
-- [ ] **Step 6: Smoke-test delete**
-  1. On the detail page, click "Eliminar"
-  2. Confirm in the modal — should redirect to `/coleccion` with game removed
+- [ ] **Step 6: Prueba de humo de eliminación**
+  1. En la página de detalle, haz clic en "Eliminar"
+  2. Confirma en el modal — debería redirigir a `/coleccion` con el juego eliminado
 
-- [ ] **Step 7: Run final test suite**
+- [ ] **Step 7: Ejecutar la suite de tests final**
 
 ```bash
 npx vitest run
 ```
 
-Expected: 27 tests pass.
+Esperado: pasan 27 tests.
 
-- [ ] **Step 8: Commit if any fixes were made**
+- [ ] **Step 8: Commit si se hicieron correcciones**
 
 ```bash
 git add -A && git commit -m "fix: address smoke test findings"
 ```
 
-(Skip if no fixes were needed.)
+(Omitir si no se necesitaron correcciones.)

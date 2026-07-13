@@ -1,22 +1,22 @@
-# Spec: Ember Redesign — vg-collection
+# Spec: Rediseño Ember — vg-collection
 
-**Date:** 2026-04-13  
-**Branch:** `main` (fresh additions)  
-**Status:** Approved by user
-
----
-
-## Overview
-
-A full visual redesign of the `vg-collection` app using the "Ember" aesthetic: dark charcoal background with ember red accent, cinematic typography (Bebas Neue + DM Sans), and a new home layout that adds a Popular Games section powered by the IGDB API, a redesigned sticky header with search and login, and a login/register modal.
+**Fecha:** 2026-04-13  
+**Rama:** `main` (adiciones nuevas)  
+**Estado:** Aprobado por el usuario
 
 ---
 
-## 1. Color & Typography System
+## Resumen general
 
-### CSS Custom Properties (`src/index.css`)
+Un rediseño visual completo de la aplicación `vg-collection` usando la estética "Ember": fondo carbón oscuro con acento rojo ember, tipografía cinematográfica (Bebas Neue + DM Sans), y un nuevo layout de inicio que agrega una sección de Juegos Populares alimentada por la API de IGDB, un header sticky rediseñado con búsqueda y login, y un modal de login/registro.
 
-Replace all existing CSS variables with:
+---
+
+## 1. Sistema de color y tipografía
+
+### Propiedades personalizadas de CSS (`src/index.css`)
+
+Reemplazar todas las variables CSS existentes con:
 
 ```css
 :root {
@@ -41,22 +41,22 @@ Replace all existing CSS variables with:
 
 ### Google Fonts
 
-Import in `index.html` (or `index.css` via `@import`):
-- **Bebas Neue** — display headings, logo, section titles, game card titles
-- **DM Sans** — all body text, UI labels, buttons, form fields, table data
-- **JetBrains Mono** — ratings, years, numeric data
+Importar en `index.html` (o en `index.css` vía `@import`):
+- **Bebas Neue** — encabezados de display, logo, títulos de sección, títulos de tarjetas de juego
+- **DM Sans** — todo el texto de cuerpo, etiquetas de UI, botones, campos de formulario, datos de tabla
+- **JetBrains Mono** — calificaciones, años, datos numéricos
 
-### Background Texture
+### Textura de fondo
 
-A subtle SVG-based noise texture at 3% opacity is applied to the `body` element as a `background-image`. Generated as an inline data URI or a small static asset at `public/noise.svg`. This adds depth to the flat dark background without affecting readability.
+Se aplica una sutil textura de ruido basada en SVG al 3% de opacidad al elemento `body` como `background-image`. Se genera como un data URI inline o un pequeño asset estático en `public/noise.svg`. Esto agrega profundidad al fondo oscuro plano sin afectar la legibilidad.
 
 ---
 
-## 2. Ant Design Theme (`src/main.tsx`)
+## 2. Tema de Ant Design (`src/main.tsx`)
 
-`<ConfigProvider>` receives a `theme` prop with `algorithm: theme.darkAlgorithm` and the following token overrides:
+`<ConfigProvider>` recibe una prop `theme` con `algorithm: theme.darkAlgorithm` y las siguientes sobreescrituras de tokens:
 
-| Token | Value |
+| Token | Valor |
 |---|---|
 | `colorPrimary` | `#e03c2f` |
 | `colorBgContainer` | `#1a1918` |
@@ -68,75 +68,75 @@ A subtle SVG-based noise texture at 3% opacity is applied to the `body` element 
 | `borderRadius` | `6` |
 | `colorLink` | `#e03c2f` |
 
-These tokens propagate to all Ant Design components: Table, Modal, Form, Select, Input, Button, Card, Tag. No per-component inline style overrides are needed for theming.
+Estos tokens se propagan a todos los componentes de Ant Design: Table, Modal, Form, Select, Input, Button, Card, Tag. No se necesitan sobreescrituras de estilo inline por componente para el theming.
 
 ---
 
 ## 3. Header (`src/shared/ui/AppLayout.tsx`)
 
-The `AppLayout` header is a sticky 64px dark strip with three zones:
+El header de `AppLayout` es una franja oscura sticky de 64px con tres zonas:
 
-### Left — Logo
-- Wordmark "VG COLLECTION" in Bebas Neue, ~28px, `--text-h` color
-- A small ember-red decorative mark (e.g., `●` or `▸`) before the wordmark
-- Clicking the logo scrolls to the top of the page (no routing)
+### Izquierda — Logo
+- Wordmark "VG COLLECTION" en Bebas Neue, ~28px, color `--text-h`
+- Una pequeña marca decorativa roja ember (por ejemplo, `●` o `▸`) antes del wordmark
+- Al hacer clic en el logo se hace scroll hasta el inicio de la página (sin routing)
 
-### Center — Search Bar
-- Ant Design `Input.Search`, pill-shaped (border-radius: 24px)
-- Width: ~380px (flex: grows between logo and button)
-- Dark background (`--bg-elevated`), `--border` default border, `--accent` focus ring
+### Centro — Barra de búsqueda
+- `Input.Search` de Ant Design, con forma de píldora (border-radius: 24px)
+- Ancho: ~380px (flex: crece entre el logo y el botón)
+- Fondo oscuro (`--bg-elevated`), borde por defecto `--border`, anillo de foco `--accent`
 - Placeholder: "Buscar juegos, géneros, plataformas…"
-- `onChange` dispatches `setSearch` to `GamesContext` — filters the collection table in real time
-- The search bar is NOT connected to IGDB (IGDB section is separate, pre-loaded)
+- `onChange` despacha `setSearch` a `GamesContext` — filtra la tabla de la colección en tiempo real
+- La barra de búsqueda NO está conectada a IGDB (la sección de IGDB es independiente, precargada)
 
-### Right — Login Button
-- Bordered pill button: `--accent` border + `--accent` text color on `--bg-surface` background
-- On hover: fills to `--accent` background with `--text-h` text (transition 150ms)
-- Text: "Login"
-- `onClick`: opens the Login modal
+### Derecha — Botón de Login
+- Botón píldora con borde: borde `--accent` + color de texto `--accent` sobre fondo `--bg-surface`
+- Al pasar el mouse: se rellena con fondo `--accent` y texto `--text-h` (transición 150ms)
+- Texto: "Login"
+- `onClick`: abre el modal de Login
 
-### Header Component Structure
+### Estructura del componente Header
 
-`AppLayout` is wrapped by `AuthProvider` in `App.tsx`. The `LoginButton` component reads `isLoggedIn` and `user` from `useAuthContext()` — when `isLoggedIn` is `true`, it renders a red circle avatar with the user's email initial instead of the "Login" button.
+`AppLayout` está envuelto por `AuthProvider` en `App.tsx`. El componente `LoginButton` lee `isLoggedIn` y `user` desde `useAuthContext()` — cuando `isLoggedIn` es `true`, renderiza un avatar circular rojo con la inicial del email del usuario en lugar del botón "Login".
 
 ```
-<AuthProvider>              ← wraps entire app in App.tsx
+<AuthProvider>              ← envuelve toda la app en App.tsx
   <AppLayout>
     <Header sticky>
       <Logo />
-      <HeaderSearch />        ← new component, dispatches to GamesContext
-      <LoginButton />         ← new component, reads AuthContext
+      <HeaderSearch />        ← componente nuevo, despacha a GamesContext
+      <LoginButton />         ← componente nuevo, lee AuthContext
     </Header>
     <Content>
-      <PopularGamesSection /> ← new component
-      <GamesPage />           ← existing, restyled
+      <PopularGamesSection /> ← componente nuevo
+      <GamesPage />           ← existente, restilizado
     </Content>
   </AppLayout>
-  <LoginModal />              ← rendered at root level, controlled by AuthContext
+  <LoginModal />              ← renderizado a nivel raíz, controlado por AuthContext
 </AuthProvider>
 ```
 
 ---
 
-## 4. IGDB Integration
+## 4. Integración con IGDB
 
-### API Access
+### Acceso a la API
 
-IGDB requires a Twitch OAuth token. The app uses a Vite dev proxy to avoid exposing credentials in the browser bundle.
+IGDB requiere un token OAuth de Twitch. La aplicación usa un proxy de desarrollo de Vite para evitar exponer credenciales en el bundle del navegador.
 
-**`.env.local`** (git-ignored):
+**`.env.local`** (ignorado por git):
 ```
-VITE_IGDB_CLIENT_ID=<your-client-id>
-VITE_IGDB_CLIENT_SECRET=<your-client-secret>
+VITE_IGDB_CLIENT_ID=<tu-client-id>
+VITE_IGDB_CLIENT_SECRET=<tu-client-secret>
 ```
 
-**`vite.config.ts`** — add a server proxy with token fetching fully in the Node.js proxy context:
+**`vite.config.ts`** — agregar un proxy de servidor con obtención de token completamente en el contexto del proxy de Node.js:
 
 ```ts
-// vite.config.ts (Node.js context — not the browser bundle)
-// The proxy configure hook fetches a Twitch OAuth token on startup,
-// caches it in a module-level variable, and injects it into every proxied request.
-// React code only calls /api/igdb/* — credentials never reach the browser.
+// vite.config.ts (contexto de Node.js — no el bundle del navegador)
+// El hook configure del proxy obtiene un token OAuth de Twitch al iniciar,
+// lo cachea en una variable de nivel de módulo, y lo inyecta en cada request proxeado.
+// El código de React solo llama a /api/igdb/* — las credenciales nunca llegan al navegador.
 server: {
   proxy: {
     '/api/igdb': {
@@ -146,7 +146,7 @@ server: {
       configure: (proxy) => {
         let cachedToken: string | null = null
 
-        // Fetch token once; cache until Vite restarts
+        // Obtiene el token una vez; lo cachea hasta que Vite se reinicie
         async function getToken(): Promise<string> {
           if (cachedToken) return cachedToken
           const res = await fetch(
@@ -159,13 +159,13 @@ server: {
         }
 
         proxy.on('proxyReq', (proxyReq) => {
-          // Token is injected synchronously after first warm-up.
-          // On first request, cachedToken may be null for a brief moment;
-          // subsequent requests always have the token.
+          // El token se inyecta de forma síncrona después del primer warm-up.
+          // En el primer request, cachedToken puede ser null por un breve momento;
+          // los requests subsiguientes siempre tienen el token.
           getToken().then((token) => {
             proxyReq.setHeader('Client-ID', process.env.VITE_IGDB_CLIENT_ID ?? '')
             proxyReq.setHeader('Authorization', `Bearer ${token}`)
-          }).catch(() => { /* token fetch failed; IGDB will return 401 */ })
+          }).catch(() => { /* falló la obtención del token; IGDB devolverá 401 */ })
         })
       },
     },
@@ -173,9 +173,9 @@ server: {
 }
 ```
 
-> **Token handling**: All credential handling is in `vite.config.ts` (Node.js). No React file reads or stores the IGDB Client-ID or token. `VITE_IGDB_CLIENT_ID` and `VITE_IGDB_CLIENT_SECRET` are loaded by Vite from `.env.local` and available as `process.env.*` in the config file (Node context) but NOT exposed to the browser bundle (they are not referenced in any `src/` file).
+> **Manejo del token**: Todo el manejo de credenciales está en `vite.config.ts` (Node.js). Ningún archivo de React lee ni almacena el Client-ID o el token de IGDB. `VITE_IGDB_CLIENT_ID` y `VITE_IGDB_CLIENT_SECRET` son cargados por Vite desde `.env.local` y están disponibles como `process.env.*` en el archivo de configuración (contexto Node) pero NO se exponen al bundle del navegador (no se referencian en ningún archivo de `src/`).
 
-### IGDB Query
+### Consulta a IGDB
 
 Endpoint: `POST /api/igdb/games`  
 Body:
@@ -186,148 +186,148 @@ sort total_rating desc;
 limit 20;
 ```
 
-This returns the top 20 rated games with covers. Cover URLs use IGDB's image API: replace `t_thumb` with `t_cover_big` for 264×374 resolution.
+Esto devuelve los 20 juegos mejor calificados con portadas. Las URLs de portada usan la API de imágenes de IGDB: reemplazar `t_thumb` por `t_cover_big` para una resolución de 264×374.
 
-### Data Flow
+### Flujo de datos
 
 ```
 PopularGamesSection
-  └── useIgdbPopularGames() hook
-        ├── state: { games, loading, error }
-        ├── fetches once on mount
-        └── returns { games: IgdbGame[], loading: boolean, error: string | null }
+  └── hook useIgdbPopularGames()
+        ├── estado: { games, loading, error }
+        ├── hace fetch una vez al montar
+        └── retorna { games: IgdbGame[], loading: boolean, error: string | null }
 ```
 
-`IgdbGame` interface:
+Interfaz `IgdbGame`:
 ```ts
 interface IgdbGame {
   id: number
   name: string
   cover: { url: string }
-  first_release_date?: number  // Unix timestamp
+  first_release_date?: number  // timestamp Unix
   platforms?: Array<{ abbreviation: string }>
   total_rating?: number
 }
 ```
 
-### Error & Loading States
+### Estados de error y carga
 
-- **Loading**: render 8 skeleton cards (same size as real cards, `--bg-surface` background, animated shimmer)
-- **Error**: a single-line message in `--text` color: "No se pudo cargar juegos populares" — no blocking UI, collection still works
+- **Carga**: renderizar 8 tarjetas esqueleto (mismo tamaño que las tarjetas reales, fondo `--bg-surface`, shimmer animado)
+- **Error**: un mensaje de una sola línea en color `--text`: "No se pudo cargar juegos populares" — sin UI bloqueante, la colección sigue funcionando
 
 ---
 
-## 5. Popular Games Section (`src/features/popular/`)
+## 5. Sección de Juegos Populares (`src/features/popular/`)
 
-New feature directory: `src/features/popular/`
+Nuevo directorio de feature: `src/features/popular/`
 
-### Files
+### Archivos
 
-- `src/features/popular/ui/PopularGamesSection.tsx` — section wrapper with heading and card row
-- `src/features/popular/ui/PopularGameCard.tsx` — individual game card
-- `src/features/popular/hooks/useIgdbPopularGames.ts` — data fetching hook
-- `src/features/popular/types.ts` — `IgdbGame` interface
+- `src/features/popular/ui/PopularGamesSection.tsx` — wrapper de sección con encabezado y fila de tarjetas
+- `src/features/popular/ui/PopularGameCard.tsx` — tarjeta de juego individual
+- `src/features/popular/hooks/useIgdbPopularGames.ts` — hook de obtención de datos
+- `src/features/popular/types.ts` — interfaz `IgdbGame`
 
 ### Layout
 
 ```
 <section id="popular-games">
   <h2>POPULAR AHORA</h2>          ← Bebas Neue, --text-h, letter-spacing 2px
-  <div class="cards-row">         ← horizontal scroll, gap 16px, no scrollbar
-    <PopularGameCard />            ← repeat × N (or × 8 skeletons)
+  <div class="cards-row">         ← scroll horizontal, gap 16px, sin scrollbar
+    <PopularGameCard />            ← se repite × N (u × 8 esqueletos)
   </div>
 </section>
 ```
 
-The `cards-row` uses `display: flex; overflow-x: auto; scroll-snap-type: x mandatory` with `scrollbar-width: none` to hide the native scrollbar.
+El `cards-row` usa `display: flex; overflow-x: auto; scroll-snap-type: x mandatory` con `scrollbar-width: none` para ocultar el scrollbar nativo.
 
-### Card Design
+### Diseño de la tarjeta
 
-Dimensions: 180px wide × 260px tall  
-Structure (top to bottom):
-1. **Cover image** — 180×240px, `object-fit: cover`, top-rounded corners
-2. **Title bar** — dark overlay strip at the bottom: game title in Bebas Neue 16px, `--text-h`
+Dimensiones: 180px de ancho × 260px de alto  
+Estructura (de arriba a abajo):
+1. **Imagen de portada** — 180×240px, `object-fit: cover`, esquinas redondeadas arriba
+2. **Barra de título** — franja oscura superpuesta en la parte inferior: título del juego en Bebas Neue 16px, `--text-h`
 
-On hover:
-- `transform: scale(1.04)` (transition 200ms ease)
-- `box-shadow: 0 0 18px var(--accent-dim)` (red glow)
-- Title overlay becomes slightly more opaque
+Al pasar el mouse:
+- `transform: scale(1.04)` (transición 200ms ease)
+- `box-shadow: 0 0 18px var(--accent-dim)` (resplandor rojo)
+- La superposición del título se vuelve ligeramente más opaca
 
-Cards are not clickable (no routing to a game detail page — out of scope).
+Las tarjetas no son clicleables (no hay routing a una página de detalle de juego — fuera de alcance).
 
 ---
 
-## 6. Login / Register Modal (`src/features/auth/`)
+## 6. Modal de Login / Registro (`src/features/auth/`)
 
-New feature directory: `src/features/auth/`
+Nuevo directorio de feature: `src/features/auth/`
 
-### Files
+### Archivos
 
-- `src/features/auth/ui/LoginModal.tsx` — modal with login + register tabs or toggled views
-- `src/features/auth/state/AuthContext.tsx` — minimal context: `{ isLoggedIn: boolean, user: null | { email: string } }`
-- `src/features/auth/state/authReducer.ts` — actions: `login`, `logout`
+- `src/features/auth/ui/LoginModal.tsx` — modal con pestañas de login + registro o vistas alternadas
+- `src/features/auth/state/AuthContext.tsx` — contexto mínimo: `{ isLoggedIn: boolean, user: null | { email: string } }`
+- `src/features/auth/state/authReducer.ts` — acciones: `login`, `logout`
 
-### Modal Design
+### Diseño del modal
 
-- Ant Design `Modal`, `centered`, `width: 420px`
-- Dark background (`--bg-surface`), red top border accent (4px top border in `--accent`)
-- **Logo** centered at top inside the modal
-- **Two views**: Login and Register, toggled by a footer link
-- No tabs — a simple state toggle (`'login' | 'register'`)
+- `Modal` de Ant Design, `centered`, `width: 420px`
+- Fondo oscuro (`--bg-surface`), acento de borde superior rojo (borde superior de 4px en `--accent`)
+- **Logo** centrado en la parte superior dentro del modal
+- **Dos vistas**: Login y Registro, alternadas por un enlace en el pie
+- Sin pestañas — un simple toggle de estado (`'login' | 'register'`)
 
-**Login view fields:**
-- Email (`Input`, type email, required)
-- Contraseña (`Input.Password`, required)
-- "Iniciar sesión" — full-width primary button (`--accent` background)
-- Footer: "¿No tienes cuenta? Regístrate" — toggles to register view
+**Campos de la vista de Login:**
+- Email (`Input`, tipo email, requerido)
+- Contraseña (`Input.Password`, requerido)
+- "Iniciar sesión" — botón primario de ancho completo (fondo `--accent`)
+- Pie: "¿No tienes cuenta? Regístrate" — alterna a la vista de registro
 
-**Register view fields:**
-- Nombre de usuario (`Input`, required)
-- Email (`Input`, type email, required)
-- Contraseña (`Input.Password`, required)
-- "Crear cuenta" — full-width primary button
-- Footer: "¿Ya tienes cuenta? Inicia sesión" — toggles back to login view
+**Campos de la vista de Registro:**
+- Nombre de usuario (`Input`, requerido)
+- Email (`Input`, tipo email, requerido)
+- Contraseña (`Input.Password`, requerido)
+- "Crear cuenta" — botón primario de ancho completo
+- Pie: "¿Ya tienes cuenta? Inicia sesión" — alterna de vuelta a la vista de login
 
-**On submit (both views):**
-- No backend call
+**Al enviar (ambas vistas):**
+- Sin llamada a backend
 - `dispatch({ type: 'login', payload: { email } })`
-- Show Ant Design success `message.success('¡Bienvenido!')`
-- Close the modal
-- The header Login button changes to show the user's email initial in a red circle avatar
+- Mostrar el mensaje de éxito de Ant Design `message.success('¡Bienvenido!')`
+- Cerrar el modal
+- El botón de Login del header cambia para mostrar la inicial del email del usuario en un avatar circular rojo
 
-### Auth State Persistence
+### Persistencia del estado de autenticación
 
-Not persisted — `isLoggedIn` resets on page reload (mock auth). This is explicitly out of scope.
+No se persiste — `isLoggedIn` se reinicia al recargar la página (autenticación simulada). Esto está explícitamente fuera de alcance.
 
 ---
 
-## 7. Existing Collection Restyling
+## 7. Restilizado de la colección existente
 
-The existing `GamesPage`, `GamesTable`, `GamesToolbar`, `GameFormModal`, and `StatusTag` components are **not structurally changed** — only visual adjustments:
+Los componentes existentes `GamesPage`, `GamesTable`, `GamesToolbar`, `GameFormModal`, y `StatusTag` **no cambian estructuralmente** — solo ajustes visuales:
 
-- The wrapping `<Card>` in `GamesPage` uses `--bg-surface` background (inherited from ConfigProvider token)
-- A section heading above the card: "TU COLECCIÓN" in Bebas Neue + a small logo mark
-- `GamesToolbar`: the "Crear juego" `<Button type="primary">` inherits red from ConfigProvider — no change needed
-- `GamesTable`: dark rows from ConfigProvider dark theme — no change needed
-- `StatusTag`: colors updated to use ember palette:
-  - `backlog` → dark gray (`#3a3836`)
-  - `playing` → ember orange (`#e07a2f`)
-  - `completed` → green (`#2e7d52`)
-  - `paused` → muted yellow (`#8a7a2f`)
-  - `dropped` → muted red (`#7a2e2e`)
-- `GameFormModal`: inherits dark theme from ConfigProvider — no structural change
+- El `<Card>` envolvente en `GamesPage` usa fondo `--bg-surface` (heredado del token de ConfigProvider)
+- Un encabezado de sección arriba de la tarjeta: "TU COLECCIÓN" en Bebas Neue + una pequeña marca de logo
+- `GamesToolbar`: el `<Button type="primary">` de "Crear juego" hereda el rojo de ConfigProvider — no se necesita cambio
+- `GamesTable`: filas oscuras del tema oscuro de ConfigProvider — no se necesita cambio
+- `StatusTag`: colores actualizados para usar la paleta ember:
+  - `backlog` → gris oscuro (`#3a3836`)
+  - `playing` → naranja ember (`#e07a2f`)
+  - `completed` → verde (`#2e7d52`)
+  - `paused` → amarillo apagado (`#8a7a2f`)
+  - `dropped` → rojo apagado (`#7a2e2e`)
+- `GameFormModal`: hereda el tema oscuro de ConfigProvider — sin cambio estructural
 
 ---
 
 ## 8. Routing
 
-No routing library is added. The app remains a single page. The header search filters the collection table via `GamesContext`. There is no navigation between pages.
+No se agrega ninguna librería de routing. La aplicación sigue siendo de una sola página. La búsqueda del header filtra la tabla de la colección vía `GamesContext`. No hay navegación entre páginas.
 
 ---
 
-## 9. File Structure Changes
+## 9. Cambios en la estructura de archivos
 
-### New files
+### Archivos nuevos
 ```
 src/
   features/
@@ -342,36 +342,36 @@ src/
       types.ts
   shared/
     ui/
-      HeaderSearch.tsx        ← extracted from AppLayout
-      LoginButton.tsx         ← extracted from AppLayout
+      HeaderSearch.tsx        ← extraído de AppLayout
+      LoginButton.tsx         ← extraído de AppLayout
 public/
-  noise.svg                   ← background texture
-.env.local                    ← IGDB credentials (git-ignored)
+  noise.svg                   ← textura de fondo
+.env.local                    ← credenciales de IGDB (ignorado por git)
 docs/
   superpowers/
     specs/
       2026-04-13-ember-redesign-design.md
 ```
 
-### Modified files
+### Archivos modificados
 ```
-src/index.css                 ← full replacement of CSS variables + fonts
-src/main.tsx                  ← add ConfigProvider theme tokens
-src/shared/ui/AppLayout.tsx   ← full rewrite: sticky header, 3-zone layout
-src/shared/ui/StatusTag.tsx   ← updated color mapping
-src/App.tsx                   ← wrap with AuthProvider, add PopularGamesSection
-vite.config.ts                ← add IGDB proxy with token fetch
-index.html                    ← add Google Fonts link tags
-.gitignore                    ← ensure .env.local is listed (if not already)
+src/index.css                 ← reemplazo completo de variables CSS + fuentes
+src/main.tsx                  ← agregar tokens de tema de ConfigProvider
+src/shared/ui/AppLayout.tsx   ← reescritura completa: header sticky, layout de 3 zonas
+src/shared/ui/StatusTag.tsx   ← mapeo de colores actualizado
+src/App.tsx                   ← envolver con AuthProvider, agregar PopularGamesSection
+vite.config.ts                ← agregar proxy de IGDB con obtención de token
+index.html                    ← agregar etiquetas link de Google Fonts
+.gitignore                    ← asegurar que .env.local esté listado (si no lo estaba ya)
 ```
 
 ---
 
-## 10. Out of Scope
+## 10. Fuera de alcance
 
-- Actual backend authentication
-- Persistent login state across page reloads
-- Clicking a Popular Game card to view details
-- Routing / multiple pages
-- Mobile responsiveness (not prioritized in this iteration)
-- Unit tests for new components (existing tests remain unmodified)
+- Autenticación real de backend
+- Estado de login persistente entre recargas de página
+- Hacer clic en una tarjeta de Juego Popular para ver detalles
+- Routing / múltiples páginas
+- Responsividad móvil (no priorizada en esta iteración)
+- Tests unitarios para componentes nuevos (los tests existentes permanecen sin modificar)

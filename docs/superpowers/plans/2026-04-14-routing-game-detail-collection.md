@@ -1,6 +1,6 @@
-# Routing, Game Detail Page & Enriched Collection — Implementation Plan
+# Ruteo, Página de Detalle de Juego y Colección Enriquecida — Plan de Implementación
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Para trabajadores agénticos:** SUB-SKILL REQUERIDA: Usar superpowers:subagent-driven-development (recomendado) o superpowers:executing-plans para implementar este plan tarea por tarea. Los pasos usan sintaxis de checkbox (`- [ ]`) para el seguimiento.
 
 **Goal:** Agregar React Router v7 con tres rutas (`/`, `/coleccion`, `/juego/:id`), una pantalla de detalle de juego con banner inmersivo, y una colección enriquecida con grid de tarjetas con portadas reales de IGDB.
 

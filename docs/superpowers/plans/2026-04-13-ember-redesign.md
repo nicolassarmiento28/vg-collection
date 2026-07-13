@@ -1,24 +1,24 @@
-# Ember Redesign Implementation Plan
+# Plan de implementación del rediseño Ember
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Para trabajadores agénticos:** SUB-HABILIDAD REQUERIDA: usa superpowers:subagent-driven-development (recomendado) o superpowers:executing-plans para implementar este plan tarea por tarea. Los pasos usan sintaxis de checkbox (`- [ ]`) para el seguimiento.
 
-**Goal:** Redesign `vg-collection` with the "Ember" aesthetic — dark charcoal + ember red, Bebas Neue + DM Sans typography, a new sticky header (logo + search + login), a Popular Games section via IGDB API, and a login/register modal.
+**Goal:** Rediseñar `vg-collection` con la estética "Ember" — carbón oscuro + rojo ember, tipografía Bebas Neue + DM Sans, un nuevo header fijo (logo + búsqueda + inicio de sesión), una sección de Juegos Populares mediante la API de IGDB, y un modal de inicio de sesión/registro.
 
-**Architecture:** The existing single-page React app is extended with two new feature slices (`src/features/auth/`, `src/features/popular/`) and two new shared UI components (`HeaderSearch`, `LoginButton`). The Ant Design `ConfigProvider` is given a dark theme with ember-red tokens that propagate to all existing components with no per-component overrides. The IGDB API is accessed via a Vite dev proxy that handles Twitch OAuth token fetching entirely in Node.js — no credentials ever reach the browser.
+**Architecture:** La aplicación React de una sola página existente se extiende con dos nuevos slices de features (`src/features/auth/`, `src/features/popular/`) y dos nuevos componentes de UI compartidos (`HeaderSearch`, `LoginButton`). El `ConfigProvider` de Ant Design recibe un tema oscuro con tokens rojo-ember que se propagan a todos los componentes existentes sin overrides por componente. La API de IGDB se accede mediante un proxy de desarrollo de Vite que maneja la obtención del token OAuth de Twitch enteramente en Node.js — ninguna credencial llega jamás al navegador.
 
 **Tech Stack:** React 19, TypeScript strict, Ant Design 6, Vite 8, Vitest, Google Fonts (Bebas Neue, DM Sans, JetBrains Mono)
 
 ---
 
-## Task 1: Google Fonts + CSS design tokens
+## Task 1: Google Fonts + tokens de diseño CSS
 
 **Files:**
 - Modify: `index.html`
 - Modify: `src/index.css`
 
-- [ ] **Step 1: Add Google Fonts to `index.html`**
+- [ ] **Step 1: Agregar Google Fonts a `index.html`**
 
-Replace the `<head>` section of `index.html` with:
+Reemplaza la sección `<head>` de `index.html` por:
 
 ```html
 <!doctype html>
@@ -42,9 +42,9 @@ Replace the `<head>` section of `index.html` with:
 </html>
 ```
 
-- [ ] **Step 2: Replace `src/index.css` with Ember design tokens**
+- [ ] **Step 2: Reemplazar `src/index.css` con los tokens de diseño Ember**
 
-Overwrite the entire file:
+Sobrescribe el archivo completo:
 
 ```css
 :root {
@@ -102,11 +102,11 @@ p {
 }
 ```
 
-- [ ] **Step 3: Verify the app still loads**
+- [ ] **Step 3: Verificar que la aplicación siga cargando**
 
-Run: `npm run dev` in `C:\Users\Nicolas Sarmiento\vg-collection`
+Ejecuta: `npm run dev` en `C:\Users\Nicolas Sarmiento\vg-collection`
 
-Open `http://localhost:5173` in the browser. The page should be dark with DM Sans font. No console errors. The existing table should still render.
+Abre `http://localhost:5173` en el navegador. La página debe verse oscura con la fuente DM Sans. Sin errores en la consola. La tabla existente debe seguir renderizando.
 
 - [ ] **Step 4: Commit**
 
@@ -117,14 +117,14 @@ git commit -m "feat: add Ember design tokens and Google Fonts"
 
 ---
 
-## Task 2: Ant Design dark theme with ember-red tokens
+## Task 2: Tema oscuro de Ant Design con tokens rojo-ember
 
 **Files:**
 - Modify: `src/main.tsx`
 
-- [ ] **Step 1: Update `src/main.tsx` to apply the dark ember theme**
+- [ ] **Step 1: Actualizar `src/main.tsx` para aplicar el tema oscuro ember**
 
-Replace the entire file:
+Reemplaza el archivo completo:
 
 ```tsx
 import { StrictMode } from 'react'
@@ -162,12 +162,12 @@ createRoot(document.getElementById('root')!).render(
 )
 ```
 
-- [ ] **Step 2: Verify dark theme applies**
+- [ ] **Step 2: Verificar que se aplique el tema oscuro**
 
-Run the dev server. The table, buttons, inputs, and modal should now use dark backgrounds and ember-red primary color. No TypeScript errors (`npm run build` should pass).
+Ejecuta el servidor de desarrollo. La tabla, los botones, los inputs y el modal ahora deben usar fondos oscuros y el color primario rojo-ember. Sin errores de TypeScript (`npm run build` debe pasar).
 
-Run: `npm run build`
-Expected: exits with code 0, no errors.
+Ejecuta: `npm run build`
+Esperado: termina con código 0, sin errores.
 
 - [ ] **Step 3: Commit**
 
@@ -178,13 +178,13 @@ git commit -m "feat: apply Ant Design dark ember theme via ConfigProvider"
 
 ---
 
-## Task 3: Auth reducer and context
+## Task 3: Reducer y contexto de autenticación
 
 **Files:**
 - Create: `src/features/auth/state/authReducer.ts`
 - Create: `src/features/auth/state/AuthContext.tsx`
 
-- [ ] **Step 1: Create `src/features/auth/state/authReducer.ts`**
+- [ ] **Step 1: Crear `src/features/auth/state/authReducer.ts`**
 
 ```ts
 export interface AuthUser {
@@ -225,7 +225,7 @@ export function authReducer(state: AuthState, action: AuthAction): AuthState {
 }
 ```
 
-- [ ] **Step 2: Create `src/features/auth/state/AuthContext.tsx`**
+- [ ] **Step 2: Crear `src/features/auth/state/AuthContext.tsx`**
 
 ```tsx
 import { createContext, useContext, useReducer, type ReactNode } from 'react'
@@ -250,10 +250,10 @@ export function useAuthContext(): AuthContextValue {
 }
 ```
 
-- [ ] **Step 3: Verify TypeScript compiles**
+- [ ] **Step 3: Verificar que TypeScript compile**
 
-Run: `npm run build`
-Expected: exits with code 0.
+Ejecuta: `npm run build`
+Esperado: termina con código 0.
 
 - [ ] **Step 4: Commit**
 
@@ -264,12 +264,12 @@ git commit -m "feat: add AuthContext and authReducer"
 
 ---
 
-## Task 4: Login / Register modal
+## Task 4: Modal de inicio de sesión / registro
 
 **Files:**
 - Create: `src/features/auth/ui/LoginModal.tsx`
 
-- [ ] **Step 1: Create `src/features/auth/ui/LoginModal.tsx`**
+- [ ] **Step 1: Crear `src/features/auth/ui/LoginModal.tsx`**
 
 ```tsx
 import { App as AntdApp, Button, Form, Input, Modal, Typography } from 'antd'
@@ -439,10 +439,10 @@ export function LoginModal() {
 }
 ```
 
-- [ ] **Step 2: Verify TypeScript compiles**
+- [ ] **Step 2: Verificar que TypeScript compile**
 
-Run: `npm run build`
-Expected: exits with code 0.
+Ejecuta: `npm run build`
+Esperado: termina con código 0.
 
 - [ ] **Step 3: Commit**
 
@@ -453,13 +453,13 @@ git commit -m "feat: add login/register modal"
 
 ---
 
-## Task 5: Header components (Logo, HeaderSearch, LoginButton)
+## Task 5: Componentes del header (Logo, HeaderSearch, LoginButton)
 
 **Files:**
 - Create: `src/shared/ui/HeaderSearch.tsx`
 - Create: `src/shared/ui/LoginButton.tsx`
 
-- [ ] **Step 1: Create `src/shared/ui/HeaderSearch.tsx`**
+- [ ] **Step 1: Crear `src/shared/ui/HeaderSearch.tsx`**
 
 ```tsx
 import { Input } from 'antd'
@@ -491,7 +491,7 @@ export function HeaderSearch() {
 }
 ```
 
-- [ ] **Step 2: Create `src/shared/ui/LoginButton.tsx`**
+- [ ] **Step 2: Crear `src/shared/ui/LoginButton.tsx`**
 
 ```tsx
 import { Avatar, Button } from 'antd'
@@ -550,10 +550,10 @@ export function LoginButton() {
 }
 ```
 
-- [ ] **Step 3: Verify TypeScript compiles**
+- [ ] **Step 3: Verificar que TypeScript compile**
 
-Run: `npm run build`
-Expected: exits with code 0.
+Ejecuta: `npm run build`
+Esperado: termina con código 0.
 
 - [ ] **Step 4: Commit**
 
@@ -564,12 +564,12 @@ git commit -m "feat: add HeaderSearch and LoginButton components"
 
 ---
 
-## Task 6: Rewrite AppLayout with sticky Ember header
+## Task 6: Reescribir AppLayout con header Ember fijo
 
 **Files:**
 - Modify: `src/shared/ui/AppLayout.tsx`
 
-- [ ] **Step 1: Rewrite `src/shared/ui/AppLayout.tsx`**
+- [ ] **Step 1: Reescribir `src/shared/ui/AppLayout.tsx`**
 
 ```tsx
 import { Layout } from 'antd'
@@ -651,21 +651,21 @@ export function AppLayout({ children }: AppLayoutProps) {
 }
 ```
 
-- [ ] **Step 2: Verify the header renders**
+- [ ] **Step 2: Verificar que el header se renderice**
 
-Run dev server, open browser. You should see:
-- Dark sticky header with "▸ VG COLLECTION" on the left
-- Search bar in the center
-- "Login" pill button on the right
+Ejecuta el servidor de desarrollo, abre el navegador. Deberías ver:
+- Header fijo oscuro con "▸ VG COLLECTION" a la izquierda
+- Barra de búsqueda en el centro
+- Botón de píldora "Login" a la derecha
 
-No console errors about missing context — `HeaderSearch` and `LoginButton` both read from contexts that are provided in `App.tsx` (GamesContext) and will be provided by AuthProvider in the next task.
+Sin errores en la consola sobre contexto faltante — tanto `HeaderSearch` como `LoginButton` leen de contextos que se proveen en `App.tsx` (GamesContext) y serán provistos por AuthProvider en la siguiente tarea.
 
-> If you get a context error from `LoginButton` (AuthContext not yet provided), that is expected and will be fixed in Task 7.
+> Si obtienes un error de contexto de `LoginButton` (AuthContext aún no provisto), eso es esperado y se corregirá en la Tarea 7.
 
-- [ ] **Step 3: Verify TypeScript compiles**
+- [ ] **Step 3: Verificar que TypeScript compile**
 
-Run: `npm run build`
-Expected: exits with code 0.
+Ejecuta: `npm run build`
+Esperado: termina con código 0.
 
 - [ ] **Step 4: Commit**
 
@@ -676,12 +676,12 @@ git commit -m "feat: rewrite AppLayout with sticky Ember header"
 
 ---
 
-## Task 7: Wire AuthProvider and LoginModal into App
+## Task 7: Conectar AuthProvider y LoginModal a la App
 
 **Files:**
 - Modify: `src/App.tsx`
 
-- [ ] **Step 1: Update `src/App.tsx`**
+- [ ] **Step 1: Actualizar `src/App.tsx`**
 
 ```tsx
 import { AuthProvider } from './features/auth/state/AuthContext'
@@ -703,14 +703,14 @@ function App() {
 export default App
 ```
 
-- [ ] **Step 2: Verify login flow works end to end**
+- [ ] **Step 2: Verificar que el flujo de inicio de sesión funcione de punta a punta**
 
-Run dev server. Click "Login" — the modal should open with the ember-red top border and the VG COLLECTION logo. Fill in any email + password and submit. The modal closes, a success toast appears, and the header Login button becomes a red avatar with the email initial. Clicking the avatar logs out and restores the "Login" button.
+Ejecuta el servidor de desarrollo. Haz clic en "Login" — el modal debe abrirse con el borde superior rojo-ember y el logo VG COLLECTION. Completa cualquier email + contraseña y envía. El modal se cierra, aparece un toast de éxito, y el botón Login del header se convierte en un avatar rojo con la inicial del email. Al hacer clic en el avatar se cierra sesión y se restaura el botón "Login".
 
-- [ ] **Step 3: Verify tests still pass**
+- [ ] **Step 3: Verificar que los tests sigan pasando**
 
-Run: `npm test`
-Expected: all tests pass (or `No test files found` if none exist yet). Exit code 0.
+Ejecuta: `npm test`
+Esperado: todos los tests pasan (o `No test files found` si aún no existen). Código de salida 0.
 
 - [ ] **Step 4: Commit**
 
@@ -721,24 +721,24 @@ git commit -m "feat: wire AuthProvider and LoginModal into App"
 
 ---
 
-## Task 8: IGDB Vite proxy
+## Task 8: Proxy de Vite para IGDB
 
 **Files:**
 - Modify: `vite.config.ts`
-- Create: `.env.local` (manually by user — see note)
+- Create: `.env.local` (manualmente por el usuario — ver nota)
 
-- [ ] **Step 1: Note on `.env.local`**
+- [ ] **Step 1: Nota sobre `.env.local`**
 
-Before running the dev server after this task, you (or the user) must create `.env.local` in the project root with real credentials:
+Antes de ejecutar el servidor de desarrollo después de esta tarea, tú (o el usuario) deben crear `.env.local` en la raíz del proyecto con credenciales reales:
 
 ```
 VITE_IGDB_CLIENT_ID=your_client_id_here
 VITE_IGDB_CLIENT_SECRET=your_client_secret_here
 ```
 
-Get credentials from: https://dev.twitch.tv/console/apps — create an app, set category to "Application Integration", redirect URL to `http://localhost`. The Client ID and Client Secret appear on the app detail page. `.env.local` is already covered by `*.local` in `.gitignore`.
+Obtén las credenciales en: https://dev.twitch.tv/console/apps — crea una app, configura la categoría como "Application Integration", la URL de redirección como `http://localhost`. El Client ID y el Client Secret aparecen en la página de detalle de la app. `.env.local` ya está cubierto por `*.local` en `.gitignore`.
 
-- [ ] **Step 2: Update `vite.config.ts` with the IGDB proxy**
+- [ ] **Step 2: Actualizar `vite.config.ts` con el proxy de IGDB**
 
 ```ts
 import { defineConfig } from 'vitest/config'
@@ -786,16 +786,16 @@ export default defineConfig({
 })
 ```
 
-> **TypeScript note for the proxy type:** If `import('http-proxy').Server` causes a type error, replace the `configure` parameter type with `(proxy: import('vite').ProxyServer) => void` or simply use `// @ts-expect-error` above the `configure` line. The proxy runs in Node.js at dev time only — type precision here is low priority.
+> **Nota de TypeScript sobre el tipo del proxy:** Si `import('http-proxy').Server` causa un error de tipo, reemplaza el tipo del parámetro `configure` por `(proxy: import('vite').ProxyServer) => void` o simplemente usa `// @ts-expect-error` arriba de la línea `configure`. El proxy corre en Node.js solo en tiempo de desarrollo — la precisión de tipos aquí es de baja prioridad.
 
-- [ ] **Step 3: Verify proxy works (requires `.env.local` to be set)**
+- [ ] **Step 3: Verificar que el proxy funcione (requiere que `.env.local` esté configurado)**
 
-With `.env.local` in place, run `npm run dev`. Open the browser DevTools Network tab. The Popular Games section (added in Task 9) will trigger `POST /api/igdb/games`. If credentials are valid, you'll see a 200 response. If `.env.local` is missing, the proxy still starts but IGDB returns 401 — the UI shows the error state gracefully.
+Con `.env.local` en su lugar, ejecuta `npm run dev`. Abre la pestaña Network de las DevTools del navegador. La sección de Juegos Populares (agregada en la Tarea 9) disparará `POST /api/igdb/games`. Si las credenciales son válidas, verás una respuesta 200. Si `.env.local` falta, el proxy igual arranca pero IGDB devuelve 401 — la UI muestra el estado de error de forma elegante.
 
-- [ ] **Step 4: Verify TypeScript compiles**
+- [ ] **Step 4: Verificar que TypeScript compile**
 
-Run: `npm run build`
-Expected: exits with code 0.
+Ejecuta: `npm run build`
+Esperado: termina con código 0.
 
 - [ ] **Step 5: Commit**
 
@@ -806,13 +806,13 @@ git commit -m "feat: add Vite IGDB proxy with Twitch OAuth token caching"
 
 ---
 
-## Task 9: IGDB types and data-fetching hook
+## Task 9: Tipos de IGDB y hook de obtención de datos
 
 **Files:**
 - Create: `src/features/popular/types.ts`
 - Create: `src/features/popular/hooks/useIgdbPopularGames.ts`
 
-- [ ] **Step 1: Create `src/features/popular/types.ts`**
+- [ ] **Step 1: Crear `src/features/popular/types.ts`**
 
 ```ts
 export interface IgdbGame {
@@ -825,7 +825,7 @@ export interface IgdbGame {
 }
 ```
 
-- [ ] **Step 2: Create `src/features/popular/hooks/useIgdbPopularGames.ts`**
+- [ ] **Step 2: Crear `src/features/popular/hooks/useIgdbPopularGames.ts`**
 
 ```ts
 import { useEffect, useState } from 'react'
@@ -879,10 +879,10 @@ export function useIgdbPopularGames(): UseIgdbPopularGamesResult {
 }
 ```
 
-- [ ] **Step 3: Verify TypeScript compiles**
+- [ ] **Step 3: Verificar que TypeScript compile**
 
-Run: `npm run build`
-Expected: exits with code 0.
+Ejecuta: `npm run build`
+Esperado: termina con código 0.
 
 - [ ] **Step 4: Commit**
 
@@ -893,12 +893,12 @@ git commit -m "feat: add IgdbGame types and useIgdbPopularGames hook"
 
 ---
 
-## Task 10: PopularGameCard and skeleton
+## Task 10: PopularGameCard y skeleton
 
 **Files:**
 - Create: `src/features/popular/ui/PopularGameCard.tsx`
 
-- [ ] **Step 1: Create `src/features/popular/ui/PopularGameCard.tsx`**
+- [ ] **Step 1: Crear `src/features/popular/ui/PopularGameCard.tsx`**
 
 ```tsx
 import type { IgdbGame } from '../types'
@@ -1029,10 +1029,10 @@ export function PopularGameCardSkeleton() {
 }
 ```
 
-- [ ] **Step 2: Verify TypeScript compiles**
+- [ ] **Step 2: Verificar que TypeScript compile**
 
-Run: `npm run build`
-Expected: exits with code 0.
+Ejecuta: `npm run build`
+Esperado: termina con código 0.
 
 - [ ] **Step 3: Commit**
 
@@ -1048,7 +1048,7 @@ git commit -m "feat: add PopularGameCard and skeleton component"
 **Files:**
 - Create: `src/features/popular/ui/PopularGamesSection.tsx`
 
-- [ ] **Step 1: Create `src/features/popular/ui/PopularGamesSection.tsx`**
+- [ ] **Step 1: Crear `src/features/popular/ui/PopularGamesSection.tsx`**
 
 ```tsx
 import { useIgdbPopularGames } from '../hooks/useIgdbPopularGames'
@@ -1098,10 +1098,10 @@ export function PopularGamesSection() {
 }
 ```
 
-- [ ] **Step 2: Verify TypeScript compiles**
+- [ ] **Step 2: Verificar que TypeScript compile**
 
-Run: `npm run build`
-Expected: exits with code 0.
+Ejecuta: `npm run build`
+Esperado: termina con código 0.
 
 - [ ] **Step 3: Commit**
 
@@ -1112,13 +1112,13 @@ git commit -m "feat: add PopularGamesSection with horizontal scroll card row"
 
 ---
 
-## Task 12: Add PopularGamesSection to App and add collection heading
+## Task 12: Agregar PopularGamesSection a la App y agregar el encabezado de colección
 
 **Files:**
 - Modify: `src/App.tsx`
 - Modify: `src/features/games/ui/GamesPage.tsx`
 
-- [ ] **Step 1: Update `src/App.tsx` to include `PopularGamesSection`**
+- [ ] **Step 1: Actualizar `src/App.tsx` para incluir `PopularGamesSection`**
 
 ```tsx
 import { AuthProvider } from './features/auth/state/AuthContext'
@@ -1142,9 +1142,9 @@ function App() {
 export default App
 ```
 
-- [ ] **Step 2: Add "TU COLECCIÓN" section heading above the card in `GamesPage.tsx`**
+- [ ] **Step 2: Agregar el encabezado de sección "TU COLECCIÓN" sobre la tarjeta en `GamesPage.tsx`**
 
-In `src/features/games/ui/GamesPage.tsx`, find the `return (` statement and add a heading before the `<Card>`:
+En `src/features/games/ui/GamesPage.tsx`, busca la sentencia `return (` y agrega un encabezado antes del `<Card>`:
 
 ```tsx
   return (
@@ -1178,7 +1178,7 @@ In `src/features/games/ui/GamesPage.tsx`, find the `return (` statement and add 
   )
 ```
 
-The full updated `return` block for `GamesPage.tsx`:
+El bloque `return` completo actualizado para `GamesPage.tsx`:
 
 ```tsx
   return (
@@ -1226,18 +1226,18 @@ The full updated `return` block for `GamesPage.tsx`:
   )
 ```
 
-- [ ] **Step 3: Verify the page renders correctly**
+- [ ] **Step 3: Verificar que la página se renderice correctamente**
 
-Run dev server. The page should show:
-1. Sticky dark header with logo, search, login button
-2. "POPULAR AHORA" section with 8 skeleton cards (or real cards if `.env.local` is set)
-3. "▸ TU COLECCIÓN" heading
-4. The existing collection card with toolbar and table
+Ejecuta el servidor de desarrollo. La página debe mostrar:
+1. Header fijo oscuro con logo, búsqueda, botón de inicio de sesión
+2. Sección "POPULAR AHORA" con 8 tarjetas skeleton (o tarjetas reales si `.env.local` está configurado)
+3. Encabezado "▸ TU COLECCIÓN"
+4. La tarjeta de colección existente con toolbar y tabla
 
-- [ ] **Step 4: Verify tests still pass**
+- [ ] **Step 4: Verificar que los tests sigan pasando**
 
-Run: `npm test`
-Expected: all existing tests pass, exit code 0.
+Ejecuta: `npm test`
+Esperado: todos los tests existentes pasan, código de salida 0.
 
 - [ ] **Step 5: Commit**
 
@@ -1248,14 +1248,14 @@ git commit -m "feat: wire PopularGamesSection and add TU COLECCIÓN heading"
 
 ---
 
-## Task 13: Update StatusTag ember palette
+## Task 13: Actualizar la paleta ember de StatusTag
 
 **Files:**
 - Modify: `src/shared/ui/StatusTag.tsx`
 
-- [ ] **Step 1: Update `src/shared/ui/StatusTag.tsx`**
+- [ ] **Step 1: Actualizar `src/shared/ui/StatusTag.tsx`**
 
-Replace the entire file:
+Reemplaza el archivo completo:
 
 ```tsx
 import { Tag } from 'antd'
@@ -1294,19 +1294,19 @@ export function StatusTag({ status }: StatusTagProps) {
 }
 ```
 
-- [ ] **Step 2: Verify visually**
+- [ ] **Step 2: Verificar visualmente**
 
-Run dev server. Add a game (or use existing ones). Status tags in the table should render in ember-palette colors against the dark background.
+Ejecuta el servidor de desarrollo. Agrega un juego (o usa los existentes). Las etiquetas de estado en la tabla deben renderizarse con los colores de la paleta ember contra el fondo oscuro.
 
-- [ ] **Step 3: Verify TypeScript compiles**
+- [ ] **Step 3: Verificar que TypeScript compile**
 
-Run: `npm run build`
-Expected: exits with code 0.
+Ejecuta: `npm run build`
+Esperado: termina con código 0.
 
-- [ ] **Step 4: Run full test suite**
+- [ ] **Step 4: Ejecutar la suite completa de tests**
 
-Run: `npm test`
-Expected: all tests pass, exit code 0.
+Ejecuta: `npm test`
+Esperado: todos los tests pasan, código de salida 0.
 
 - [ ] **Step 5: Commit**
 
@@ -1317,29 +1317,28 @@ git commit -m "feat: update StatusTag colors to ember palette"
 
 ---
 
-## Self-Review Checklist
+## Lista de autorrevisión
 
-After all tasks are committed, verify the following spec requirements are met:
+Después de que todas las tareas estén confirmadas (commit), verifica que se cumplan los siguientes requisitos de la especificación:
 
-| Spec requirement | Task | Status |
+| Requisito de la especificación | Tarea | Estado |
 |---|---|---|
-| CSS design tokens (--bg, --accent, etc.) | Task 1 | ✓ |
-| Google Fonts (Bebas Neue, DM Sans, JetBrains Mono) | Task 1 | ✓ |
-| Noise texture on body | Task 1 | ✓ |
-| Ant Design dark algorithm + ember tokens | Task 2 | ✓ |
-| AuthReducer + AuthContext | Task 3 | ✓ |
-| Login/Register modal with view toggle | Task 4 | ✓ |
-| HeaderSearch (dispatches to GamesContext) | Task 5 | ✓ |
-| LoginButton (avatar when logged in) | Task 5 | ✓ |
-| Sticky header with 3 zones | Task 6 | ✓ |
-| AuthProvider + LoginModal wired into App | Task 7 | ✓ |
-| Vite IGDB proxy with token caching | Task 8 | ✓ |
-| IgdbGame type + useIgdbPopularGames hook | Task 9 | ✓ |
-| PopularGameCard with hover glow | Task 10 | ✓ |
-| Skeleton loading state (8 cards) | Task 10 | ✓ |
-| PopularGamesSection with horizontal scroll | Task 11 | ✓ |
-| Error state message | Task 11 | ✓ |
-| PopularGamesSection mounted in App | Task 12 | ✓ |
-| "TU COLECCIÓN" heading in GamesPage | Task 12 | ✓ |
-| StatusTag ember palette colors | Task 13 | ✓ |
-| .gitignore covers .env.local (*.local) | Pre-existing | ✓ |
+| Tokens de diseño CSS (--bg, --accent, etc.) | Tarea 1 | ✓ |
+| Google Fonts (Bebas Neue, DM Sans, JetBrains Mono) | Tarea 1 | ✓ |
+| Textura de ruido en el body | Tarea 1 | ✓ |
+| Algoritmo oscuro de Ant Design + tokens ember | Tarea 2 | ✓ |
+| AuthReducer + AuthContext | Tarea 3 | ✓ |
+| Modal de inicio de sesión/registro con alternancia de vista | Tarea 4 | ✓ |
+| HeaderSearch (despacha a GamesContext) | Tarea 5 | ✓ |
+| LoginButton (avatar cuando hay sesión iniciada) | Tarea 5 | ✓ |
+| Header fijo con 3 zonas | Tarea 6 | ✓ |
+| AuthProvider + LoginModal conectados a la App | Tarea 7 | ✓ |
+| Proxy de Vite para IGDB con caché de token | Tarea 8 | ✓ |
+| Tipo IgdbGame + hook useIgdbPopularGames | Tarea 9 | ✓ |
+| PopularGameCard con brillo al pasar el mouse | Tarea 10 | ✓ |
+| Estado de carga skeleton (8 tarjetas) | Tarea 10 | ✓ |
+| PopularGamesSection con scroll horizontal | Tarea 11 | ✓ |
+| Mensaje de estado de error | Tarea 11 | ✓ |
+| PopularGamesSection montado en la App | Tarea 12 | ✓ |
+| Encabezado "TU COLECCIÓN" en GamesPage | Tarea 12 | ✓ |
+| Colores de la paleta ember en StatusTag | Tarea 13 | ✓ |

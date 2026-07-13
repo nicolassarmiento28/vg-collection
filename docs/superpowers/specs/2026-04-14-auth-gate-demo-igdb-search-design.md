@@ -1,96 +1,96 @@
-# Spec: Auth Gate + Demo Credentials + IGDB Header Search
+# Spec: Barrera de autenticación + Credenciales demo + Búsqueda IGDB en el header
 
-**Date:** 2026-04-14  
-**Status:** Approved
-
----
-
-## Overview
-
-Three focused improvements to the vg-collection Ember app:
-
-1. **Auth gate on Tu Colección** — the collection section is hidden until the user logs in.
-2. **Demo credentials card in login modal** — a visible hint showing the test email and password.
-3. **IGDB autocomplete in header search** — the header search bar queries IGDB as the user types and pre-fills the game form modal on selection.
+**Fecha:** 2026-04-14  
+**Estado:** Aprobado
 
 ---
 
-## 1. Auth Gate — Tu Colección
+## Resumen general
 
-### Behavior
+Tres mejoras puntuales a la app Ember de vg-collection:
 
-- `GamesPage` is only rendered when `state.isLoggedIn === true` (from `AuthContext`).
-- When the user is **not** logged in, a placeholder section is shown in its place:
-  - Same `▸ TU COLECCIÓN` heading (Bebas Neue, ember accent).
-  - A centered block with a lock icon (`🔒` or Ant Design `LockOutlined`), the text "Inicia sesión para ver tu colección", and a primary button "Iniciar sesión" that dispatches `{ type: 'openModal' }`.
-- When the user **logs in**, the placeholder disappears and `GamesPage` renders normally.
-- When the user **logs out**, `GamesPage` unmounts and the placeholder reappears.
-
-### Implementation
-
-- Change is contained to `App.tsx`: read `state.isLoggedIn` from `useAuthContext`, conditionally render `<GamesPage />` or `<CollectionGatePlaceholder />`.
-- `CollectionGatePlaceholder` is a small inline component in `App.tsx` (no separate file needed).
+1. **Barrera de autenticación en Tu Colección** — la sección de colección se oculta hasta que el usuario inicia sesión.
+2. **Tarjeta de credenciales demo en el modal de login** — una pista visible que muestra el email y la contraseña de prueba.
+3. **Autocompletado de IGDB en la búsqueda del header** — la barra de búsqueda del header consulta a IGDB mientras el usuario escribe y precarga el modal del formulario de juego al seleccionar.
 
 ---
 
-## 2. Demo Credentials Card in Login Modal
+## 1. Barrera de autenticación — Tu Colección
 
-### Behavior
+### Comportamiento
 
-- In the login view of `LoginModal`, display an Ant Design `Alert` component above the form fields.
-- The alert shows:
+- `GamesPage` solo se renderiza cuando `state.isLoggedIn === true` (desde `AuthContext`).
+- Cuando el usuario **no** ha iniciado sesión, se muestra una sección de placeholder en su lugar:
+  - Mismo encabezado `▸ TU COLECCIÓN` (Bebas Neue, acento ember).
+  - Un bloque centrado con un ícono de candado (`🔒` o `LockOutlined` de Ant Design), el texto "Inicia sesión para ver tu colección", y un botón primario "Iniciar sesión" que despacha `{ type: 'openModal' }`.
+- Cuando el usuario **inicia sesión**, el placeholder desaparece y `GamesPage` se renderiza normalmente.
+- Cuando el usuario **cierra sesión**, `GamesPage` se desmonta y el placeholder reaparece.
+
+### Implementación
+
+- El cambio se limita a `App.tsx`: leer `state.isLoggedIn` desde `useAuthContext`, renderizar condicionalmente `<GamesPage />` o `<CollectionGatePlaceholder />`.
+- `CollectionGatePlaceholder` es un pequeño componente inline en `App.tsx` (no se necesita un archivo separado).
+
+---
+
+## 2. Tarjeta de credenciales demo en el modal de login
+
+### Comportamiento
+
+- En la vista de login de `LoginModal`, mostrar un componente `Alert` de Ant Design arriba de los campos del formulario.
+- El alert muestra:
   ```
   Usuario demo
   Email: demo@vgcollection.app  |  Contraseña: demo1234
   ```
-- Style: `type="info"`, custom styles matching the ember dark theme — dark semi-transparent background (`rgba(255,255,255,0.04)`), left border `4px solid var(--accent)`, no default Ant Design blue icon coloring.
-- The alert is only shown in the **login view** (not register view).
-- The mock auth accepts **any** email and password — the demo credentials are just a hint for convenience.
+- Estilo: `type="info"`, estilos personalizados acordes al tema oscuro ember — fondo semitransparente oscuro (`rgba(255,255,255,0.04)`), borde izquierdo `4px solid var(--accent)`, sin el coloreado azul por defecto del ícono de Ant Design.
+- El alert solo se muestra en la **vista de login** (no en la vista de registro).
+- La autenticación simulada acepta **cualquier** email y contraseña — las credenciales demo son solo una pista por conveniencia.
 
-### Implementation
+### Implementación
 
-- Edit `LoginModal.tsx`: add an `<Alert>` before the login `<Form>` block.
+- Editar `LoginModal.tsx`: agregar un `<Alert>` antes del bloque `<Form>` de login.
 
 ---
 
-## 3. IGDB Autocomplete in Header Search
+## 3. Autocompletado de IGDB en la búsqueda del header
 
-### Behavior
+### Comportamiento
 
-- The header `HeaderSearch` component becomes an `AutoComplete` backed by a live IGDB search.
-- **Debounce:** 400 ms after the user stops typing before firing the IGDB request.
-- **Minimum query length:** 2 characters. Below that, the dropdown is empty.
-- **Dropdown options** each show:
-  - Game cover thumbnail (32×32 px, `object-fit: cover`, rounded 4px) — fallback gray box if no cover.
-  - Game name (bold, white).
-  - Release year (muted, small).
-- **On select:** Opens `GameFormModal` in `create` mode with pre-filled fields:
+- El componente `HeaderSearch` del header se convierte en un `AutoComplete` respaldado por una búsqueda en vivo de IGDB.
+- **Debounce:** 400 ms después de que el usuario deja de escribir antes de disparar el request a IGDB.
+- **Longitud mínima de consulta:** 2 caracteres. Por debajo de eso, el desplegable está vacío.
+- **Cada opción del desplegable** muestra:
+  - Miniatura de portada del juego (32×32 px, `object-fit: cover`, bordes redondeados de 4px) — caja gris de respaldo si no hay portada.
+  - Nombre del juego (negrita, blanco).
+  - Año de lanzamiento (atenuado, pequeño).
+- **Al seleccionar:** Abre `GameFormModal` en modo `create` con campos precargados:
   - `title` ← `game.name`
-  - `year` ← year extracted from `game.first_release_date` (Unix timestamp → full year)
-  - `platform` ← first matched platform abbreviation mapped to local `Platform` enum; falls back to `'other'` if no match.
-  - `status`, `genre`, `rating`, `notes` ← left empty for user to fill.
-- **Loading state:** Show a spinning indicator inside the dropdown while fetching.
-- **Error / no results:** Show "Sin resultados" option (disabled) if the query returns nothing.
-- The search bar no longer dispatches `setSearch` to `GamesContext`. The collection toolbar's own search field (`GamesToolbar`) continues to filter the local collection independently.
+  - `year` ← año extraído de `game.first_release_date` (timestamp Unix → año completo)
+  - `platform` ← la primera abreviatura de plataforma coincidente mapeada al enum local `Platform`; recae en `'other'` si no hay coincidencia.
+  - `status`, `genre`, `rating`, `notes` ← se dejan vacíos para que el usuario los complete.
+- **Estado de carga:** Mostrar un indicador giratorio dentro del desplegable mientras se hace el fetch.
+- **Error / sin resultados:** Mostrar la opción "Sin resultados" (deshabilitada) si la consulta no devuelve nada.
+- La barra de búsqueda ya no despacha `setSearch` a `GamesContext`. El propio campo de búsqueda de la barra de herramientas de la colección (`GamesToolbar`) sigue filtrando la colección local de forma independiente.
 
-### New hook: `useIgdbSearch`
+### Nuevo hook: `useIgdbSearch`
 
-File: `src/features/popular/hooks/useIgdbSearch.ts`
+Archivo: `src/features/popular/hooks/useIgdbSearch.ts`
 
 ```ts
 function useIgdbSearch(query: string): { results: IgdbGame[]; loading: boolean }
 ```
 
-- Uses `useEffect` with a `setTimeout` debounce (400 ms).
-- Query sent to `/api/igdb/games` via POST with body:
+- Usa `useEffect` con un debounce por `setTimeout` (400 ms).
+- La consulta se envía a `/api/igdb/games` vía POST con body:
   ```
   search "{query}"; fields name,cover.url,first_release_date,platforms.abbreviation; limit 8;
   ```
-- Returns up to 8 results.
-- Clears results when query is shorter than 2 characters.
-- Cancels in-flight requests on cleanup with an `abortController`.
+- Devuelve hasta 8 resultados.
+- Limpia los resultados cuando la consulta tiene menos de 2 caracteres.
+- Cancela los requests en curso en la limpieza (`cleanup`) con un `abortController`.
 
-### Platform mapping
+### Mapeo de plataformas
 
 ```ts
 const IGDB_PLATFORM_MAP: Record<string, Platform> = {
@@ -103,20 +103,20 @@ const IGDB_PLATFORM_MAP: Record<string, Platform> = {
 }
 ```
 
-First platform abbreviation in the IGDB result that maps to a known value is used; otherwise `'other'`.
+Se usa la primera abreviatura de plataforma en el resultado de IGDB que se mapee a un valor conocido; en caso contrario, `'other'`.
 
-### `HeaderSearch` changes
+### Cambios en `HeaderSearch`
 
-- Replace `Input.Search` with Ant Design `AutoComplete` wrapping a custom `Input`.
-- `options` prop is derived from `useIgdbSearch` results, rendered as custom `label` nodes.
-- `onSelect` callback: maps selected `IgdbGame` to `GameFormValues` partial, then calls a new prop `onGameSelect(game: IgdbGame)` passed down from `App.tsx`.
-- Loading spinner shown via `suffix` on the inner `Input` when `loading === true`.
+- Reemplazar `Input.Search` con `AutoComplete` de Ant Design envolviendo un `Input` personalizado.
+- La prop `options` se deriva de los resultados de `useIgdbSearch`, renderizados como nodos `label` personalizados.
+- Callback `onSelect`: mapea el `IgdbGame` seleccionado a un parcial de `GameFormValues`, luego llama a una nueva prop `onGameSelect(game: IgdbGame)` pasada desde `App.tsx`.
+- El spinner de carga se muestra vía `suffix` en el `Input` interno cuando `loading === true`.
 
-### `GameFormModal` pre-fill
+### Precarga de `GameFormModal`
 
-`GameFormModal` already accepts a `game?: Game` prop for edit mode. For IGDB pre-fill in create mode, a new optional prop `prefill?: Partial<GameFormValues>` is added. When provided and `mode === 'create'`, `form.setFieldsValue(prefill)` is called in the `useEffect`.
+`GameFormModal` ya acepta una prop `game?: Game` para el modo de edición. Para la precarga desde IGDB en modo creación, se agrega una nueva prop opcional `prefill?: Partial<GameFormValues>`. Cuando se provee y `mode === 'create'`, se llama a `form.setFieldsValue(prefill)` en el `useEffect`.
 
-### State wiring in `App.tsx`
+### Conexión de estado en `App.tsx`
 
 ```tsx
 const [igdbPrefill, setIgdbPrefill] = useState<Partial<GameFormValues> | undefined>()
@@ -128,36 +128,36 @@ function handleIgdbSelect(game: IgdbGame) {
 }
 ```
 
-`GameFormModal` is lifted from `GamesPage` to `App.tsx` for this IGDB-triggered open path, OR a shared open-modal event is propagated via context. **Recommended:** keep `GameFormModal` inside `GamesPage` and add an imperative ref or a new context action `openCreateModal(prefill?)` to `GamesContext`.
+`GameFormModal` se eleva de `GamesPage` a `App.tsx` para esta ruta de apertura disparada por IGDB, O se propaga un evento compartido de apertura de modal vía context. **Recomendado:** mantener `GameFormModal` dentro de `GamesPage` y agregar una ref imperativa o una nueva acción de context `openCreateModal(prefill?)` a `GamesContext`.
 
 ---
 
-## Architecture Summary
+## Resumen de arquitectura
 
-| File | Change |
+| Archivo | Cambio |
 |---|---|
-| `src/App.tsx` | Auth gate conditional render, `CollectionGatePlaceholder` inline component |
-| `src/features/auth/ui/LoginModal.tsx` | Add demo credentials `Alert` |
-| `src/shared/ui/HeaderSearch.tsx` | Replace `Input.Search` with `AutoComplete` + `useIgdbSearch` |
-| `src/features/popular/hooks/useIgdbSearch.ts` | New hook |
-| `src/features/popular/types.ts` | No changes needed |
-| `src/features/games/ui/GamesPage.tsx` | Accept `openModal` trigger from context or expose ref |
-| `src/features/games/state/gamesReducer.ts` | Add `openCreateModal(prefill?)` action if context approach chosen |
-| `src/features/games/state/GamesContext.tsx` | Wire new action if context approach chosen |
+| `src/App.tsx` | Renderizado condicional de la barrera de autenticación, componente inline `CollectionGatePlaceholder` |
+| `src/features/auth/ui/LoginModal.tsx` | Agregar `Alert` de credenciales demo |
+| `src/shared/ui/HeaderSearch.tsx` | Reemplazar `Input.Search` con `AutoComplete` + `useIgdbSearch` |
+| `src/features/popular/hooks/useIgdbSearch.ts` | Hook nuevo |
+| `src/features/popular/types.ts` | No requiere cambios |
+| `src/features/games/ui/GamesPage.tsx` | Aceptar el disparador `openModal` desde el context o exponer una ref |
+| `src/features/games/state/gamesReducer.ts` | Agregar acción `openCreateModal(prefill?)` si se elige el enfoque de context |
+| `src/features/games/state/GamesContext.tsx` | Conectar la nueva acción si se elige el enfoque de context |
 
 ---
 
-## Error Handling
+## Manejo de errores
 
-- IGDB search errors are swallowed silently — the dropdown shows "Sin resultados" (same as empty).
-- If the cover URL is missing, a neutral gray placeholder box is shown.
-- If the IGDB proxy returns 401/500, the dropdown shows "Sin resultados" without crashing.
+- Los errores de búsqueda en IGDB se descartan silenciosamente — el desplegable muestra "Sin resultados" (igual que cuando está vacío).
+- Si falta la URL de la portada, se muestra una caja de placeholder gris neutro.
+- Si el proxy de IGDB devuelve 401/500, el desplegable muestra "Sin resultados" sin fallar.
 
 ---
 
-## Out of Scope
+## Fuera de alcance
 
-- Persistent login (localStorage / session).
-- Real authentication backend.
-- Pagination of IGDB search results.
-- Clicking a Popular Now card to pre-fill the form.
+- Login persistente (localStorage / sesión).
+- Backend de autenticación real.
+- Paginación de los resultados de búsqueda de IGDB.
+- Hacer clic en una tarjeta de Popular Ahora para precargar el formulario.

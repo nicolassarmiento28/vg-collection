@@ -1,36 +1,36 @@
-# Carousel Arrows + Collection Detail IGDB Enrichment — Implementation Plan
+# Flechas del Carrusel + Enriquecimiento IGDB del Detalle de Colección — Plan de implementación
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Para trabajadores agénticos:** SUB-SKILL REQUERIDA: usa superpowers:subagent-driven-development (recomendado) o superpowers:executing-plans para implementar este plan tarea por tarea. Los pasos usan la sintaxis de checkbox (`- [ ]`) para el seguimiento.
 
-**Goal:** Add circular navigation arrows to the "Mejor Valorados" carousel, and enrich the collection detail page with IGDB data (hero banner, description, rating, stats grid) for games that have an `igdbId`.
+**Goal:** Añadir flechas de navegación circulares al carrusel "Mejor Valorados", y enriquecer la página de detalle de colección con datos de IGDB (banner hero, descripción, rating, grilla de estadísticas) para los juegos que tienen un `igdbId`.
 
-**Architecture:** Two independent changes to existing components. Task 1 adds a `useRef` + scroll listener to `PopularGamesSection.tsx` to drive `‹`/`›` buttons. Task 2 reworks `CollectionDetailPage.tsx` to call `useIgdbGameDetail` when `game.igdbId` is set and renders the IGDB layout (reusing the same JSX structure as `GameDetailPage.tsx`) followed by a "En tu colección" section with user data.
+**Architecture:** Dos cambios independientes sobre componentes existentes. La Task 1 añade un `useRef` + listener de scroll a `PopularGamesSection.tsx` para manejar los botones `‹`/`›`. La Task 2 rehace `CollectionDetailPage.tsx` para llamar a `useIgdbGameDetail` cuando `game.igdbId` está definido y renderiza el layout de IGDB (reutilizando la misma estructura JSX que `GameDetailPage.tsx`) seguido de una sección "En tu colección" con los datos del usuario.
 
 **Tech Stack:** React 19, TypeScript strict, Ant Design 6, Vite, Vitest
 
 ---
 
-## File Map
+## Mapa de archivos
 
-| File | Change |
+| Archivo | Cambio |
 |---|---|
-| `src/features/popular/ui/PopularGamesSection.tsx` | Add `scrollRef`, scroll listener, `canScrollLeft`/`canScrollRight` state, two arrow buttons |
-| `src/features/collection/ui/CollectionDetailPage.tsx` | Add `useIgdbGameDetail` call when `igdbId` exists; render IGDB layout + "En tu colección" section |
+| `src/features/popular/ui/PopularGamesSection.tsx` | Añadir `scrollRef`, listener de scroll, estado `canScrollLeft`/`canScrollRight`, dos botones de flecha |
+| `src/features/collection/ui/CollectionDetailPage.tsx` | Añadir la llamada a `useIgdbGameDetail` cuando existe `igdbId`; renderizar el layout de IGDB + sección "En tu colección" |
 
-No new files. No type changes. No storage changes.
+Sin archivos nuevos. Sin cambios de tipos. Sin cambios de almacenamiento.
 
 ---
 
-## Task 1 — Carousel arrows in PopularGamesSection
+## Task 1 — Flechas del carrusel en PopularGamesSection
 
 **Files:**
 - Modify: `src/features/popular/ui/PopularGamesSection.tsx`
 
-The carousel scroll container needs a `ref`. We track `canScrollLeft` and `canScrollRight` state, updated on every scroll event and on mount (after data loads). The two buttons are absolutely-positioned over the container's left and right edges.
+El contenedor de scroll del carrusel necesita un `ref`. Se rastrea el estado `canScrollLeft` y `canScrollRight`, actualizado en cada evento de scroll y al montar (después de que cargan los datos). Los dos botones están posicionados de forma absoluta sobre los bordes izquierdo y derecho del contenedor.
 
-- [ ] **Step 1: Add ref, state and scroll handler**
+- [ ] **Step 1: Añadir ref, estado y manejador de scroll**
 
-Replace the entire file with:
+Reemplazar el archivo completo por:
 
 ```tsx
 import type React from 'react'
@@ -184,26 +184,26 @@ export function PopularGamesSection({ title, layout, hook }: PopularGamesSection
 }
 ```
 
-- [ ] **Step 2: Run dev server and verify manually**
+- [ ] **Step 2: Ejecutar el servidor de desarrollo y verificar manualmente**
 
 ```bash
 npm run dev
 ```
 
-Open http://localhost:5173. The "Mejor Valorados" section must show:
-- A `‹` button on the left edge (hidden/transparent on load since scroll is at 0)
-- A `›` button on the right edge (visible if there are more cards than fit)
-- Clicking `›` scrolls ~3 cards to the right smoothly
-- Clicking `‹` scrolls back
-- "Lanzamientos Recientes" (grid) has no arrows
+Abrir http://localhost:5173. La sección "Mejor Valorados" debe mostrar:
+- Un botón `‹` en el borde izquierdo (oculto/transparente al cargar ya que el scroll está en 0)
+- Un botón `›` en el borde derecho (visible si hay más tarjetas de las que caben)
+- Al hacer clic en `›` se hace scroll ~3 tarjetas hacia la derecha suavemente
+- Al hacer clic en `‹` se retrocede
+- "Lanzamientos Recientes" (grid) no tiene flechas
 
-- [ ] **Step 3: Run tests to make sure nothing broke**
+- [ ] **Step 3: Ejecutar tests para asegurar que nada se rompió**
 
 ```bash
 npx vitest run
 ```
 
-Expected: all 30 tests pass (no tests cover PopularGamesSection directly).
+Esperado: los 30 tests pasan (ningún test cubre `PopularGamesSection` directamente).
 
 - [ ] **Step 4: Commit**
 
@@ -214,18 +214,18 @@ git commit -m "feat: add circular navigation arrows to Mejor Valorados carousel"
 
 ---
 
-## Task 2 — Collection detail page enriched with IGDB data
+## Task 2 — Página de detalle de colección enriquecida con datos de IGDB
 
 **Files:**
 - Modify: `src/features/collection/ui/CollectionDetailPage.tsx`
 
-When `game.igdbId` is defined, call `useIgdbGameDetail(String(game.igdbId))` and render the IGDB layout (hero banner + cover + stats grid + description) followed by a "En tu colección" divider section with the user's own data. When `game.igdbId` is undefined, render the current layout unchanged.
+Cuando `game.igdbId` está definido, se llama a `useIgdbGameDetail(String(game.igdbId))` y se renderiza el layout de IGDB (banner hero + carátula + grilla de estadísticas + descripción) seguido de una sección divisoria "En tu colección" con los datos propios del usuario. Cuando `game.igdbId` no está definido, se renderiza el layout actual sin cambios.
 
-Note: `useIgdbGameDetail` accepts a `string` id (see hook signature: `useIgdbGameDetail(id: string)`).
+Nota: `useIgdbGameDetail` acepta un id de tipo `string` (ver la firma del hook: `useIgdbGameDetail(id: string)`).
 
-- [ ] **Step 1: Add IGDB-enriched layout to CollectionDetailPage**
+- [ ] **Step 1: Añadir el layout enriquecido con IGDB a CollectionDetailPage**
 
-Replace the entire file with:
+Reemplazar el archivo completo por:
 
 ```tsx
 // src/features/collection/ui/CollectionDetailPage.tsx
@@ -801,38 +801,38 @@ export function CollectionDetailPage() {
 }
 ```
 
-- [ ] **Step 2: Run TypeScript check**
+- [ ] **Step 2: Ejecutar la verificación de TypeScript**
 
 ```bash
 npx tsc --noEmit
 ```
 
-Expected: no errors.
+Esperado: sin errores.
 
-- [ ] **Step 3: Run dev server and verify manually**
+- [ ] **Step 3: Ejecutar el servidor de desarrollo y verificar manualmente**
 
 ```bash
 npm run dev
 ```
 
-Open http://localhost:5173/coleccion and click on a game that **has** `igdbId` (added via "+ Agregar a mi colección" from a game detail page). Verify:
-- Hero banner appears with cover image from IGDB
-- Title, developer, year visible in banner
-- Description, stats grid (Rating, Plataforma, Lanzamiento, Género), platform tags shown
-- "En tu colección" divider with green badge appears below
-- User's status tag, rating, pros/cons, notes visible
-- Editar / Eliminar buttons work
+Abrir http://localhost:5173/coleccion y hacer clic en un juego que **tenga** `igdbId` (añadido mediante "+ Agregar a mi colección" desde una página de detalle de juego). Verificar:
+- Aparece el banner hero con la imagen de carátula de IGDB
+- Título, desarrollador, año visibles en el banner
+- Se muestran la descripción, la grilla de estadísticas (Rating, Plataforma, Lanzamiento, Género), y las etiquetas de plataforma
+- Aparece debajo el divisor "En tu colección" con la insignia verde
+- Se ven la etiqueta de estado del usuario, el rating, los pros/contras y las notas
+- Los botones Editar / Eliminar funcionan
 
-Open a game added manually (no igdbId). Verify:
-- Old layout renders (cover/initials + title + meta + status/rating + pros/cons + notes)
+Abrir un juego añadido manualmente (sin igdbId). Verificar:
+- Se renderiza el layout anterior (carátula/iniciales + título + metadatos + estado/rating + pros/contras + notas)
 
-- [ ] **Step 4: Run tests**
+- [ ] **Step 4: Ejecutar tests**
 
 ```bash
 npx vitest run
 ```
 
-Expected: all 30 tests pass.
+Esperado: los 30 tests pasan.
 
 - [ ] **Step 5: Commit**
 

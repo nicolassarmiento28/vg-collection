@@ -1,51 +1,51 @@
-# Spec: Cover Image + Pros/Cons — vg-collection
+# Spec: Imagen de portada + Pros/Contras — vg-collection
 
-**Date:** 2026-04-14  
-**Status:** Approved  
+**Fecha:** 2026-04-14  
+**Estado:** Aprobado  
 **Stack:** React 19 + TypeScript strict + Vite + Ant Design 6 + Vitest
 
 ---
 
-## Overview
+## Resumen general
 
-Two new features:
+Dos funcionalidades nuevas:
 
-1. **Cover image** — each game in the collection can display a cover/photo, sourced from IGDB (auto) or from the user (file upload or URL paste).
-2. **Pros/Cons card** — a "Mi opinión" card on the collection game detail page listing the user's positive and negative points about the game.
+1. **Imagen de portada** — cada juego de la colección puede mostrar una portada/foto, obtenida de IGDB (automático) o del usuario (subida de archivo o pegado de URL).
+2. **Tarjeta de Pros/Contras** — una tarjeta "Mi opinión" en la página de detalle del juego de la colección que lista los puntos positivos y negativos del usuario sobre el juego.
 
-Both features surface in a **new dedicated detail page** at `/coleccion/:id` (one per collection game).
+Ambas funcionalidades se presentan en una **nueva página de detalle dedicada** en `/coleccion/:id` (una por cada juego de la colección).
 
 ---
 
-## 1. Data Model Changes
+## 1. Cambios en el modelo de datos
 
-### `Game` interface — add four optional fields
+### Interfaz `Game` — agregar cuatro campos opcionales
 
 ```ts
 // src/shared/types/game.ts
 export interface Game {
-  // ...existing fields unchanged...
-  coverUrl?: string      // URL string (IGDB CDN or user-pasted)
-  coverBase64?: string   // base64 data-URI (user file upload)
-  pros?: string          // newline-separated list of positive points
-  cons?: string          // newline-separated list of negative points
+  // ...campos existentes sin cambios...
+  coverUrl?: string      // cadena URL (CDN de IGDB o pegada por el usuario)
+  coverBase64?: string   // data-URI en base64 (subida de archivo del usuario)
+  pros?: string          // lista de puntos positivos separados por salto de línea
+  cons?: string          // lista de puntos negativos separados por salto de línea
 }
 ```
 
-**Cover resolution rule (read time):** prefer `coverBase64` → fall back to `coverUrl` → fall back to no image.
+**Regla de resolución de portada (al leer):** preferir `coverBase64` → recaer en `coverUrl` → recaer en ninguna imagen.
 
-### Storage migration
+### Migración de almacenamiento
 
-`migrateStoredGame` in `gamesStorage.ts` already handles partial records via the spread pattern. Because all four new fields are optional, existing stored records are valid as-is — no active migration logic is needed. The four fields simply default to `undefined` when absent.
+`migrateStoredGame` en `gamesStorage.ts` ya maneja registros parciales mediante el patrón de spread. Dado que los cuatro campos nuevos son opcionales, los registros almacenados existentes son válidos tal cual — no se necesita lógica de migración activa. Los cuatro campos simplemente quedan en `undefined` por defecto cuando están ausentes.
 
-`isValidGame` must be updated to accept the new optional string fields (reject if present but not a string).
+Se debe actualizar `isValidGame` para aceptar los nuevos campos de texto opcionales (rechazar si están presentes pero no son un string).
 
 ---
 
-## 2. Form — Cover Image Section
+## 2. Formulario — Sección de imagen de portada
 
-**File:** `src/features/games/ui/GameFormFields.tsx`  
-**Form values:** add to `GameFormValues` in `GameFormModal.tsx`:
+**Archivo:** `src/features/games/ui/GameFormFields.tsx`  
+**Valores del formulario:** agregar a `GameFormValues` en `GameFormModal.tsx`:
 
 ```ts
 coverUrl?: string
@@ -54,35 +54,35 @@ pros?: string
 cons?: string
 ```
 
-### Cover input UI
+### UI de entrada de portada
 
-A tab selector with two tabs labeled **"Subir archivo"** and **"Pegar URL"**, placed after the existing "Notas" field.
+Un selector de pestañas con dos pestañas etiquetadas **"Subir archivo"** y **"Pegar URL"**, ubicado después del campo existente "Notas".
 
-**Tab: Subir archivo**  
-- Ant Design `Upload` component, `accept="image/*"`, single file, no server upload (`beforeUpload` returns `false`)  
-- On file select: read via `FileReader.readAsDataURL`, store result in `coverBase64` form field, clear `coverUrl`  
-- Shows a small preview (max 120 px tall) below the upload button when a file is selected  
+**Pestaña: Subir archivo**  
+- Componente `Upload` de Ant Design, `accept="image/*"`, archivo único, sin subida al servidor (`beforeUpload` devuelve `false`)  
+- Al seleccionar un archivo: se lee vía `FileReader.readAsDataURL`, se almacena el resultado en el campo de formulario `coverBase64`, se limpia `coverUrl`  
+- Muestra una pequeña vista previa (máximo 120 px de alto) debajo del botón de subida cuando se selecciona un archivo  
 
-**Tab: Pegar URL**  
-- A plain text input bound to `coverUrl` form field, placeholder `https://...`  
-- On change: clear `coverBase64`  
-- Shows a small preview below the input (rendered as `<img>`) when the field is non-empty. Preview only appears if the URL looks valid (starts with `http`). No network validation.
+**Pestaña: Pegar URL**  
+- Un input de texto simple vinculado al campo de formulario `coverUrl`, placeholder `https://...`  
+- Al cambiar: se limpia `coverBase64`  
+- Muestra una pequeña vista previa debajo del input (renderizada como `<img>`) cuando el campo no está vacío. La vista previa solo aparece si la URL parece válida (comienza con `http`). Sin validación de red.
 
-**IGDB games:** when the form is opened in create mode with an `igdbId` prefill that also carries a `coverUrl` in the prefill object (set by the caller — e.g., the IGDB detail page — before opening the modal), `coverUrl` is pre-populated in the form. The cover tabs are still visible so the user can override if desired. The `GameFormPrefill` type must be extended to include `coverUrl?: string`.
+**Juegos de IGDB:** cuando el formulario se abre en modo creación con una precarga de `igdbId` que también trae un `coverUrl` en el objeto de precarga (establecido por quien llama — por ejemplo, la página de detalle de IGDB — antes de abrir el modal), `coverUrl` queda prepoblado en el formulario. Las pestañas de portada siguen visibles para que el usuario pueda sobreescribirlo si lo desea. El tipo `GameFormPrefill` debe extenderse para incluir `coverUrl?: string`.
 
-**Edit mode:** load existing `coverUrl` and `coverBase64` from the `Game` object into the form on open.
+**Modo edición:** cargar el `coverUrl` y `coverBase64` existentes del objeto `Game` en el formulario al abrirlo.
 
-### Pros/Cons textarea fields
+### Campos de textarea de Pros/Contras
 
-Two `<textarea>` fields (Ant Design `Input.TextArea`), placed after the cover section:
+Dos campos `<textarea>` (`Input.TextArea` de Ant Design), ubicados después de la sección de portada:
 
-- **"Puntos positivos"** — bound to `pros`, placeholder `Un punto por línea`  
-- **"Puntos negativos"** — bound to `cons`, placeholder `Un punto por línea`  
-- Both optional, no validation
+- **"Puntos positivos"** — vinculado a `pros`, placeholder `Un punto por línea`  
+- **"Puntos negativos"** — vinculado a `cons`, placeholder `Un punto por línea`  
+- Ambos opcionales, sin validación
 
-### Form submission
+### Envío del formulario
 
-`GlobalGameFormModal` in `App.tsx` (and `CollectionPage`'s local edit handler) must pass the new fields through to the `addGame` / `editGame` dispatch:
+`GlobalGameFormModal` en `App.tsx` (y el manejador de edición local de `CollectionPage`) deben pasar los campos nuevos al despacho de `addGame` / `editGame`:
 
 ```ts
 coverUrl: values.coverUrl,
@@ -93,83 +93,83 @@ cons: values.cons,
 
 ---
 
-## 3. Collection Detail Page — `/coleccion/:id`
+## 3. Página de detalle de colección — `/coleccion/:id`
 
-**New file:** `src/features/collection/ui/CollectionDetailPage.tsx`  
-**Route:** add `<Route path="/coleccion/:id" element={<CollectionDetailPage />} />` in `App.tsx`
+**Archivo nuevo:** `src/features/collection/ui/CollectionDetailPage.tsx`  
+**Ruta:** agregar `<Route path="/coleccion/:id" element={<CollectionDetailPage />} />` en `App.tsx`
 
-### Navigation
+### Navegación
 
-- In `CollectionPage`, each game card becomes clickable (or gets a "Ver detalle" button) that navigates to `/coleccion/:gameId`.
-- The detail page has a "← Volver a mi colección" back link.
+- En `CollectionPage`, cada tarjeta de juego se vuelve clicleable (u obtiene un botón "Ver detalle") que navega a `/coleccion/:gameId`.
+- La página de detalle tiene un enlace de retorno "← Volver a mi colección".
 
-### Page layout
+### Layout de la página
 
 ```
 ┌─────────────────────────────────────────────────────┐
 │  [← Volver]                                         │
 │                                                     │
-│  [Cover image]   Title                              │
-│                  Platform · Year · Genre            │
-│                  Status badge    Rating             │
+│  [Imagen de portada]   Título                       │
+│                  Plataforma · Año · Género          │
+│                  Badge de estado    Calificación    │
 │                  [Editar] [Eliminar]                │
 │                                                     │
 │  ┌────────────┐  ┌──────────────────────────────┐   │
 │  │ Mi opinión │  │ Notas                        │   │
-│  │ (pros/cons)│  │ (free text)                  │   │
+│  │(pros/contras)│  │ (texto libre)               │   │
 │  └────────────┘  └──────────────────────────────┘   │
 └─────────────────────────────────────────────────────┘
 ```
 
-**Responsive (mobile, < md breakpoint):** single column, cover full-width at top, then header info, then "Mi opinión" card, then Notas card.
+**Responsivo (móvil, breakpoint < md):** una sola columna, portada a ancho completo arriba, luego la información del encabezado, luego la tarjeta "Mi opinión", luego la tarjeta de Notas.
 
-**Cover image display:**  
-- Shown in the top-left area, max 200 px wide, rounded corners  
-- Resolution: `coverBase64` → `coverUrl` → initials fallback (same as collection card)
+**Visualización de la imagen de portada:**  
+- Se muestra en el área superior izquierda, máximo 200 px de ancho, esquinas redondeadas  
+- Resolución: `coverBase64` → `coverUrl` → respaldo de iniciales (igual que la tarjeta de colección)
 
-**"Mi opinión" card:**  
-- Only rendered if `game.pros` has at least one non-empty line OR `game.cons` has at least one non-empty line  
-- Card title: "Mi opinión"  
-- Section "✓ Puntos positivos" in green — only rendered if pros non-empty, renders each line as a bullet  
-- Ant Design `Divider` between sections (only if both sections are rendered)  
-- Section "✗ Puntos negativos" in red — only rendered if cons non-empty, renders each line as a bullet  
+**Tarjeta "Mi opinión":**  
+- Solo se renderiza si `game.pros` tiene al menos una línea no vacía O `game.cons` tiene al menos una línea no vacía  
+- Título de la tarjeta: "Mi opinión"  
+- Sección "✓ Puntos positivos" en verde — solo se renderiza si pros no está vacío, renderiza cada línea como una viñeta  
+- `Divider` de Ant Design entre secciones (solo si ambas secciones se renderizan)  
+- Sección "✗ Puntos negativos" en rojo — solo se renderiza si cons no está vacío, renderiza cada línea como una viñeta  
 
-**Notas card:**  
-- Only rendered if `game.notes` is non-empty  
+**Tarjeta de Notas:**  
+- Solo se renderiza si `game.notes` no está vacío  
 
-**Edit / Delete:**  
-- "Editar" opens the same `GameFormModal` in edit mode  
-- "Eliminar" shows a confirm dialog, dispatches `removeGame`, then navigates back to `/coleccion`
-
----
-
-## 4. Collection Card (CollectionPage)
-
-- Cover image shown as the card's thumbnail: `coverBase64` → `coverUrl` → live IGDB cover (from `useCollectionCovers`) → initials fallback  
-- Clicking the card (or a "Ver detalle" link) navigates to `/coleccion/:id`  
-- The existing "Ver detalle" button (currently only on cards with `igdbId`) is replaced with a universal link to `/coleccion/:id`
+**Editar / Eliminar:**  
+- "Editar" abre el mismo `GameFormModal` en modo edición  
+- "Eliminar" muestra un diálogo de confirmación, despacha `removeGame`, y luego navega de vuelta a `/coleccion`
 
 ---
 
-## 5. Storage
+## 4. Tarjeta de colección (CollectionPage)
 
-No storage key change. The `migrateStoredGame` function's spread already preserves unknown fields, so new fields round-trip correctly. Only `isValidGame` needs updating for the four new optional fields.
+- La imagen de portada se muestra como miniatura de la tarjeta: `coverBase64` → `coverUrl` → portada en vivo de IGDB (desde `useCollectionCovers`) → respaldo de iniciales  
+- Al hacer clic en la tarjeta (o en un enlace "Ver detalle") se navega a `/coleccion/:id`  
+- El botón "Ver detalle" existente (actualmente solo en tarjetas con `igdbId`) se reemplaza por un enlace universal a `/coleccion/:id`
+
+---
+
+## 5. Almacenamiento
+
+Sin cambio en la clave de almacenamiento. El spread de la función `migrateStoredGame` ya preserva campos desconocidos, así que los campos nuevos se preservan correctamente en el ida y vuelta. Solo `isValidGame` necesita actualizarse para los cuatro nuevos campos opcionales.
 
 ---
 
 ## 6. Tests
 
-- Existing 24 Vitest unit tests must continue to pass.
-- `gamesStorage.test.ts` should get new cases covering:
-  - Stored game with all four new fields passes `isValidGame`
-  - Stored game without new fields is migrated to valid `Game` (fields are `undefined`)
-  - Stored game with a non-string `pros` field is rejected by `isValidGame`
+- Los 24 tests unitarios de Vitest existentes deben seguir pasando.
+- `gamesStorage.test.ts` debería obtener nuevos casos que cubran:
+  - Un juego almacenado con los cuatro campos nuevos pasa `isValidGame`
+  - Un juego almacenado sin los campos nuevos se migra a un `Game` válido (los campos quedan en `undefined`)
+  - Un juego almacenado con un campo `pros` que no es string es rechazado por `isValidGame`
 
 ---
 
-## 7. Out of Scope
+## 7. Fuera de alcance
 
-- IGDB does not provide pros/cons data — the "Mi opinión" section is exclusively user-written.
-- No image compression or size-limit warning (base64 images can be large; trade-off accepted).
-- No sharing or export of the detail page.
-- The existing IGDB detail page (`/juego/:id`) is not modified.
+- IGDB no provee datos de pros/contras — la sección "Mi opinión" es exclusivamente escrita por el usuario.
+- Sin compresión de imagen ni advertencia de límite de tamaño (las imágenes en base64 pueden ser grandes; se acepta el trade-off).
+- Sin funcionalidad de compartir o exportar la página de detalle.
+- La página de detalle de IGDB existente (`/juego/:id`) no se modifica.

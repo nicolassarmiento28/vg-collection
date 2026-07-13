@@ -1,6 +1,6 @@
 # Footer, Crear Juego y Descripción en GameDetail — Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Para trabajadores agénticos:** SUB-SKILL REQUERIDA: usa superpowers:subagent-driven-development (recomendado) o superpowers:executing-plans para implementar este plan tarea por tarea. Los pasos usan la sintaxis de checkbox (`- [ ]`) para el seguimiento.
 
 **Goal:** Añadir un footer global de copyright, una página `/crear` con formulario inline de creación de videojuegos, y un título "Descripción" encima del summary en `GameDetailPage`.
 
@@ -10,23 +10,23 @@
 
 **Spec:** `docs/superpowers/specs/2026-04-14-footer-crear-descripcion-design.md`
 
-**Verification commands:**
-- TypeScript: `npx tsc --noEmit` (must output nothing)
-- Tests: `npx vitest run --exclude ".worktrees/**"` (must show 24 passed)
+**Comandos de verificación:**
+- TypeScript: `npx tsc --noEmit` (no debe producir salida)
+- Tests: `npx vitest run --exclude ".worktrees/**"` (debe mostrar 24 pasados)
 
 ---
 
-## File Map
+## Mapa de archivos
 
-| File | Action | Purpose |
+| Archivo | Acción | Propósito |
 |------|--------|---------|
-| `src/shared/ui/AppFooter.tsx` | Create | Footer component con texto de copyright |
-| `src/shared/ui/AppLayout.tsx` | Modify | Añadir `AppFooter` + NavLink "Crear Juego" |
-| `src/features/games/ui/GameFormFields.tsx` | Create | 7 campos comunes del formulario (sin igdbId) |
-| `src/features/games/ui/GameFormModal.tsx` | Modify | Usar `GameFormFields` internamente |
-| `src/features/games/ui/CreateGamePage.tsx` | Create | Página `/crear` con form inline y auth-gate |
-| `src/App.tsx` | Modify | Ruta `/crear` → `CreateGamePage` |
-| `src/features/games/ui/GameDetailPage.tsx` | Modify | Label "DESCRIPCIÓN" encima del summary |
+| `src/shared/ui/AppFooter.tsx` | Crear | Componente de footer con texto de copyright |
+| `src/shared/ui/AppLayout.tsx` | Modificar | Añadir `AppFooter` + NavLink "Crear Juego" |
+| `src/features/games/ui/GameFormFields.tsx` | Crear | 7 campos comunes del formulario (sin igdbId) |
+| `src/features/games/ui/GameFormModal.tsx` | Modificar | Usar `GameFormFields` internamente |
+| `src/features/games/ui/CreateGamePage.tsx` | Crear | Página `/crear` con form inline y auth-gate |
+| `src/App.tsx` | Modificar | Ruta `/crear` → `CreateGamePage` |
+| `src/features/games/ui/GameDetailPage.tsx` | Modificar | Label "DESCRIPCIÓN" encima del summary |
 
 ---
 
@@ -728,7 +728,7 @@ git commit -m "feat: add Descripcion label above game summary in GameDetailPage"
 
 ---
 
-## Self-Review Checklist
+## Checklist de autorrevisión
 
 - [x] Footer: Task 1 crea `AppFooter` y lo añade a `AppLayout` con el texto exacto del spec. NavLink "Crear Juego" también en Task 1.
 - [x] `GameFormFields`: Task 2 extrae los 7 campos. `igdbId` NO está en `GameFormFields`, permanece en `GameFormModal`.

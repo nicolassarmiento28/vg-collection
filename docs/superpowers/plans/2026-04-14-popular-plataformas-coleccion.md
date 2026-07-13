@@ -1,40 +1,40 @@
-# Popular Ahora + Plataformas Expandidas + Fix Colección — Implementation Plan
+# Popular Ahora + Plataformas Expandidas + Fix Colección — Plan de Implementación
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Para trabajadores agénticos:** SUB-SKILL REQUERIDA: Usar superpowers:subagent-driven-development (recomendado) o superpowers:executing-plans para implementar este plan tarea por tarea. Los pasos usan sintaxis de checkbox (`- [ ]`) para el seguimiento.
 
-**Goal:** Add two home-page sections (top-rated carousel + recent grid), expand Platform type to ~30 consoles grouped by manufacturer, and fix "Ya en tu colección" detection by comparing IGDB ids.
+**Goal:** Agregar dos secciones a la página principal (carrusel de mejor valorados + grilla de recientes), expandir el tipo Platform a ~30 consolas agrupadas por fabricante, y corregir la detección de "Ya en tu colección" comparando ids de IGDB.
 
-**Architecture:** Types come first (shared/types/game.ts), then storage validation, then test migration, then UI bottom-up (hooks → components → pages). Each task is self-contained and verified before the next.
+**Architecture:** Los tipos van primero (shared/types/game.ts), luego la validación de almacenamiento, luego la migración de tests, y luego la UI de abajo hacia arriba (hooks → componentes → páginas). Cada tarea es autocontenida y se verifica antes de pasar a la siguiente.
 
 **Tech Stack:** React 19, TypeScript strict, Vite 8, Ant Design 6, Vitest, React Router v7
 
 ---
 
-## File Map
+## Mapa de archivos
 
-| File | Action | Responsibility |
+| Archivo | Acción | Responsabilidad |
 |---|---|---|
-| `src/shared/types/game.ts` | Modify | Expand `Platform`, add `PLATFORM_LABELS`, add `igdbId?` to `Game` and `GameFormPrefill` |
-| `src/shared/lib/storage/gamesStorage.ts` | Modify | Replace `VALID_PLATFORMS` with all 30 new values |
-| `src/features/games/state/gamesReducer.test.ts` | Modify | Migrate `'xbox'` → `'xbone'` (only breaking value) |
-| `src/features/games/ui/GameFormModal.tsx` | Modify | Replace flat `options` with `Select.OptGroup` groups; add hidden `igdbId` field |
-| `src/features/games/ui/GameDetailPage.tsx` | Modify | Expand `IGDB_PLATFORM_MAP`, dispatch with `igdbId`, compare by `igdbId` first |
-| `src/App.tsx` | Modify | `GlobalGameFormModal.handleSubmit` includes `igdbId: values.igdbId` |
-| `src/features/collection/ui/CollectionPage.tsx` | Modify | Replace `PLATFORM_OPTIONS` with `PlatformGroup` chips; show `PLATFORM_LABELS[game.platform]` |
-| `src/features/popular/hooks/useIgdbRecentGames.ts` | Create | Hook that fetches recent games from IGDB (last 2 years, sorted by release date desc) |
-| `src/features/popular/ui/PopularGamesSection.tsx` | Modify | Accept `title: string` and `layout: 'carousel' \| 'grid'` props |
-| `src/features/home/ui/HomePage.tsx` | Modify | Mount two `PopularGamesSection` instances |
+| `src/shared/types/game.ts` | Modificar | Expandir `Platform`, agregar `PLATFORM_LABELS`, agregar `igdbId?` a `Game` y `GameFormPrefill` |
+| `src/shared/lib/storage/gamesStorage.ts` | Modificar | Reemplazar `VALID_PLATFORMS` con los 30 valores nuevos |
+| `src/features/games/state/gamesReducer.test.ts` | Modificar | Migrar `'xbox'` → `'xbone'` (el único valor que rompe) |
+| `src/features/games/ui/GameFormModal.tsx` | Modificar | Reemplazar el `options` plano por grupos `Select.OptGroup`; agregar campo oculto `igdbId` |
+| `src/features/games/ui/GameDetailPage.tsx` | Modificar | Expandir `IGDB_PLATFORM_MAP`, despachar con `igdbId`, comparar por `igdbId` primero |
+| `src/App.tsx` | Modificar | `GlobalGameFormModal.handleSubmit` incluye `igdbId: values.igdbId` |
+| `src/features/collection/ui/CollectionPage.tsx` | Modificar | Reemplazar `PLATFORM_OPTIONS` con chips de `PlatformGroup`; mostrar `PLATFORM_LABELS[game.platform]` |
+| `src/features/popular/hooks/useIgdbRecentGames.ts` | Crear | Hook que trae juegos recientes desde IGDB (últimos 2 años, ordenados por fecha de lanzamiento descendente) |
+| `src/features/popular/ui/PopularGamesSection.tsx` | Modificar | Aceptar props `title: string` y `layout: 'carousel' \| 'grid'` |
+| `src/features/home/ui/HomePage.tsx` | Modificar | Montar dos instancias de `PopularGamesSection` |
 
 ---
 
-### Task 1: Expand `Platform` type and add `PLATFORM_LABELS`
+### Tarea 1: Expandir el tipo `Platform` y agregar `PLATFORM_LABELS`
 
 **Files:**
 - Modify: `src/shared/types/game.ts`
 
-- [ ] **Step 1: Replace the `Platform` type and add `PLATFORM_LABELS`**
+- [ ] **Step 1: Reemplazar el tipo `Platform` y agregar `PLATFORM_LABELS`**
 
-Replace the entire file content:
+Reemplazar todo el contenido del archivo:
 
 ```ts
 export type Platform =
@@ -129,7 +129,7 @@ export interface Game {
   updatedAt: string
 }
 
-// Prefill shape — mirrors GameFormValues from GameFormModal (title, year, platform)
+// Forma de prefill — refleja GameFormValues de GameFormModal (title, year, platform)
 export interface GameFormPrefill {
   title: string
   year: number
@@ -156,22 +156,22 @@ export const defaultGamesState: GamesState = {
 }
 ```
 
-- [ ] **Step 2: Verify TypeScript compiles (only this file, quickly)**
+- [ ] **Step 2: Verificar que TypeScript compile (solo este archivo, rápido)**
 
-Run: `npx tsc --noEmit 2>&1 | head -30`
+Ejecutar: `npx tsc --noEmit 2>&1 | head -30`
 
-Expected: Errors mentioning `gamesStorage.ts` (VALID_PLATFORMS still has old values) and test files. That's expected — we fix them in subsequent tasks. No errors in `game.ts` itself.
+Esperado: Errores mencionando `gamesStorage.ts` (VALID_PLATFORMS todavía tiene los valores viejos) y archivos de test. Eso es esperado — los arreglamos en las tareas siguientes. Sin errores en `game.ts` propiamente.
 
 ---
 
-### Task 2: Update `VALID_PLATFORMS` in `gamesStorage.ts`
+### Tarea 2: Actualizar `VALID_PLATFORMS` en `gamesStorage.ts`
 
 **Files:**
 - Modify: `src/shared/lib/storage/gamesStorage.ts`
 
-- [ ] **Step 1: Replace `VALID_PLATFORMS` array**
+- [ ] **Step 1: Reemplazar el array `VALID_PLATFORMS`**
 
-Change lines 11–18 from:
+Cambiar las líneas 11–18 de:
 
 ```ts
 const VALID_PLATFORMS: Platform[] = [
@@ -184,7 +184,7 @@ const VALID_PLATFORMS: Platform[] = [
 ]
 ```
 
-To:
+A:
 
 ```ts
 const VALID_PLATFORMS: Platform[] = [
@@ -200,61 +200,61 @@ const VALID_PLATFORMS: Platform[] = [
 ]
 ```
 
-- [ ] **Step 2: Run tsc to check storage compiles cleanly**
+- [ ] **Step 2: Ejecutar tsc para verificar que storage compile correctamente**
 
-Run: `npx tsc --noEmit 2>&1 | grep gamesStorage`
+Ejecutar: `npx tsc --noEmit 2>&1 | grep gamesStorage`
 
-Expected: No errors for `gamesStorage.ts`.
+Esperado: Sin errores para `gamesStorage.ts`.
 
 ---
 
-### Task 3: Migrate test files with old Platform values
+### Tarea 3: Migrar archivos de test con valores de Platform antiguos
 
 **Files:**
 - Modify: `src/features/games/state/gamesReducer.test.ts`
 
-The only breaking value in tests is `'xbox'` in `gamesReducer.test.ts` — the old `'xbox'` was a generic Xbox catch-all that no longer exists. Map it to `'xbone'` (Xbox One), which is the closest equivalent in the new type.
+El único valor que rompe en los tests es `'xbox'` en `gamesReducer.test.ts` — el viejo `'xbox'` era un genérico "catch-all" de Xbox que ya no existe. Mapearlo a `'xbone'` (Xbox One), que es el equivalente más cercano en el tipo nuevo.
 
-`'switch'` and `'pc'` in other test files are still valid Platform values — no changes needed there.
+`'switch'` y `'pc'` en otros archivos de test siguen siendo valores válidos de Platform — no se necesitan cambios ahí.
 
-- [ ] **Step 1: Migrate `'xbox'` → `'xbone'` in gamesReducer.test.ts**
+- [ ] **Step 1: Migrar `'xbox'` → `'xbone'` en gamesReducer.test.ts**
 
-In `src/features/games/state/gamesReducer.test.ts`:
+En `src/features/games/state/gamesReducer.test.ts`:
 
-Change line 9:
+Cambiar la línea 9:
 ```ts
   platform: 'xbox',
 ```
-To:
+A:
 ```ts
   platform: 'xbone',
 ```
 
-Change line 76:
+Cambiar la línea 76:
 ```ts
     nextState = gamesReducer(nextState, { type: 'setPlatformFilter', payload: 'xbox' })
 ```
-To:
+A:
 ```ts
     nextState = gamesReducer(nextState, { type: 'setPlatformFilter', payload: 'xbone' })
 ```
 
-Change line 80:
+Cambiar la línea 80:
 ```ts
     expect(nextState.platformFilter).toBe('xbox')
 ```
-To:
+A:
 ```ts
     expect(nextState.platformFilter).toBe('xbone')
 ```
 
-- [ ] **Step 2: Run tests to confirm all 23 pass**
+- [ ] **Step 2: Ejecutar los tests para confirmar que los 23 pasen**
 
-Run: `npx vitest run --exclude ".worktrees/**" 2>&1 | tail -20`
+Ejecutar: `npx vitest run --exclude ".worktrees/**" 2>&1 | tail -20`
 
-Expected: `23 passed` (or equivalent count — all passing, 0 failed).
+Esperado: `23 passed` (o el conteo equivalente — todos pasando, 0 fallidos).
 
-- [ ] **Step 3: Commit types + storage + test migration**
+- [ ] **Step 3: Commitear tipos + storage + migración de tests**
 
 ```bash
 git add src/shared/types/game.ts src/shared/lib/storage/gamesStorage.ts src/features/games/state/gamesReducer.test.ts
@@ -263,14 +263,14 @@ git commit -m "feat: expand Platform type to 30 consoles and add PLATFORM_LABELS
 
 ---
 
-### Task 4: Update `GameFormModal` with grouped select and hidden `igdbId`
+### Tarea 4: Actualizar `GameFormModal` con select agrupado e `igdbId` oculto
 
 **Files:**
 - Modify: `src/features/games/ui/GameFormModal.tsx`
 
-- [ ] **Step 1: Replace the platform select with `Select.OptGroup` and add hidden `igdbId` field**
+- [ ] **Step 1: Reemplazar el select de plataforma con `Select.OptGroup` y agregar campo oculto `igdbId`**
 
-Replace the entire file with:
+Reemplazar todo el archivo con:
 
 ```tsx
 import { Form, Input, InputNumber, Modal, Select } from 'antd'
@@ -457,7 +457,7 @@ export function GameFormModal({ open, mode, game, prefill, onCancel, onSubmit }:
           <Input.TextArea rows={3} />
         </Form.Item>
 
-        {/* Hidden field — carries igdbId from prefill so it gets submitted */}
+        {/* Campo oculto — lleva igdbId desde el prefill para que se envíe */}
         <Form.Item name="igdbId" hidden>
           <InputNumber />
         </Form.Item>
@@ -469,13 +469,13 @@ export function GameFormModal({ open, mode, game, prefill, onCancel, onSubmit }:
 export type { GameFormValues }
 ```
 
-- [ ] **Step 2: Run tests**
+- [ ] **Step 2: Ejecutar tests**
 
-Run: `npx vitest run --exclude ".worktrees/**" 2>&1 | tail -20`
+Ejecutar: `npx vitest run --exclude ".worktrees/**" 2>&1 | tail -20`
 
-Expected: All tests pass (the existing `GameFormModal` tests use `'pc'` and `'switch'`, both still valid).
+Esperado: Todos los tests pasan (los tests existentes de `GameFormModal` usan `'pc'` y `'switch'`, ambos siguen siendo válidos).
 
-- [ ] **Step 3: Commit**
+- [ ] **Step 3: Commitear**
 
 ```bash
 git add src/features/games/ui/GameFormModal.tsx
@@ -484,14 +484,14 @@ git commit -m "feat: update GameFormModal with grouped platform select and hidde
 
 ---
 
-### Task 5: Update `GameDetailPage` — IGDB map, igdbId dispatch, collection comparison
+### Tarea 5: Actualizar `GameDetailPage` — mapa de IGDB, despacho de igdbId, comparación de colección
 
 **Files:**
 - Modify: `src/features/games/ui/GameDetailPage.tsx`
 
-- [ ] **Step 1: Replace `IGDB_PLATFORM_MAP`, update `alreadyInCollection` check, and update `handleAddToCollection` dispatch**
+- [ ] **Step 1: Reemplazar `IGDB_PLATFORM_MAP`, actualizar el chequeo de `alreadyInCollection`, y actualizar el despacho de `handleAddToCollection`**
 
-Change lines 10–17 (IGDB_PLATFORM_MAP):
+Cambiar las líneas 10–17 (IGDB_PLATFORM_MAP):
 
 ```ts
 const IGDB_PLATFORM_MAP: Record<string, Platform> = {
@@ -509,12 +509,12 @@ const IGDB_PLATFORM_MAP: Record<string, Platform> = {
   SMS: 'sega-ms', 'Mega Drive': 'sega-md', SAT: 'sega-saturn', DC: 'sega-dc',
   // Commodore
   C64: 'c64', AMI: 'amiga',
-  // Mobile (legacy)
+  // Mobile (legado)
   iOS: 'other', Android: 'other',
 }
 ```
 
-Change lines 93–95 (`alreadyInCollection`):
+Cambiar las líneas 93–95 (`alreadyInCollection`):
 
 ```ts
   const alreadyInCollection = gamesState.games.some(
@@ -523,7 +523,7 @@ Change lines 93–95 (`alreadyInCollection`):
   )
 ```
 
-Change lines 108–114 (`prefill` and `dispatch`):
+Cambiar las líneas 108–114 (`prefill` y `dispatch`):
 
 ```ts
     const prefill: Partial<GameFormPrefill> = {
@@ -536,19 +536,19 @@ Change lines 108–114 (`prefill` and `dispatch`):
     dispatch({ type: 'openCreateModal', payload: prefill })
 ```
 
-- [ ] **Step 2: Run tsc**
+- [ ] **Step 2: Ejecutar tsc**
 
-Run: `npx tsc --noEmit 2>&1 | grep GameDetailPage`
+Ejecutar: `npx tsc --noEmit 2>&1 | grep GameDetailPage`
 
-Expected: No errors.
+Esperado: Sin errores.
 
-- [ ] **Step 3: Run tests**
+- [ ] **Step 3: Ejecutar tests**
 
-Run: `npx vitest run --exclude ".worktrees/**" 2>&1 | tail -20`
+Ejecutar: `npx vitest run --exclude ".worktrees/**" 2>&1 | tail -20`
 
-Expected: All tests pass.
+Esperado: Todos los tests pasan.
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 4: Commitear**
 
 ```bash
 git add src/features/games/ui/GameDetailPage.tsx
@@ -557,14 +557,14 @@ git commit -m "feat: update GameDetailPage with expanded IGDB map and igdbId-bas
 
 ---
 
-### Task 6: Update `App.tsx` — pass `igdbId` when adding game
+### Tarea 6: Actualizar `App.tsx` — pasar `igdbId` al agregar juego
 
 **Files:**
 - Modify: `src/App.tsx`
 
-- [ ] **Step 1: Include `igdbId` in `addGame` dispatch payload**
+- [ ] **Step 1: Incluir `igdbId` en el payload del despacho `addGame`**
 
-In `GlobalGameFormModal.handleSubmit`, change the `dispatch` call (lines 29–43) from:
+En `GlobalGameFormModal.handleSubmit`, cambiar la llamada a `dispatch` (líneas 29–43) de:
 
 ```ts
     dispatch({
@@ -584,7 +584,7 @@ In `GlobalGameFormModal.handleSubmit`, change the `dispatch` call (lines 29–43
     })
 ```
 
-To:
+A:
 
 ```ts
     dispatch({
@@ -605,19 +605,19 @@ To:
     })
 ```
 
-- [ ] **Step 2: Run tsc**
+- [ ] **Step 2: Ejecutar tsc**
 
-Run: `npx tsc --noEmit 2>&1 | grep "App.tsx"`
+Ejecutar: `npx tsc --noEmit 2>&1 | grep "App.tsx"`
 
-Expected: No errors.
+Esperado: Sin errores.
 
-- [ ] **Step 3: Run tests**
+- [ ] **Step 3: Ejecutar tests**
 
-Run: `npx vitest run --exclude ".worktrees/**" 2>&1 | tail -10`
+Ejecutar: `npx vitest run --exclude ".worktrees/**" 2>&1 | tail -10`
 
-Expected: All tests pass.
+Esperado: Todos los tests pasan.
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 4: Commitear**
 
 ```bash
 git add src/App.tsx
@@ -626,23 +626,23 @@ git commit -m "feat: pass igdbId through GlobalGameFormModal when creating game 
 
 ---
 
-### Task 7: Update `CollectionPage` — manufacturer group chips and `PLATFORM_LABELS`
+### Tarea 7: Actualizar `CollectionPage` — chips de grupo de fabricante y `PLATFORM_LABELS`
 
 **Files:**
 - Modify: `src/features/collection/ui/CollectionPage.tsx`
 
-- [ ] **Step 1: Replace platform filter state and chips with manufacturer groups**
+- [ ] **Step 1: Reemplazar el estado del filtro de plataforma y los chips con grupos de fabricante**
 
-Make the following changes to `CollectionPage.tsx`:
+Hacer los siguientes cambios en `CollectionPage.tsx`:
 
-1. Add `PLATFORM_LABELS` to the import from `game.ts`:
+1. Agregar `PLATFORM_LABELS` al import de `game.ts`:
 
 ```ts
 import type { Game, GameStatus, Platform } from '../../../shared/types/game'
 import { PLATFORM_LABELS } from '../../../shared/types/game'
 ```
 
-2. Replace `PLATFORM_OPTIONS` (lines 31–39) with:
+2. Reemplazar `PLATFORM_OPTIONS` (líneas 31–39) con:
 
 ```ts
 type PlatformGroup = 'all' | 'sega' | 'nintendo' | 'playstation' | 'microsoft' | 'pc' | 'commodore' | 'other'
@@ -670,13 +670,13 @@ const PLATFORM_GROUP_OPTIONS: Array<{ value: PlatformGroup; label: string }> = [
 ]
 ```
 
-3. Change `platformFilter` state type from `Platform | 'all'` to `PlatformGroup`:
+3. Cambiar el tipo del estado `platformFilter` de `Platform | 'all'` a `PlatformGroup`:
 
 ```ts
   const [platformFilter, setPlatformFilter] = useState<PlatformGroup>('all')
 ```
 
-4. Update `filteredGames` `matchPlatform` logic:
+4. Actualizar la lógica de `matchPlatform` en `filteredGames`:
 
 ```ts
       const platformValues = PLATFORM_GROUPS[platformFilter]
@@ -686,10 +686,10 @@ const PLATFORM_GROUP_OPTIONS: Array<{ value: PlatformGroup; label: string }> = [
         (Array.isArray(platformValues) && platformValues.includes(g.platform))
 ```
 
-5. Replace the platform chips render (the `PLATFORM_OPTIONS.map` block) with:
+5. Reemplazar el render de los chips de plataforma (el bloque `PLATFORM_OPTIONS.map`) con:
 
 ```tsx
-      {/* Platform chips */}
+      {/* Chips de plataforma */}
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 24 }}>
         {PLATFORM_GROUP_OPTIONS.map((opt) => (
           <Chip
@@ -702,25 +702,25 @@ const PLATFORM_GROUP_OPTIONS: Array<{ value: PlatformGroup; label: string }> = [
       </div>
 ```
 
-6. In `CollectionCard`, change the platform display line (line 207):
+6. En `CollectionCard`, cambiar la línea de visualización de la plataforma (línea 207):
 
 ```tsx
           {PLATFORM_LABELS[game.platform]} · {game.year}
 ```
 
-- [ ] **Step 2: Run tsc**
+- [ ] **Step 2: Ejecutar tsc**
 
-Run: `npx tsc --noEmit 2>&1 | grep CollectionPage`
+Ejecutar: `npx tsc --noEmit 2>&1 | grep CollectionPage`
 
-Expected: No errors.
+Esperado: Sin errores.
 
-- [ ] **Step 3: Run tests**
+- [ ] **Step 3: Ejecutar tests**
 
-Run: `npx vitest run --exclude ".worktrees/**" 2>&1 | tail -10`
+Ejecutar: `npx vitest run --exclude ".worktrees/**" 2>&1 | tail -10`
 
-Expected: All tests pass.
+Esperado: Todos los tests pasan.
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 4: Commitear**
 
 ```bash
 git add src/features/collection/ui/CollectionPage.tsx
@@ -729,12 +729,12 @@ git commit -m "feat: update CollectionPage with manufacturer group chips and PLA
 
 ---
 
-### Task 8: Create `useIgdbRecentGames` hook
+### Tarea 8: Crear el hook `useIgdbRecentGames`
 
 **Files:**
 - Create: `src/features/popular/hooks/useIgdbRecentGames.ts`
 
-- [ ] **Step 1: Create the hook**
+- [ ] **Step 1: Crear el hook**
 
 ```ts
 import { useEffect, useState } from 'react'
@@ -794,26 +794,26 @@ export function useIgdbRecentGames(): UseIgdbRecentGamesResult {
 }
 ```
 
-- [ ] **Step 2: Run tsc to verify new file compiles**
+- [ ] **Step 2: Ejecutar tsc para verificar que el archivo nuevo compile**
 
-Run: `npx tsc --noEmit 2>&1 | grep useIgdbRecentGames`
+Ejecutar: `npx tsc --noEmit 2>&1 | grep useIgdbRecentGames`
 
-Expected: No output (no errors).
+Esperado: Sin salida (sin errores).
 
-- [ ] **Step 3: Run tests**
+- [ ] **Step 3: Ejecutar tests**
 
-Run: `npx vitest run --exclude ".worktrees/**" 2>&1 | tail -10`
+Ejecutar: `npx vitest run --exclude ".worktrees/**" 2>&1 | tail -10`
 
-Expected: All tests pass.
+Esperado: Todos los tests pasan.
 
 ---
 
-### Task 9: Update `PopularGamesSection` with `layout` and `title` props
+### Tarea 9: Actualizar `PopularGamesSection` con props `layout` y `title`
 
 **Files:**
 - Modify: `src/features/popular/ui/PopularGamesSection.tsx`
 
-- [ ] **Step 1: Replace the component with layout-aware version**
+- [ ] **Step 1: Reemplazar el componente con la versión consciente del layout**
 
 ```tsx
 import { useIgdbPopularGames } from '../hooks/useIgdbPopularGames'
@@ -850,7 +850,7 @@ export function PopularGamesSection({ title, layout, hook }: PopularGamesSection
 
   return (
     <section style={{ marginBottom: 40 }}>
-      {/* Shimmer keyframe defined once for all skeleton cards */}
+      {/* Keyframe de shimmer definido una sola vez para todas las tarjetas skeleton */}
       <style>{`
         @keyframes shimmer {
           0% { background-position: 200% 0; }
@@ -900,30 +900,30 @@ export function PopularGamesSection({ title, layout, hook }: PopularGamesSection
 }
 ```
 
-**Note:** Both hooks are always called (React rules of hooks — no conditional hook calls). The `hook` prop selects which result to use.
+**Nota:** Ambos hooks se llaman siempre (reglas de hooks de React — no se pueden llamar hooks de forma condicional). La prop `hook` selecciona qué resultado usar.
 
-- [ ] **Step 2: Run tsc**
+- [ ] **Step 2: Ejecutar tsc**
 
-Run: `npx tsc --noEmit 2>&1 | grep PopularGamesSection`
+Ejecutar: `npx tsc --noEmit 2>&1 | grep PopularGamesSection`
 
-Expected: No errors.
+Esperado: Sin errores.
 
-- [ ] **Step 3: Run tests**
+- [ ] **Step 3: Ejecutar tests**
 
-Run: `npx vitest run --exclude ".worktrees/**" 2>&1 | tail -10`
+Ejecutar: `npx vitest run --exclude ".worktrees/**" 2>&1 | tail -10`
 
-Expected: All tests pass.
+Esperado: Todos los tests pasan.
 
 ---
 
-### Task 10: Update `HomePage` with two sections
+### Tarea 10: Actualizar `HomePage` con dos secciones
 
 **Files:**
 - Modify: `src/features/home/ui/HomePage.tsx`
 
-- [ ] **Step 1: Mount two `PopularGamesSection` instances**
+- [ ] **Step 1: Montar dos instancias de `PopularGamesSection`**
 
-Replace the entire file with:
+Reemplazar todo el archivo con:
 
 ```tsx
 // src/features/home/ui/HomePage.tsx
@@ -939,19 +939,19 @@ export function HomePage() {
 }
 ```
 
-- [ ] **Step 2: Run tsc**
+- [ ] **Step 2: Ejecutar tsc**
 
-Run: `npx tsc --noEmit`
+Ejecutar: `npx tsc --noEmit`
 
-Expected: 0 errors.
+Esperado: 0 errores.
 
-- [ ] **Step 3: Run all tests**
+- [ ] **Step 3: Ejecutar todos los tests**
 
-Run: `npx vitest run --exclude ".worktrees/**" 2>&1 | tail -10`
+Ejecutar: `npx vitest run --exclude ".worktrees/**" 2>&1 | tail -10`
 
-Expected: All tests pass.
+Esperado: Todos los tests pasan.
 
-- [ ] **Step 4: Commit everything remaining**
+- [ ] **Step 4: Commitear todo lo restante**
 
 ```bash
 git add src/features/popular/hooks/useIgdbRecentGames.ts src/features/popular/ui/PopularGamesSection.tsx src/features/home/ui/HomePage.tsx
@@ -960,8 +960,8 @@ git commit -m "feat: add recent games section to HomePage with grid layout"
 
 ---
 
-## Final Verification
+## Verificación final
 
-- [ ] Run `npx tsc --noEmit` — expect 0 errors
-- [ ] Run `npx vitest run --exclude ".worktrees/**"` — expect all tests pass (≥23)
-- [ ] Manually verify in browser: `npm run dev` → home page shows two sections, collection chips show manufacturer groups, game form shows grouped platform select, adding from game detail pre-fills igdbId hidden field
+- [ ] Ejecutar `npx tsc --noEmit` — esperar 0 errores
+- [ ] Ejecutar `npx vitest run --exclude ".worktrees/**"` — esperar que todos los tests pasen (≥23)
+- [ ] Verificar manualmente en el navegador: `npm run dev` → la página principal muestra dos secciones, los chips de colección muestran grupos de fabricante, el formulario de juego muestra el select agrupado de plataforma, agregar desde el detalle del juego pre-llena el campo oculto igdbId

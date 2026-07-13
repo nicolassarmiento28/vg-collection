@@ -1,37 +1,37 @@
-# Auth Gate + Demo Credentials + IGDB Header Search — Implementation Plan
+# Auth Gate + Credenciales Demo + Búsqueda IGDB en el Header — Plan de implementación
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **Para trabajadores agénticos:** SUB-SKILL REQUERIDA: usa superpowers:subagent-driven-development (recomendado) o superpowers:executing-plans para implementar este plan tarea por tarea. Los pasos usan la sintaxis de checkbox (`- [ ]`) para el seguimiento.
 
-**Goal:** Gate "Tu Colección" behind login, show demo credentials in the login modal, and replace the header search bar with an IGDB autocomplete that pre-fills the game form modal on selection.
+**Goal:** Bloquear "Tu Colección" detrás del login, mostrar credenciales demo en el modal de login, y reemplazar la barra de búsqueda del header por un autocompletado de IGDB que precargue el modal del formulario de juego al seleccionar un resultado.
 
-**Architecture:** Three independent vertical slices. Auth gate is a pure conditional render in `App.tsx`. Demo card is an `Alert` added to `LoginModal`. IGDB search adds a new hook (`useIgdbSearch`) and rewires `HeaderSearch` to `AutoComplete`; game form pre-fill is propagated via a new `GamesContext` action `openCreateModal(prefill?)` to avoid lifting `GameFormModal` out of `GamesPage`.
+**Architecture:** Tres slices verticales independientes. El auth gate es un render condicional puro en `App.tsx`. La tarjeta demo es un `Alert` añadido a `LoginModal`. La búsqueda IGDB agrega un nuevo hook (`useIgdbSearch`) y rehace `HeaderSearch` sobre `AutoComplete`; el precargado del formulario de juego se propaga mediante una nueva acción de `GamesContext` llamada `openCreateModal(prefill?)`, para evitar sacar `GameFormModal` fuera de `GamesPage`.
 
 **Tech Stack:** React 19, TypeScript strict, Ant Design 6, Vite 8, Vitest
 
 ---
 
-## File Map
+## Mapa de archivos
 
-| File | Action | Purpose |
+| Archivo | Acción | Propósito |
 |---|---|---|
-| `src/App.tsx` | Modify | Conditional render of `GamesPage` / `CollectionGatePlaceholder` |
-| `src/features/auth/ui/LoginModal.tsx` | Modify | Add demo credentials `Alert` |
-| `src/features/games/state/gamesReducer.ts` | Modify | Add `openCreateModal` / `closeCreateModal` actions + `createModalPrefill` state |
-| `src/features/games/state/GamesContext.tsx` | No change | Already wires reducer |
-| `src/features/games/ui/GamesPage.tsx` | Modify | Read `state.isCreateModalOpen` / `state.createModalPrefill`, open `GameFormModal` accordingly |
-| `src/features/popular/hooks/useIgdbSearch.ts` | Create | Debounced IGDB search hook |
-| `src/shared/ui/HeaderSearch.tsx` | Modify | Replace `Input.Search` with `AutoComplete` backed by `useIgdbSearch` |
+| `src/App.tsx` | Modificar | Render condicional de `GamesPage` / `CollectionGatePlaceholder` |
+| `src/features/auth/ui/LoginModal.tsx` | Modificar | Añadir `Alert` con credenciales demo |
+| `src/features/games/state/gamesReducer.ts` | Modificar | Añadir acciones `openCreateModal` / `closeCreateModal` + estado `createModalPrefill` |
+| `src/features/games/state/GamesContext.tsx` | Sin cambios | Ya conecta el reducer |
+| `src/features/games/ui/GamesPage.tsx` | Modificar | Leer `state.isCreateModalOpen` / `state.createModalPrefill`, abrir `GameFormModal` en consecuencia |
+| `src/features/popular/hooks/useIgdbSearch.ts` | Crear | Hook de búsqueda IGDB con debounce |
+| `src/shared/ui/HeaderSearch.tsx` | Modificar | Reemplazar `Input.Search` por `AutoComplete` respaldado por `useIgdbSearch` |
 
 ---
 
-## Task 1: Auth gate — hide Tu Colección when logged out
+## Task 1: Auth gate — ocultar Tu Colección cuando no hay sesión iniciada
 
 **Files:**
 - Modify: `src/App.tsx`
 
-- [ ] **Step 1: Add `CollectionGatePlaceholder` inline component to `App.tsx`**
+- [ ] **Step 1: Añadir el componente inline `CollectionGatePlaceholder` a `App.tsx`**
 
-Replace the contents of `src/App.tsx` with:
+Reemplazar el contenido de `src/App.tsx` por:
 
 ```tsx
 import { LockOutlined } from '@ant-design/icons'
@@ -106,7 +106,7 @@ function AppWithProviders() {
 export default AppWithProviders
 ```
 
-Wait — `useAuthContext` must be called inside `AuthProvider`. The cleanest fix is to keep `AuthProvider` wrapping everything in `main.tsx` or use the existing `AuthProvider` in `App.tsx`. Use the existing pattern: `AuthProvider` wraps everything in `App.tsx`. The correct final `App.tsx`:
+Un momento — `useAuthContext` debe llamarse dentro de `AuthProvider`. La solución más limpia es mantener `AuthProvider` envolviendo todo en `main.tsx`, o usar el `AuthProvider` existente en `App.tsx`. Se usa el patrón existente: `AuthProvider` envuelve todo en `App.tsx`. El `App.tsx` final correcto:
 
 ```tsx
 import { LockOutlined } from '@ant-design/icons'
@@ -181,21 +181,21 @@ function App() {
 export default App
 ```
 
-- [ ] **Step 2: Type-check**
+- [ ] **Step 2: Verificar tipos**
 
 ```bash
 npx tsc --noEmit
 ```
 
-Expected: no errors.
+Esperado: sin errores.
 
-- [ ] **Step 3: Manual verify in browser**
+- [ ] **Step 3: Verificación manual en el navegador**
 
-Navigate to `http://localhost:5173`. Confirm:
-- "Tu Colección" shows lock icon + "Inicia sesión para ver tu colección" + "Iniciar sesión" button.
-- Clicking "Iniciar sesión" opens the login modal.
-- After logging in, "Tu Colección" table appears.
-- After logging out (header avatar button), lock placeholder reappears.
+Navegar a `http://localhost:5173`. Confirmar:
+- "Tu Colección" muestra ícono de candado + "Inicia sesión para ver tu colección" + botón "Iniciar sesión".
+- Al hacer clic en "Iniciar sesión" se abre el modal de login.
+- Después de iniciar sesión, aparece la tabla de "Tu Colección".
+- Después de cerrar sesión (botón de avatar en el header), reaparece el placeholder de candado.
 
 - [ ] **Step 4: Commit**
 
@@ -206,20 +206,20 @@ git commit -m "feat: gate Tu Coleccion behind login with placeholder"
 
 ---
 
-## Task 2: Demo credentials card in login modal
+## Task 2: Tarjeta de credenciales demo en el modal de login
 
 **Files:**
 - Modify: `src/features/auth/ui/LoginModal.tsx`
 
-- [ ] **Step 1: Add `Alert` import and demo credentials block**
+- [ ] **Step 1: Añadir el import de `Alert` y el bloque de credenciales demo**
 
-In `LoginModal.tsx`, add `Alert` to the antd import line:
+En `LoginModal.tsx`, añadir `Alert` a la línea de import de antd:
 
 ```tsx
 import { Alert, App as AntdApp, Button, Form, Input, Modal, Typography } from 'antd'
 ```
 
-Then, inside the `view === 'login'` branch, add the `Alert` **before** the `<Form>` opening tag:
+Luego, dentro de la rama `view === 'login'`, añadir el `Alert` **antes** de la etiqueta de apertura de `<Form>`:
 
 ```tsx
 {view === 'login' ? (
@@ -258,17 +258,17 @@ Then, inside the `view === 'login'` branch, add the `Alert` **before** the `<For
 )}
 ```
 
-- [ ] **Step 2: Type-check**
+- [ ] **Step 2: Verificar tipos**
 
 ```bash
 npx tsc --noEmit
 ```
 
-Expected: no errors.
+Esperado: sin errores.
 
-- [ ] **Step 3: Manual verify**
+- [ ] **Step 3: Verificación manual**
 
-Open the login modal. Confirm the demo credentials card appears above the email/password fields. Switch to register view — card must NOT appear there.
+Abrir el modal de login. Confirmar que la tarjeta de credenciales demo aparece encima de los campos de email/contraseña. Cambiar a la vista de registro — la tarjeta NO debe aparecer ahí.
 
 - [ ] **Step 4: Commit**
 
@@ -279,17 +279,17 @@ git commit -m "feat: add demo credentials card to login modal"
 
 ---
 
-## Task 3: Add `openCreateModal` action to GamesContext
+## Task 3: Añadir la acción `openCreateModal` a GamesContext
 
-This propagates the IGDB-selected game prefill into `GamesPage`'s `GameFormModal` without lifting state.
+Esto propaga el precargado del juego seleccionado en IGDB hacia el `GameFormModal` de `GamesPage` sin levantar el estado.
 
 **Files:**
 - Modify: `src/features/games/state/gamesReducer.ts`
 - Modify: `src/features/games/ui/GamesPage.tsx`
 
-- [ ] **Step 1: Extend `GamesState` in `src/shared/types/game.ts`**
+- [ ] **Step 1: Extender `GamesState` en `src/shared/types/game.ts`**
 
-Add two fields to `GamesState`:
+Añadir dos campos a `GamesState`:
 
 ```ts
 export interface GamesState {
@@ -309,7 +309,7 @@ export interface GameFormPrefill {
 }
 ```
 
-Update `defaultGamesState`:
+Actualizar `defaultGamesState`:
 
 ```ts
 export const defaultGamesState: GamesState = {
@@ -322,9 +322,9 @@ export const defaultGamesState: GamesState = {
 }
 ```
 
-- [ ] **Step 2: Add actions to `gamesReducer.ts`**
+- [ ] **Step 2: Añadir acciones a `gamesReducer.ts`**
 
-Add two new action types to the union:
+Añadir dos nuevos tipos de acción a la unión:
 
 ```ts
 export type GamesAction =
@@ -338,13 +338,13 @@ export type GamesAction =
   | { type: 'closeCreateModal' }
 ```
 
-Add the import at the top of `gamesReducer.ts`:
+Añadir el import al inicio de `gamesReducer.ts`:
 
 ```ts
 import type { Game, GameFormPrefill, GameStatus, GamesState, Platform } from '../../../shared/types/game'
 ```
 
-Add two cases in the `switch`:
+Añadir dos casos en el `switch`:
 
 ```ts
 case 'openCreateModal':
@@ -353,11 +353,11 @@ case 'closeCreateModal':
   return { ...state, isCreateModalOpen: false, createModalPrefill: undefined }
 ```
 
-- [ ] **Step 3: Update `GamesPage.tsx` to read `isCreateModalOpen` and `createModalPrefill`**
+- [ ] **Step 3: Actualizar `GamesPage.tsx` para leer `isCreateModalOpen` y `createModalPrefill`**
 
-In `GamesPage.tsx`, replace the local modal open/mode/editingGame state management to also handle the context-driven open:
+En `GamesPage.tsx`, reemplazar el manejo del estado local de apertura/modo/juego en edición del modal para que también maneje la apertura disparada desde el contexto.
 
-At the top of the `GamesPage` function body, read the new state:
+Al inicio del cuerpo de la función `GamesPage`, leer el nuevo estado:
 
 ```ts
 const { state, dispatch } = useGamesContext()
@@ -365,7 +365,7 @@ const contextPrefill = state.createModalPrefill
 const isContextModalOpen = state.isCreateModalOpen
 ```
 
-Replace the existing `isModalOpen` local state with a computed value that also accounts for the context trigger:
+Reemplazar el estado local `isModalOpen` existente por un valor calculado que también tenga en cuenta el disparador del contexto:
 
 ```ts
 // Keep local state for edit-triggered opens
@@ -377,7 +377,7 @@ const [editingGame, setEditingGame] = useState<Game | undefined>(undefined)
 const isModalOpen = isLocalModalOpen || isContextModalOpen
 ```
 
-Update `closeModal`:
+Actualizar `closeModal`:
 
 ```ts
 const closeModal = () => {
@@ -389,7 +389,7 @@ const closeModal = () => {
 }
 ```
 
-Update `handleCreate` (local button):
+Actualizar `handleCreate` (botón local):
 
 ```ts
 const handleCreate = () => {
@@ -399,9 +399,9 @@ const handleCreate = () => {
 }
 ```
 
-Pass prefill to `GameFormModal`. First, add `prefill` prop to `GameFormModal`.
+Pasar el precargado a `GameFormModal`. Primero, añadir la prop `prefill` a `GameFormModal`.
 
-In `src/features/games/ui/GameFormModal.tsx`, add `prefill?: Partial<GameFormValues>` to `GameFormModalProps`:
+En `src/features/games/ui/GameFormModal.tsx`, añadir `prefill?: Partial<GameFormValues>` a `GameFormModalProps`:
 
 ```ts
 interface GameFormModalProps {
@@ -414,7 +414,7 @@ interface GameFormModalProps {
 }
 ```
 
-In the `useEffect` inside `GameFormModal`, add prefill application for create mode:
+En el `useEffect` dentro de `GameFormModal`, añadir la aplicación del precargado para el modo de creación:
 
 ```ts
 useEffect(() => {
@@ -439,7 +439,7 @@ useEffect(() => {
 }, [form, game, mode, open, prefill])
 ```
 
-Back in `GamesPage.tsx`, pass the combined prefill to `GameFormModal`:
+De vuelta en `GamesPage.tsx`, pasar el precargado combinado a `GameFormModal`:
 
 ```tsx
 <GameFormModal
@@ -452,13 +452,13 @@ Back in `GamesPage.tsx`, pass the combined prefill to `GameFormModal`:
 />
 ```
 
-- [ ] **Step 4: Type-check**
+- [ ] **Step 4: Verificar tipos**
 
 ```bash
 npx tsc --noEmit
 ```
 
-Expected: no errors.
+Esperado: sin errores.
 
 - [ ] **Step 5: Commit**
 
@@ -469,12 +469,12 @@ git commit -m "feat: add openCreateModal action to GamesContext for IGDB prefill
 
 ---
 
-## Task 4: `useIgdbSearch` hook
+## Task 4: Hook `useIgdbSearch`
 
 **Files:**
 - Create: `src/features/popular/hooks/useIgdbSearch.ts`
 
-- [ ] **Step 1: Create the hook**
+- [ ] **Step 1: Crear el hook**
 
 ```ts
 // src/features/popular/hooks/useIgdbSearch.ts
@@ -534,13 +534,13 @@ export function useIgdbSearch(query: string): UseIgdbSearchResult {
 }
 ```
 
-- [ ] **Step 2: Type-check**
+- [ ] **Step 2: Verificar tipos**
 
 ```bash
 npx tsc --noEmit
 ```
 
-Expected: no errors.
+Esperado: sin errores.
 
 - [ ] **Step 3: Commit**
 
@@ -551,12 +551,12 @@ git commit -m "feat: add useIgdbSearch hook with debounce and abort"
 
 ---
 
-## Task 5: Rewire `HeaderSearch` to IGDB `AutoComplete`
+## Task 5: Rehacer `HeaderSearch` sobre `AutoComplete` de IGDB
 
 **Files:**
 - Modify: `src/shared/ui/HeaderSearch.tsx`
 
-- [ ] **Step 1: Rewrite `HeaderSearch.tsx`**
+- [ ] **Step 1: Reescribir `HeaderSearch.tsx`**
 
 ```tsx
 // src/shared/ui/HeaderSearch.tsx
@@ -698,23 +698,23 @@ export function HeaderSearch() {
 }
 ```
 
-- [ ] **Step 2: Type-check**
+- [ ] **Step 2: Verificar tipos**
 
 ```bash
 npx tsc --noEmit
 ```
 
-Expected: no errors.
+Esperado: sin errores.
 
-- [ ] **Step 3: Manual verify in browser**
+- [ ] **Step 3: Verificación manual en el navegador**
 
-1. Log in with any credentials.
-2. Type "zelda" in the header search.
-3. After ~400 ms, a dropdown appears with game covers, names, and years.
-4. Select a game.
-5. The "Crear juego" modal opens with Title and Year pre-filled.
-6. Complete the remaining fields and submit.
-7. The game appears in Tu Colección.
+1. Iniciar sesión con cualquier credencial.
+2. Escribir "zelda" en la búsqueda del header.
+3. Después de ~400 ms, aparece un dropdown con carátulas, nombres y años de los juegos.
+4. Seleccionar un juego.
+5. Se abre el modal "Crear juego" con Título y Año precargados.
+6. Completar los campos restantes y enviar.
+7. El juego aparece en Tu Colección.
 
 - [ ] **Step 4: Commit**
 
@@ -725,29 +725,29 @@ git commit -m "feat: replace header search with IGDB autocomplete"
 
 ---
 
-## Task 6: Final type-check and test run
+## Task 6: Verificación de tipos y ejecución de tests final
 
-- [ ] **Step 1: Full type-check**
+- [ ] **Step 1: Verificación de tipos completa**
 
 ```bash
 npx tsc --noEmit
 ```
 
-Expected: no errors.
+Esperado: sin errores.
 
-- [ ] **Step 2: Run tests**
+- [ ] **Step 2: Ejecutar tests**
 
 ```bash
 npx vitest run --exclude ".worktrees/**"
 ```
 
-Expected: all tests pass (pre-existing worktree failures excluded).
+Esperado: todos los tests pasan (excluyendo fallos preexistentes de worktree).
 
-- [ ] **Step 3: Commit if any fixups needed**
+- [ ] **Step 3: Commit si se necesitan ajustes**
 
 ```bash
 git add -A
 git commit -m "fix: post-integration fixups"
 ```
 
-Only commit if there were actual changes. Skip if tests passed clean.
+Solo hacer commit si hubo cambios reales. Omitir si los tests pasaron limpio.
