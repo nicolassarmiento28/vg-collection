@@ -486,7 +486,7 @@ export function CollectionPage() {
           }}
         >
           {state.games.length === 0
-            ? 'Tu colección está vacía. ¡Agregá tu primer juego!'
+            ? 'Tu colección está vacía. ¡Agrega tu primer juego!'
             : 'Sin resultados para los filtros aplicados.'}
         </div>
       )}

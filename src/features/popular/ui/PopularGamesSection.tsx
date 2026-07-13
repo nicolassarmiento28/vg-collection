@@ -101,7 +101,7 @@ export function PopularGamesSection({ title, layout, hook }: PopularGamesSection
 
       {!loading && error === null && games.length === 0 && (
         <p style={{ color: 'var(--text-muted)', fontSize: 14, marginBottom: 8 }}>
-          No encontramos juegos para mostrar acá por ahora. Probá recargar más tarde.
+          No encontramos juegos para mostrar aquí por ahora. Prueba recargar más tarde.
         </p>
       )}
 

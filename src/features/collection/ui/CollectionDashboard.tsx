@@ -74,7 +74,7 @@ export function CollectionDashboard({ games }: CollectionDashboardProps) {
       >
         <BarChartOutlined style={{ fontSize: 32, color: 'var(--text-muted)', marginBottom: 8 }} />
         <div style={{ color: 'var(--text-muted)', fontSize: 14 }}>
-          Agregá juegos a tu colección para ver estadísticas acá.
+          Agrega juegos a tu colección para ver estadísticas aquí.
         </div>
       </div>
     )
