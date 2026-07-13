@@ -1,19 +1,22 @@
 // src/shared/ui/AppFooter.tsx
-import { Layout } from 'antd'
+import { Grid, Layout } from 'antd'
 import { Link } from 'react-router-dom'
 import { useAuthContext } from '../../features/auth/state/AuthContext'
 
 const { Footer } = Layout
+const { useBreakpoint } = Grid
 
 export function AppFooter() {
   const { state, dispatch } = useAuthContext()
+  const screens = useBreakpoint()
+  const isMobile = screens.md === false // same rule as AppLayout's header/content
 
   return (
     <Footer
       style={{
         background: 'var(--bg-surface)',
         borderTop: '1px solid var(--border)',
-        padding: '32px 24px 20px',
+        padding: isMobile ? '32px 16px 20px' : '32px 24px 20px',
       }}
     >
       <div
@@ -22,13 +25,17 @@ export function AppFooter() {
           flexWrap: 'wrap',
           gap: 32,
           justifyContent: 'space-between',
-          maxWidth: 1080,
-          margin: '0 auto',
         }}
       >
         {/* Brand block */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6, minWidth: 220 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Link
+            to="/"
+            aria-label="Ir al inicio"
+            className="brand-logo-link"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none', width: 'fit-content' }}
+          >
             <span style={{ color: 'var(--accent)', fontSize: 18, lineHeight: 1 }}>▸</span>
             <span
               style={{
@@ -41,7 +48,7 @@ export function AppFooter() {
             >
               VG COLLECTION
             </span>
-          </div>
+          </Link>
           <p style={{ color: 'var(--text-muted)', fontSize: 13, margin: 0, maxWidth: 280 }}>
             Tu colección de videojuegos, organizada y con onda retro.
           </p>

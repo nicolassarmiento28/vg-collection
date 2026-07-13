@@ -73,6 +73,15 @@ p {
   100% { background-position: -200% 0; }
 }
 
+.brand-logo-link {
+  cursor: pointer;
+  transition: opacity 150ms;
+}
+
+.brand-logo-link:hover {
+  opacity: 0.8;
+}
+
 .skeleton-shimmer {
   background: linear-gradient(90deg, var(--bg-surface) 25%, var(--bg-elevated) 50%, var(--bg-surface) 75%);
   background-size: 200% 100%;

@@ -58,6 +58,8 @@ export function AppLayout({ children }: AppLayoutProps) {
         <Link
           to="/"
           aria-label="Ir al inicio"
+          className="brand-logo-link"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -183,7 +185,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         </div>
       </Drawer>
 
-      <Content style={{ padding: isMobile ? '16px 12px' : 24, background: 'var(--bg)' }}>
+      <Content style={{ padding: isMobile ? '16px 16px' : 24, background: 'var(--bg)' }}>
         {children}
       </Content>
 

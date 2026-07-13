@@ -1,11 +1,13 @@
 // src/shared/ui/HeaderSearch.tsx
 import { LoadingOutlined, SearchOutlined } from '@ant-design/icons'
-import { AutoComplete, Input } from 'antd'
+import { AutoComplete, Grid, Input } from 'antd'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { IgdbGame } from '../../features/popular/types'
 import { useIgdbSearch } from '../../features/popular/hooks/useIgdbSearch'
 import { useCommandPalette } from '../state/useCommandPalette'
+
+const { useBreakpoint } = Grid
 
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.userAgent)
 const shortcutHint = isMac ? '⌘K' : 'Ctrl K'
@@ -24,6 +26,11 @@ export function HeaderSearch() {
   const { results, loading } = useIgdbSearch(inputValue)
   const navigate = useNavigate()
   const { setOpen: setPaletteOpen } = useCommandPalette()
+  const screens = useBreakpoint()
+  const isMobile = screens.md === false
+  // Enough room to embed the "Ctrl K" pill inside the input without
+  // squeezing the placeholder; narrower desktop/tablet keeps it outside.
+  const hasRoomForInlineHint = screens.lg === true
 
   const options = results.map((game) => {
     const coverUrl = getCoverUrl(game)
@@ -89,38 +96,66 @@ export function HeaderSearch() {
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           suffix={
-            loading
-              ? <LoadingOutlined aria-hidden="true" style={{ color: 'var(--accent)' }} />
-              : <SearchOutlined aria-hidden="true" style={{ color: 'var(--text-muted)' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              {loading
+                ? <LoadingOutlined aria-hidden="true" style={{ color: 'var(--accent)' }} />
+                : <SearchOutlined aria-hidden="true" style={{ color: 'var(--text-muted)' }} />}
+              {hasRoomForInlineHint && (
+                <button
+                  type="button"
+                  onClick={() => setPaletteOpen(true)}
+                  aria-label="Abrir command palette"
+                  title="Abrir command palette"
+                  style={{
+                    flexShrink: 0,
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: 11,
+                    color: 'var(--text-muted)',
+                    opacity: 0.7,
+                    background: 'var(--bg-surface)',
+                    border: '1px solid var(--border)',
+                    borderRadius: 5,
+                    padding: '2px 7px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {shortcutHint}
+                </button>
+              )}
+            </div>
           }
           style={{
             background: 'var(--bg-elevated)',
             borderColor: focused ? 'var(--accent)' : 'var(--border)',
             borderRadius: 24,
+            padding: '9px 16px',
             boxShadow: focused ? '0 0 0 3px var(--accent-dim)' : 'none',
             transition: 'border-color 150ms, box-shadow 150ms',
           }}
         />
       </AutoComplete>
-      <button
-        type="button"
-        onClick={() => setPaletteOpen(true)}
-        aria-label="Abrir command palette"
-        title="Abrir command palette"
-        style={{
-          flexShrink: 0,
-          fontFamily: 'var(--font-mono)',
-          fontSize: 11,
-          color: 'var(--text-muted)',
-          background: 'var(--bg-elevated)',
-          border: '1px solid var(--border)',
-          borderRadius: 6,
-          padding: '3px 8px',
-          cursor: 'pointer',
-        }}
-      >
-        {shortcutHint}
-      </button>
+      {!isMobile && !hasRoomForInlineHint && (
+        <button
+          type="button"
+          onClick={() => setPaletteOpen(true)}
+          aria-label="Abrir command palette"
+          title="Abrir command palette"
+          style={{
+            flexShrink: 0,
+            fontFamily: 'var(--font-mono)',
+            fontSize: 11,
+            color: 'var(--text-muted)',
+            opacity: 0.6,
+            background: 'transparent',
+            border: 'none',
+            borderRadius: 6,
+            padding: '3px 8px',
+            cursor: 'pointer',
+          }}
+        >
+          {shortcutHint}
+        </button>
+      )}
     </div>
   )
 }
