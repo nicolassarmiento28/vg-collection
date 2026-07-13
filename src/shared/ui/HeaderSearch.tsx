@@ -16,6 +16,7 @@ function getCoverUrl(game: IgdbGame): string | undefined {
 
 export function HeaderSearch() {
   const [inputValue, setInputValue] = useState('')
+  const [focused, setFocused] = useState(false)
   const { results, loading } = useIgdbSearch(inputValue)
   const navigate = useNavigate()
 
@@ -72,20 +73,26 @@ export function HeaderSearch() {
       options={[...options, ...noResultsOption]}
       onSelect={handleSelect}
       onSearch={setInputValue}
-      style={{ width: '100%', maxWidth: 380 }}
+      allowClear
+      style={{ width: '100%', minWidth: 160, maxWidth: 480 }}
       popupMatchSelectWidth={true}
     >
       <Input
         placeholder="Buscar juegos..."
+        aria-label="Buscar juegos"
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
         suffix={
           loading
-            ? <LoadingOutlined style={{ color: 'var(--accent)' }} />
-            : <SearchOutlined style={{ color: 'var(--text-muted)' }} />
+            ? <LoadingOutlined aria-hidden="true" style={{ color: 'var(--accent)' }} />
+            : <SearchOutlined aria-hidden="true" style={{ color: 'var(--text-muted)' }} />
         }
         style={{
           background: 'var(--bg-elevated)',
-          borderColor: 'var(--border)',
+          borderColor: focused ? 'var(--accent)' : 'var(--border)',
           borderRadius: 24,
+          boxShadow: focused ? '0 0 0 3px var(--accent-dim)' : 'none',
+          transition: 'border-color 150ms, box-shadow 150ms',
         }}
       />
     </AutoComplete>

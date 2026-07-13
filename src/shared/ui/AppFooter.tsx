@@ -1,21 +1,121 @@
 // src/shared/ui/AppFooter.tsx
 import { Layout } from 'antd'
+import { Link } from 'react-router-dom'
+import { useAuthContext } from '../../features/auth/state/AuthContext'
 
 const { Footer } = Layout
 
 export function AppFooter() {
+  const { state, dispatch } = useAuthContext()
+
   return (
     <Footer
       style={{
         background: 'var(--bg-surface)',
         borderTop: '1px solid var(--border)',
-        textAlign: 'center',
-        color: 'var(--text-muted)',
-        fontSize: 12,
-        padding: '16px 24px',
+        padding: '32px 24px 20px',
       }}
     >
-      © 2026 Nicolás Sarmiento. Todos los derechos reservados.
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 32,
+          justifyContent: 'space-between',
+          maxWidth: 1080,
+          margin: '0 auto',
+        }}
+      >
+        {/* Brand block */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, minWidth: 220 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ color: 'var(--accent)', fontSize: 18, lineHeight: 1 }}>▸</span>
+            <span
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: 22,
+                color: 'var(--text-h)',
+                letterSpacing: 2,
+                lineHeight: 1,
+              }}
+            >
+              VG COLLECTION
+            </span>
+          </div>
+          <p style={{ color: 'var(--text-muted)', fontSize: 13, margin: 0, maxWidth: 280 }}>
+            Tu colección de videojuegos, organizada y con onda retro.
+          </p>
+        </div>
+
+        {/* Nav block */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <span
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: 11,
+              color: 'var(--text-muted)',
+              textTransform: 'uppercase',
+              letterSpacing: 1,
+            }}
+          >
+            Navegación
+          </span>
+          <Link to="/coleccion" style={{ color: 'var(--text)', fontSize: 14, textDecoration: 'none' }}>
+            Mi Colección
+          </Link>
+          <Link to="/crear" style={{ color: 'var(--text)', fontSize: 14, textDecoration: 'none' }}>
+            Crear Juego
+          </Link>
+          {state.isLoggedIn && state.user !== null ? (
+            <button
+              type="button"
+              onClick={() => dispatch({ type: 'logout' })}
+              style={{
+                color: 'var(--text)',
+                fontSize: 14,
+                textAlign: 'left',
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                cursor: 'pointer',
+                fontFamily: 'var(--font-body)',
+              }}
+            >
+              Cerrar sesión ({state.user.email})
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => dispatch({ type: 'openModal' })}
+              style={{
+                color: 'var(--text)',
+                fontSize: 14,
+                textAlign: 'left',
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                cursor: 'pointer',
+                fontFamily: 'var(--font-body)',
+              }}
+            >
+              Iniciar sesión
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div
+        style={{
+          textAlign: 'center',
+          color: 'var(--text-muted)',
+          fontSize: 12,
+          marginTop: 28,
+          paddingTop: 16,
+          borderTop: '1px solid var(--border)',
+        }}
+      >
+        © 2026 Nicolás Sarmiento. Todos los derechos reservados.
+      </div>
     </Footer>
   )
 }
