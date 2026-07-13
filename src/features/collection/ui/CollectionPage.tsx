@@ -10,6 +10,7 @@ import { GameFormModal, type GameFormValues } from '../../games/ui/GameFormModal
 import { normalizeOptionalRating } from '../../../shared/utils/rating'
 import { useCollectionCovers } from '../hooks/useCollectionCovers'
 import { downloadCollection, parseImportedCollection } from '../lib/importExport'
+import { CollectionDashboard } from './CollectionDashboard'
 import { PLATFORM_LABELS } from '../../../shared/types/game'
 import type { Game, GameStatus, Platform } from '../../../shared/types/game'
 import { STATUS_BADGE_COLORS } from '../../../shared/constants/gameStatus'
@@ -401,6 +402,8 @@ export function CollectionPage() {
           </Button>
         </div>
       </div>
+
+      <CollectionDashboard games={state.games} />
 
       {/* Search */}
       <Input
