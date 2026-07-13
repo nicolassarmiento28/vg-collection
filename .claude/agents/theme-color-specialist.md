@@ -22,18 +22,20 @@ Dark mode (default):
 --border: #2e2b28
 ```
 
-Light mode (`:root[data-theme="light"]`):
+Light mode (`:root[data-theme="light"]`) — paleta "Cream Arcade":
 ```
---bg: #f5f2ee
+--bg: #f8f4ec
 --bg-surface: #ffffff
---bg-elevated: #eae6e1
---text: #3a3530
---text-h: #1a1714
---text-muted: #7a736b
---border: #d4cfc9
---accent-dim: rgba(224, 60, 47, 0.10)
+--bg-elevated: #efe7d8
+--text: #362f26
+--text-h: #1c1712
+--text-muted: #85795f
+--border: #ddd1b8
+--accent: #d9362b
+--accent-text: #b8291f
+--accent-dim: rgba(217, 54, 43, 0.12)
 ```
-(`--accent` no se redefine en light mode — hereda `#e03c2f` del root.)
+`--accent` sí se redefine en light mode (no hereda del root). `--accent-text` es una variante más oscura reservada para texto/links sobre superficies claras, porque `--accent` puro no siempre llega a 4.5:1 como texto normal.
 
 ## Reglas de trabajo
 

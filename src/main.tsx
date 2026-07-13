@@ -27,15 +27,15 @@ function ThemedConfigProvider({ children }: { children: React.ReactNode }) {
               colorLink: '#e03c2f',
             }
           : {
-              colorPrimary: '#e03c2f',
+              colorPrimary: '#d9362b',
               colorBgContainer: '#ffffff',
-              colorBgElevated: '#eae6e1',
-              colorBorder: '#d4cfc9',
-              colorText: '#3a3530',
-              colorTextHeading: '#1a1714',
+              colorBgElevated: '#efe7d8',
+              colorBorder: '#ddd1b8',
+              colorText: '#362f26',
+              colorTextHeading: '#1c1712',
               fontFamily: "'DM Sans', sans-serif",
               borderRadius: 6,
-              colorLink: '#e03c2f',
+              colorLink: '#b8291f',
             },
       }}
     >

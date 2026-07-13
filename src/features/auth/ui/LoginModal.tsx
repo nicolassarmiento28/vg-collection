@@ -196,7 +196,7 @@ export function LoginModal() {
               ¿Ya tienes cuenta?{' '}
               <Typography.Link
                 onClick={() => setView('login')}
-                style={{ color: 'var(--accent)' }}
+                style={{ color: 'var(--accent-text)' }}
               >
                 Inicia sesión
               </Typography.Link>
