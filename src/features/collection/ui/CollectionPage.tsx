@@ -11,6 +11,7 @@ import { normalizeOptionalRating } from '../../../shared/utils/rating'
 import { useCollectionCovers } from '../hooks/useCollectionCovers'
 import { downloadCollection, parseImportedCollection } from '../lib/importExport'
 import { CollectionDashboard } from './CollectionDashboard'
+import { WhatToPlayButton } from './WhatToPlayButton'
 import { PLATFORM_LABELS } from '../../../shared/types/game'
 import type { Game, GameStatus, Platform } from '../../../shared/types/game'
 import { STATUS_BADGE_COLORS } from '../../../shared/constants/gameStatus'
@@ -380,6 +381,7 @@ export function CollectionPage() {
           MI COLECCIÓN
         </h2>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <WhatToPlayButton games={state.games} />
           <Button icon={<DownloadOutlined />} onClick={handleExport}>
             Exportar colección
           </Button>
