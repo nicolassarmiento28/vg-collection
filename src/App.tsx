@@ -14,7 +14,7 @@ import { CollectionDetailPage } from './features/collection/ui/CollectionDetailP
 import { CreateGamePage } from './features/games/ui/CreateGamePage'
 import { AppLayout } from './shared/ui/AppLayout'
 import { CommandPalette } from './shared/ui/CommandPalette'
-import { CommandPaletteProvider } from './shared/state/CommandPaletteContext'
+import { CommandPaletteProvider } from './shared/state/CommandPaletteProvider'
 
 function GlobalGameFormModal() {
   const { message } = AntdApp.useApp()

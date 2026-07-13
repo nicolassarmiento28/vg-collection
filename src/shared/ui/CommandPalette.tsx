@@ -4,7 +4,7 @@ import type React from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useIgdbSearch } from '../../features/popular/hooks/useIgdbSearch'
-import { useCommandPalette } from '../state/CommandPaletteContext'
+import { useCommandPalette } from '../state/useCommandPalette'
 import { useTheme } from '../state/ThemeContext'
 
 interface PaletteItem {
@@ -99,6 +99,8 @@ export function CommandPalette() {
       footer={null}
       centered
       destroyOnHidden
+      transitionName=""
+      maskTransitionName=""
       width={480}
       styles={{
         container: {

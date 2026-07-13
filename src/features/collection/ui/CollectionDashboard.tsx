@@ -1,8 +1,9 @@
 import { BarChartOutlined } from '@ant-design/icons'
 import type React from 'react'
 import { Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { STATUS_BADGE_COLORS } from '../../../shared/constants/gameStatus'
 import type { Game } from '../../../shared/types/game'
-import { computeCompletionStats, countByGenre, countByPlatform, countByYear } from '../lib/dashboardStats'
+import { computeCompletionStats, countByGenre, countByPlatform, countByStatus, countByYear } from '../lib/dashboardStats'
 
 interface CollectionDashboardProps {
   games: Game[]
@@ -83,6 +84,7 @@ export function CollectionDashboard({ games }: CollectionDashboardProps) {
   const byGenre = countByGenre(games)
   const byYear = countByYear(games)
   const completion = computeCompletionStats(games)
+  const byStatus = countByStatus(games)
 
   const completionData = [
     { label: 'Completado', count: completion.completed },
@@ -92,14 +94,14 @@ export function CollectionDashboard({ games }: CollectionDashboardProps) {
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, marginBottom: 28 }}>
       <ChartCard title={`Total: ${completion.total} juego(s)`}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <ResponsiveContainer width={120} height={120}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
+          <ResponsiveContainer width={100} height={100}>
             <PieChart>
               <Pie
                 data={completionData}
                 dataKey="count"
-                innerRadius={36}
-                outerRadius={56}
+                innerRadius={30}
+                outerRadius={48}
                 startAngle={90}
                 endAngle={-270}
               >
@@ -115,6 +117,25 @@ export function CollectionDashboard({ games }: CollectionDashboardProps) {
             </div>
             <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>completado</div>
           </div>
+        </div>
+
+        {/* Desglose completo por estado, complementa el % completado de arriba */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          {byStatus.map((entry) => (
+            <div key={entry.status} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}>
+              <span
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: '50%',
+                  background: STATUS_BADGE_COLORS[entry.status].text,
+                  flexShrink: 0,
+                }}
+              />
+              <span style={{ color: 'var(--text-muted)', flex: 1 }}>{entry.label}</span>
+              <span style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>{entry.count}</span>
+            </div>
+          ))}
         </div>
       </ChartCard>
 

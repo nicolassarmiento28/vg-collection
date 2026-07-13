@@ -1,4 +1,5 @@
-import { PLATFORM_LABELS, type Game } from '../../../shared/types/game'
+import { STATUS_LABELS } from '../../../shared/constants/gameStatus'
+import { PLATFORM_LABELS, type Game, type GameStatus } from '../../../shared/types/game'
 
 export interface CountEntry {
   label: string
@@ -47,9 +48,31 @@ export interface CompletionStats {
 
 // "Completado" vs. el resto de la colección (backlog/jugando/pausado/abandonado),
 // no solo status === 'backlog' — es la métrica de avance más útil de un vistazo.
+// countByStatus (abajo) complementa esto con el desglose completo por estado.
 export function computeCompletionStats(games: Game[]): CompletionStats {
   const total = games.length
   const completed = games.filter((game) => game.status === 'completed').length
   const percentCompleted = total === 0 ? 0 : Math.round((completed / total) * 100)
   return { completed, total, percentCompleted }
+}
+
+export interface StatusCountEntry {
+  status: GameStatus
+  label: string
+  count: number
+}
+
+const STATUS_ORDER: GameStatus[] = ['completed', 'playing', 'backlog', 'paused', 'dropped']
+
+/** Full breakdown by status, in a fixed order, omitting statuses with zero games. */
+export function countByStatus(games: Game[]): StatusCountEntry[] {
+  const counts = new Map<GameStatus, number>()
+  for (const game of games) {
+    counts.set(game.status, (counts.get(game.status) ?? 0) + 1)
+  }
+  return STATUS_ORDER.filter((status) => (counts.get(status) ?? 0) > 0).map((status) => ({
+    status,
+    label: STATUS_LABELS[status],
+    count: counts.get(status) ?? 0,
+  }))
 }

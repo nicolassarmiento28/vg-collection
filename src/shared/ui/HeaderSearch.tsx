@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { IgdbGame } from '../../features/popular/types'
 import { useIgdbSearch } from '../../features/popular/hooks/useIgdbSearch'
-import { useCommandPalette } from '../state/CommandPaletteContext'
+import { useCommandPalette } from '../state/useCommandPalette'
 
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.userAgent)
 const shortcutHint = isMac ? '⌘K' : 'Ctrl K'

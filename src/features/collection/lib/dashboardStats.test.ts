@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Game } from '../../../shared/types/game'
-import { computeCompletionStats, countByGenre, countByPlatform, countByYear } from './dashboardStats'
+import { computeCompletionStats, countByGenre, countByPlatform, countByStatus, countByYear } from './dashboardStats'
 
 function makeGame(overrides: Partial<Game>): Game {
   return {
@@ -79,5 +79,25 @@ describe('computeCompletionStats', () => {
       makeGame({ id: '3', status: 'dropped' }),
     ]
     expect(computeCompletionStats(games)).toEqual({ completed: 0, total: 3, percentCompleted: 0 })
+  })
+})
+
+describe('countByStatus', () => {
+  it('breaks down by every status present, in a fixed order, omitting zero-count statuses', () => {
+    const games = [
+      makeGame({ id: '1', status: 'backlog' }),
+      makeGame({ id: '2', status: 'completed' }),
+      makeGame({ id: '3', status: 'completed' }),
+      makeGame({ id: '4', status: 'playing' }),
+    ]
+    expect(countByStatus(games)).toEqual([
+      { status: 'completed', label: 'Completado', count: 2 },
+      { status: 'playing', label: 'Jugando', count: 1 },
+      { status: 'backlog', label: 'Backlog', count: 1 },
+    ])
+  })
+
+  it('returns an empty array for an empty collection', () => {
+    expect(countByStatus([])).toEqual([])
   })
 })
