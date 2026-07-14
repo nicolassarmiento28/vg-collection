@@ -91,11 +91,13 @@ export function WhatToPlayButton({ games }: WhatToPlayButtonProps) {
       >
         {backlog.length === 0 ? (
           <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '24px 0' }}>
-            No tenés juegos pendientes en tu backlog.
+            No tienes juegos pendientes en tu backlog.
           </div>
         ) : (
           <div style={{ textAlign: 'center' }}>
             <div
+              aria-live={spinning ? 'off' : 'polite'}
+              aria-atomic="true"
               style={{
                 fontFamily: 'var(--font-display)',
                 fontSize: 30,

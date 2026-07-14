@@ -73,6 +73,6 @@ test.describe('What to play', () => {
     await login(page, (viewport?.width ?? 1280) < 768)
 
     await page.getByRole('button', { name: '¿Qué juego hoy?' }).click()
-    await expect(page.getByText('No tenés juegos pendientes en tu backlog.')).toBeVisible()
+    await expect(page.getByText('No tienes juegos pendientes en tu backlog.')).toBeVisible()
   })
 })

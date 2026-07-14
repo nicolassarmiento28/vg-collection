@@ -106,7 +106,7 @@ export function CollectionDashboard({ games }: CollectionDashboardProps) {
                 endAngle={-270}
               >
                 <Cell fill="var(--accent)" />
-                <Cell fill="var(--border)" />
+                <Cell fill="var(--text-muted)" />
               </Pie>
               <Tooltip contentStyle={tooltipStyle} />
             </PieChart>
