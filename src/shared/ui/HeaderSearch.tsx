@@ -130,6 +130,7 @@ export function HeaderSearch() {
             borderRadius: 24,
             padding: '8px 16px',
             height: 40,
+            alignSelf: 'center',
             boxShadow: focused ? '0 0 0 3px var(--accent-dim)' : 'none',
             transition: 'border-color 150ms, box-shadow 150ms',
           }}
