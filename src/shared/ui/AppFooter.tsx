@@ -54,8 +54,10 @@ export function AppFooter() {
           </p>
         </div>
 
-        {/* Nav block */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {/* Nav block — width approximates the navbar's theme-toggle + login
+            button cluster, so its left edge lines up with that cluster
+            instead of sitting as a narrow column flush to the right edge. */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: isMobile ? undefined : 190 }}>
           <span
             style={{
               fontFamily: 'var(--font-mono)',

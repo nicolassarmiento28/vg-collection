@@ -101,7 +101,7 @@ export function AppLayout({ children }: AppLayoutProps) {
 
         {/* Search — desktop/tablet only */}
         {!isMobile && (
-          <div style={{ flex: 1, minWidth: 0, display: 'flex', justifyContent: 'center', overflow: 'hidden' }}>
+          <div style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
             <HeaderSearch />
           </div>
         )}

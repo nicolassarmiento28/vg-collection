@@ -80,14 +80,14 @@ export function HeaderSearch() {
   }
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', minWidth: 0 }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', minWidth: 0, height: 40 }}>
       <AutoComplete
         value={inputValue}
         options={[...options, ...noResultsOption]}
         onSelect={handleSelect}
         onSearch={setInputValue}
         allowClear
-        style={{ width: '100%', minWidth: 160, maxWidth: 480 }}
+        style={{ width: '100%', minWidth: 160, maxWidth: 480, position: 'relative' }}
         popupMatchSelectWidth={true}
       >
         <Input
@@ -128,7 +128,8 @@ export function HeaderSearch() {
             background: 'var(--bg-elevated)',
             borderColor: focused ? 'var(--accent)' : 'var(--border)',
             borderRadius: 24,
-            padding: '9px 16px',
+            padding: '8px 16px',
+            height: 40,
             boxShadow: focused ? '0 0 0 3px var(--accent-dim)' : 'none',
             transition: 'border-color 150ms, box-shadow 150ms',
           }}
