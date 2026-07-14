@@ -1,234 +1,126 @@
-# Gestor de Colección de Videojuegos
+# VG Collection
 
-Aplicación SPA desarrollada con React para la gestión y visualización de colecciones de videojuegos retro y modernos. La aplicación permite explorar juegos populares y recientes mediante integración con la API de IGDB, visualizar el detalle de cada título y administrar colecciones personalizadas.
+SPA en React para gestionar una colección personal de videojuegos, con
+integración a la API de IGDB para explorar catálogo, buscar títulos y
+enriquecer datos. Identidad visual retro-arcade, con dark mode por defecto
+y una paleta "Cream Arcade" propia para light mode.
 
-Incluye renderizado dinámico, manejo de estado y una interfaz moderna orientada a la organización de contenido y la navegación rápida. El proyecto cuenta con funcionalidades CRUD para crear, editar, completar y eliminar registros, importación/exportación de la colección en JSON, un dashboard de estadísticas, un command palette (Cmd/Ctrl+K) y persistencia de datos mediante localStorage.
+<!-- TODO: agregar screenshot o GIF de la app acá, por ejemplo public/screenshot.png -->
+
+## Features
+
+**Exploración y búsqueda**
+- Home con secciones de juegos mejor valorados y lanzamientos recientes (IGDB).
+- Búsqueda global en el header con autocompletado.
+- Command palette (`Ctrl`/`Cmd` + `K`) para buscar juegos, navegar entre secciones y cambiar de tema sin usar el mouse.
+- Vista de detalle de juego IGDB (portada, descripción, rating, plataformas, año, género).
+
+**Mi colección**
+- Colección personal con filtros por estado, plataforma y búsqueda.
+- Alta manual de juegos o desde el detalle de un título de IGDB (con datos precargados).
+- Edición, notas y puntos positivos/negativos por juego, marcado como completado.
+- Dashboard de estadísticas: distribución por plataforma, género, año y porcentaje de completado.
+- Importar/exportar la colección completa como archivo JSON.
+
+**Productividad**
+- "¿Qué juego hoy?": elige al azar un juego pendiente del backlog.
+- Toggle de tema oscuro/claro con paleta propia por modo.
+- Autenticación demo en el cliente (sin backend real, ver `CLAUDE.md`).
 
 ## Stack tecnológico
 
-- React 19 + TypeScript
-- Vite 8
-- Ant Design 6
-- React Router 7
-- Recharts (gráficos del dashboard)
-- Vitest + Testing Library (tests unitarios)
-- Playwright (tests E2E/responsive)
+- [React](https://react.dev/) 19.2 + TypeScript 6
+- [Vite](https://vite.dev/) 8
+- [Ant Design](https://ant.design/) 6.3
+- [React Router](https://reactrouter.com/) 7.14
+- [Recharts](https://recharts.org/) 3.9 (gráficos del dashboard)
+- [Vitest](https://vitest.dev/) 4.1 + Testing Library (tests unitarios/integración)
+- [Playwright](https://playwright.dev/) 1.59 (tests E2E)
+- Proxy serverless propio (`api/igdb/games.ts`) que intermedia todas las consultas a IGDB, valida el body y aplica rate limiting básico por IP.
 
-## Módulos principales
+## Arquitectura del proyecto
 
-1. Inicio
-- Muestra secciones de juegos mejor valorados y lanzamientos recientes.
-- Consume IGDB a través del proxy de desarrollo en Vite (o del endpoint serverless en producción).
-
-2. Búsqueda global y command palette
-- Autocompletado en el header con resultados de IGDB.
-- Command palette (Cmd/Ctrl+K) para buscar juegos, navegar rápido entre secciones y cambiar de tema sin usar el mouse.
-- Permite navegar directo al detalle de un juego externo.
-
-3. Detalle de juego (IGDB)
-- Muestra portada, descripción, calificación, plataformas, año de lanzamiento y género.
-- Botón para agregar a la colección (abre un modal de creación con datos precargados).
-
-4. Mi colección
-- Vista tipo galería con filtros por estado/plataforma y búsqueda.
-- Dashboard de estadísticas: juegos por plataforma, por género, por año, y porcentaje de completado.
-- Importar/exportar la colección completa como archivo JSON.
-- "¿Qué juego hoy?": selecciona al azar un juego pendiente del backlog.
-- Acciones por juego: editar, ver detalle, marcar como completado.
-- Requiere haber iniciado sesión.
-
-5. Detalle de juego en la colección
-- Vista completa del juego guardado.
-- Gestión de notas y puntos positivos/negativos.
-- Permite editar y eliminar.
-
-6. Crear juego
-- Formulario manual para agregar un juego personalizado.
-- Requiere haber iniciado sesión.
-
-7. Autenticación (demo local)
-- Modal de login/registro en el cliente, sin backend real.
-- Usuario demo disponible para pruebas rápidas.
-
-8. Tema visual
-- Toggle de tema oscuro/claro, con paletas propias para cada modo.
-- Layout responsive con menú lateral en mobile.
-
-## Requisitos previos
-
-- Node.js 20 o superior recomendado
-- npm 9 o superior
-
-## Configuración paso a paso
-
-1. Clonar o abrir el proyecto
-```bash
-cd vg-collection
+```text
+src/
+  features/
+    auth/        # login/registro demo en el cliente, sin backend real
+    collection/  # colección del usuario: vista, detalle, dashboard, import/export
+    games/       # formularios, detalle de juego IGDB, estado global de juegos
+    home/        # página de inicio
+    popular/     # hooks y UI de juegos populares/recientes de IGDB
+  shared/
+    constants/   # valores fijos de la app
+    lib/         # utilidades de integración (storage, etc.)
+    state/       # estado global (tema, command palette)
+    types/       # tipos TypeScript compartidos
+    ui/          # layout, header search, footer, command palette, theme toggle
+    utils/       # utilidades generales
+api/
+  igdb/          # proxy serverless a IGDB (producción)
+e2e/             # tests end-to-end con Playwright
 ```
 
-2. Instalar dependencias
+Más detalle de convenciones y reglas del proyecto en [`CLAUDE.md`](./CLAUDE.md).
+
+## Cómo correrlo localmente
+
+**Requisitos:** Node.js 20 o superior, npm 9 o superior.
+
 ```bash
+git clone <url-del-repo>
+cd vg-collection
 npm install
 ```
 
-3. Crear variables de entorno para IGDB
-
-Crea un archivo `.env.local` en la raíz del proyecto con:
+Crear un archivo `.env.local` en la raíz con las credenciales de IGDB/Twitch:
 
 ```env
 TWITCH_CLIENT_ID=tu_client_id
 TWITCH_CLIENT_SECRET=tu_client_secret
 ```
 
-Notas:
-- Estas variables las usa el proxy de Vite en desarrollo y el endpoint serverless (`api/igdb/games.ts`) en producción.
-- Si no configuras estas credenciales, las secciones conectadas a IGDB pueden fallar o mostrar errores.
-
-4. Levantar el entorno de desarrollo
-```bash
-npm run dev
-```
-
-5. Abrir en el navegador
-
-Por defecto Vite inicia en:
-
-http://localhost:5173
-
-## Uso paso a paso de la aplicación
-
-1. Abre la página de inicio (/)
-- Revisa los carruseles de juegos populares y recientes.
-
-2. Prueba la búsqueda global
-- Escribe al menos 2 caracteres en el buscador del header, o abre el command palette con Ctrl+K (Cmd+K en Mac).
-- Selecciona un resultado para abrir su detalle.
-
-3. Inicia sesión
-- Usa el botón de login.
-- Credenciales demo sugeridas en el modal:
-  - Email: demo@vgcollection.app
-  - Contraseña: demo1234
-
-4. Agrega un juego desde el detalle de IGDB
-- En la vista de detalle, pulsa "Agregar a mi colección".
-- Completa o ajusta los datos y guarda.
-
-5. Crea un juego manual
-- Ve a /crear.
-- Completa el formulario y guarda.
-
-6. Administra tu colección
-- Ve a /coleccion.
-- Revisa el dashboard de estadísticas en la parte superior.
-- Usa los filtros de estado, plataforma y búsqueda.
-- Edita juegos, márcalos como completados, o entra al detalle.
-- Exporta tu colección a JSON o importa una previamente exportada.
-
-7. Verifica la persistencia
-- Recarga la página.
-- Tus juegos deben mantenerse (localStorage).
-
-## Comandos más importantes
-
-### Desarrollo
+Estas variables las usa el proxy de Vite en desarrollo y el endpoint serverless
+(`api/igdb/games.ts`) en producción. Sin ellas, las secciones conectadas a
+IGDB fallan o no muestran datos.
 
 ```bash
 npm run dev
 ```
-Inicia el servidor de desarrollo con HMR.
 
-### Build de producción
+### Comandos disponibles
 
-```bash
-npm run build
-```
-Compila TypeScript y genera el build en `dist`.
+| Comando | Descripción |
+|---|---|
+| `npm run dev` | Servidor de desarrollo con HMR |
+| `npm run build` | Type-check + build de producción (`dist`) |
+| `npm run preview` | Sirve localmente el build generado |
+| `npm run lint` | ESLint sobre todo el proyecto |
+| `npm run test` | Tests unitarios (Vitest) en modo run |
+| `npm run test:watch` | Tests unitarios en modo watch |
+| `npm run test:e2e` | Tests E2E (Playwright) |
 
-### Previsualizar build
+## Testing
 
-```bash
-npm run preview
-```
-Sirve localmente el build generado.
+El proyecto tiene tests unitarios y de integración con Vitest + Testing
+Library (`npm run test`), y tests E2E con Playwright (`npm run test:e2e`,
+requiere `npx playwright install` la primera vez).
 
-### Linter
+## Uso de Claude Code
 
-```bash
-npm run lint
-```
-Ejecuta ESLint en todo el proyecto.
+El repo incluye un [`CLAUDE.md`](./CLAUDE.md) con contexto de arquitectura,
+convenciones y comandos para que agentes de IA trabajen sobre el código, más
+subagentes especializados en `.claude/agents/`:
 
-### Tests unitarios (Vitest)
+- **orchestrator** — coordina tareas que abarcan más de un dominio (UX, diseño visual, theming, seguridad).
+- **ux-ui-reviewer** — revisa estados de carga, vacíos, error y accesibilidad en componentes y flujos de usuario.
+- **frontend-visual-designer** — refuerza la identidad visual retro-arcade en vistas y componentes.
+- **theme-color-specialist** — mantiene coherencia de paleta y contraste entre dark y light mode.
+- **security-auditor** — audita el proxy de IGDB, el flujo de auth demo y la persistencia local antes de deploys.
 
-```bash
-npm run test
-```
-Ejecuta los tests en modo run.
+## Deploy
 
-### Tests unitarios en modo watch
+Desplegado en [Vercel](https://vercel.com/).
 
-```bash
-npm run test:watch
-```
-Ejecuta los tests en modo interactivo/watch.
+## Licencia / autor
 
-### Tests E2E (Playwright)
-
-```bash
-npm run test:e2e
-```
-Ejecuta las pruebas E2E/responsive usando Playwright.
-
-Primera vez con Playwright (si aplica):
-```bash
-npx playwright install
-```
-
-## Estructura principal del proyecto
-
-```text
-src/
-  features/
-    auth/        # login/registro en el cliente (demo)
-    popular/     # hooks y UI de juegos de IGDB
-    home/        # página de inicio
-    games/       # formularios, detalle IGDB, estado global de juegos
-    collection/  # vista, detalle, import/export y dashboard de la colección
-  shared/
-    ui/          # layout, header search, footer, command palette, toggle de tema
-    state/       # contextos globales (tema, command palette)
-    lib/storage/ # persistencia en localStorage
-    types/       # tipos compartidos
-    utils/       # utilidades compartidas (rating, sanitización de queries)
-api/
-  igdb/          # proxy serverless a IGDB (producción)
-e2e/             # tests end-to-end con Playwright
-```
-
-## Flujo técnico clave
-
-1. La app inicia con proveedores globales de auth, juegos, tema y command palette.
-2. El estado de juegos se carga desde localStorage.
-3. Cada cambio en la colección se persiste automáticamente.
-4. IGDB se consume desde el frontend contra `/api/igdb/*`.
-5. En desarrollo, el proxy de Vite agrega los headers OAuth con el token de Twitch; en producción, lo hace `api/igdb/games.ts`, que además valida el body y aplica rate limiting por IP.
-
-## Solución de problemas rápida
-
-1. No cargan los juegos populares/recientes
-- Revisa `.env.local` (Client ID y Secret).
-- Reinicia `npm run dev` tras cambiar las variables.
-
-2. No se guardan los juegos
-- Verifica los permisos de localStorage en el navegador.
-- Prueba en una ventana normal (no privada/estricta).
-
-3. Falla `test:e2e` por navegadores faltantes
-- Ejecuta `npx playwright install`.
-
-## Estado actual del proyecto
-
-- Base funcional completa para un MVP de colección, con dashboard, import/export y command palette.
-- Incluye tests unitarios y pruebas E2E responsive.
-- Lista para evolucionar hacia un backend real y autenticación persistente.
+© 2026 Nicolás Sarmiento. Todos los derechos reservados.
