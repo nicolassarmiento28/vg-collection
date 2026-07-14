@@ -6,6 +6,7 @@ import { useIgdbGameDetail } from '../hooks/useIgdbGameDetail'
 import { useGamesContext } from '../state/GamesContext'
 import { useAuthContext } from '../../auth/state/AuthContext'
 import type { GameFormPrefill, Platform } from '../../../shared/types/game'
+import { getInitials } from '../../../shared/utils/initials'
 
 const IGDB_PLATFORM_MAP: Record<string, Platform> = {
   PC: 'pc',
@@ -28,15 +29,6 @@ const IGDB_PLATFORM_MAP: Record<string, Platform> = {
 
 function getCoverUrl(url: string): string {
   return url.replace('t_thumb', 't_cover_big').replace(/^\/\//, 'https://')
-}
-
-function getInitials(title: string): string {
-  return title
-    .split(' ')
-    .slice(0, 2)
-    .map((w) => w[0] ?? '')
-    .join('')
-    .toUpperCase()
 }
 
 function GameDetailSkeleton() {

@@ -15,6 +15,7 @@ import { WhatToPlayButton } from './WhatToPlayButton'
 import { PLATFORM_LABELS } from '../../../shared/types/game'
 import type { Game, GameStatus, Platform } from '../../../shared/types/game'
 import { STATUS_BADGE_COLORS } from '../../../shared/constants/gameStatus'
+import { getInitials } from '../../../shared/utils/initials'
 
 const STATUS_OPTIONS: Array<{ value: GameStatus | 'all'; label: string }> = [
   { value: 'all', label: 'Todos' },
@@ -65,16 +66,6 @@ function Chip({ label, active, onClick }: ChipProps) {
       {label}
     </button>
   )
-}
-
-// --- Game card initials fallback ---
-function getInitials(title: string): string {
-  return title
-    .split(' ')
-    .slice(0, 2)
-    .map((w) => w[0] ?? '')
-    .join('')
-    .toUpperCase()
 }
 
 // --- CollectionCard ---
@@ -330,6 +321,8 @@ export function CollectionPage() {
   }
 
   const importInputRef = useRef<HTMLInputElement>(null)
+  const [importing, setImporting] = useState(false)
+  const MAX_IMPORT_FILE_SIZE = 5 * 1024 * 1024 // 5 MB — plenty for a JSON game collection
 
   function handleExport() {
     downloadCollection(state.games)
@@ -344,16 +337,26 @@ export function CollectionPage() {
     e.target.value = '' // allow re-selecting the same file later
     if (file === undefined) return
 
-    const text = await file.text()
-    const imported = parseImportedCollection(text)
-
-    if (imported === null) {
-      void message.error('El archivo no tiene el formato esperado de una colección exportada')
+    if (file.size > MAX_IMPORT_FILE_SIZE) {
+      void message.error('El archivo es demasiado grande (máximo 5 MB)')
       return
     }
 
-    dispatch({ type: 'importGames', payload: imported })
-    void message.success(`Se importaron ${imported.length} juego(s)`)
+    setImporting(true)
+    try {
+      const text = await file.text()
+      const imported = parseImportedCollection(text)
+
+      if (imported === null) {
+        void message.error('El archivo no tiene el formato esperado de una colección exportada')
+        return
+      }
+
+      dispatch({ type: 'importGames', payload: imported })
+      void message.success(`Se importaron ${imported.length} juego(s)`)
+    } finally {
+      setImporting(false)
+    }
   }
 
   if (!authState.isLoggedIn) return <CollectionGatePlaceholder />
@@ -385,13 +388,15 @@ export function CollectionPage() {
           <Button icon={<DownloadOutlined />} onClick={handleExport}>
             Exportar colección
           </Button>
-          <Button icon={<UploadOutlined />} onClick={handleImportClick}>
+          <Button icon={<UploadOutlined />} onClick={handleImportClick} loading={importing}>
             Importar colección
           </Button>
           <input
             ref={importInputRef}
             type="file"
             accept="application/json"
+            aria-hidden="true"
+            tabIndex={-1}
             style={{ display: 'none' }}
             onChange={handleImportFileChange}
           />

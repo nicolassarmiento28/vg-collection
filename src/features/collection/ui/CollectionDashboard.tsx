@@ -29,10 +29,11 @@ function ChartCard({ title, children }: { title: string; children: React.ReactNo
         minWidth: 0,
       }}
     >
-      <div
+      <h3
         style={{
           fontFamily: 'var(--font-mono)',
           fontSize: 11,
+          fontWeight: 400,
           color: 'var(--text-muted)',
           textTransform: 'uppercase',
           letterSpacing: 1,
@@ -40,7 +41,7 @@ function ChartCard({ title, children }: { title: string; children: React.ReactNo
         }}
       >
         {title}
-      </div>
+      </h3>
       {children}
     </div>
   )

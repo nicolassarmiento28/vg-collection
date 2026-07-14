@@ -40,16 +40,17 @@ export function CommandPalette() {
     setActiveIndex(0)
   }
 
-  function goTo(path: string) {
-    navigate(path)
-    close()
+  /** Runs the item's action and closes the palette unless it's marked to stay open (e.g. theme toggle). */
+  function executeItem(item: PaletteItem) {
+    item.run()
+    if (item.closesPalette) close()
   }
 
   const staticActions: PaletteItem[] = useMemo(
     () => [
-      { id: 'nav-home', label: 'Ir a Inicio', closesPalette: true, run: () => goTo('/') },
-      { id: 'nav-coleccion', label: 'Ir a Mi Colección', closesPalette: true, run: () => goTo('/coleccion') },
-      { id: 'nav-crear', label: 'Ir a Crear Juego', closesPalette: true, run: () => goTo('/crear') },
+      { id: 'nav-home', label: 'Ir a Inicio', closesPalette: true, run: () => navigate('/') },
+      { id: 'nav-coleccion', label: 'Ir a Mi Colección', closesPalette: true, run: () => navigate('/coleccion') },
+      { id: 'nav-crear', label: 'Ir a Crear Juego', closesPalette: true, run: () => navigate('/crear') },
       {
         id: 'toggle-theme',
         label: theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro',
@@ -70,7 +71,7 @@ export function CommandPalette() {
     id: `game-${game.id}`,
     label: game.name,
     closesPalette: true,
-    run: () => goTo(`/juego/${game.id}`),
+    run: () => navigate(`/juego/${game.id}`),
   }))
 
   const items = [...filteredActions, ...gameItems]
@@ -88,7 +89,8 @@ export function CommandPalette() {
       setActiveIndex((i) => Math.max(i - 1, 0))
     } else if (e.key === 'Enter') {
       e.preventDefault()
-      items[activeIndex]?.run()
+      const item = items[activeIndex]
+      if (item) executeItem(item)
     }
   }
 
@@ -114,7 +116,7 @@ export function CommandPalette() {
       <Input
         autoFocus
         placeholder="Buscar juegos o comandos…"
-        aria-label="Command palette"
+        aria-label="Paleta de comandos"
         prefix={<SearchOutlined aria-hidden="true" style={{ color: 'var(--text-muted)' }} />}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
@@ -126,7 +128,7 @@ export function CommandPalette() {
         }}
       />
 
-      <div role="listbox" style={{ maxHeight: 360, overflowY: 'auto' }}>
+      <div role="listbox" aria-live="polite" style={{ maxHeight: 360, overflowY: 'auto' }}>
         {items.length === 0 && (
           <div style={{ color: 'var(--text-muted)', fontSize: 13, padding: '12px 4px' }}>
             Sin resultados
@@ -138,7 +140,7 @@ export function CommandPalette() {
             role="option"
             aria-selected={index === activeIndex}
             onMouseEnter={() => setActiveIndex(index)}
-            onClick={item.run}
+            onClick={() => executeItem(item)}
             style={{
               padding: '10px 12px',
               borderRadius: 6,

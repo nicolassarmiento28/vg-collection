@@ -6,6 +6,13 @@ import { useAuthContext } from '../../features/auth/state/AuthContext'
 const { Footer } = Layout
 const { useBreakpoint } = Grid
 
+// Approximates the width of the navbar's theme-toggle + login-button
+// cluster (AppLayout.tsx), so the footer nav block's left edge lines up
+// with it instead of sitting as a narrow column flush to the right edge.
+// Not pixel-locked on purpose: if that cluster's width changes (e.g. a
+// longer login label), this only needs a rough match, not an exact one.
+const FOOTER_NAV_WIDTH = 190
+
 export function AppFooter() {
   const { state, dispatch } = useAuthContext()
   const screens = useBreakpoint()
@@ -54,10 +61,8 @@ export function AppFooter() {
           </p>
         </div>
 
-        {/* Nav block — width approximates the navbar's theme-toggle + login
-            button cluster, so its left edge lines up with that cluster
-            instead of sitting as a narrow column flush to the right edge. */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: isMobile ? undefined : 190 }}>
+        {/* Nav block */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: isMobile ? undefined : FOOTER_NAV_WIDTH }}>
           <span
             style={{
               fontFamily: 'var(--font-mono)',

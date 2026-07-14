@@ -20,6 +20,36 @@ function getCoverUrl(game: IgdbGame): string | undefined {
   return url.replace('t_thumb', 't_cover_small')
 }
 
+interface PaletteHintButtonProps {
+  onClick: () => void
+  variant: 'inline' | 'outside'
+}
+
+/** The "Ctrl K" / "⌘K" pill — rendered either inside the input (suffix) or next to it. */
+function PaletteHintButton({ onClick, variant }: PaletteHintButtonProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label="Abrir paleta de comandos"
+      title="Abrir paleta de comandos"
+      style={{
+        flexShrink: 0,
+        fontFamily: 'var(--font-mono)',
+        fontSize: 11,
+        color: 'var(--text-muted)',
+        background: variant === 'inline' ? 'var(--bg-surface)' : 'transparent',
+        border: variant === 'inline' ? '1px solid var(--border)' : 'none',
+        borderRadius: variant === 'inline' ? 5 : 6,
+        padding: variant === 'inline' ? '2px 7px' : '3px 8px',
+        cursor: 'pointer',
+      }}
+    >
+      {shortcutHint}
+    </button>
+  )
+}
+
 export function HeaderSearch() {
   const [inputValue, setInputValue] = useState('')
   const [focused, setFocused] = useState(false)
@@ -101,25 +131,7 @@ export function HeaderSearch() {
                 ? <LoadingOutlined aria-hidden="true" style={{ color: 'var(--accent)' }} />
                 : <SearchOutlined aria-hidden="true" style={{ color: 'var(--text-muted)' }} />}
               {hasRoomForInlineHint && (
-                <button
-                  type="button"
-                  onClick={() => setPaletteOpen(true)}
-                  aria-label="Abrir command palette"
-                  title="Abrir command palette"
-                  style={{
-                    flexShrink: 0,
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: 11,
-                    color: 'var(--text-muted)',
-                    background: 'var(--bg-surface)',
-                    border: '1px solid var(--border)',
-                    borderRadius: 5,
-                    padding: '2px 7px',
-                    cursor: 'pointer',
-                  }}
-                >
-                  {shortcutHint}
-                </button>
+                <PaletteHintButton variant="inline" onClick={() => setPaletteOpen(true)} />
               )}
             </div>
           }
@@ -136,25 +148,7 @@ export function HeaderSearch() {
         />
       </AutoComplete>
       {!isMobile && !hasRoomForInlineHint && (
-        <button
-          type="button"
-          onClick={() => setPaletteOpen(true)}
-          aria-label="Abrir command palette"
-          title="Abrir command palette"
-          style={{
-            flexShrink: 0,
-            fontFamily: 'var(--font-mono)',
-            fontSize: 11,
-            color: 'var(--text-muted)',
-            background: 'transparent',
-            border: 'none',
-            borderRadius: 6,
-            padding: '3px 8px',
-            cursor: 'pointer',
-          }}
-        >
-          {shortcutHint}
-        </button>
+        <PaletteHintButton variant="outside" onClick={() => setPaletteOpen(true)} />
       )}
     </div>
   )

@@ -1,19 +1,11 @@
 // src/features/popular/ui/PopularGameCard.tsx
 import { useNavigate } from 'react-router-dom'
+import { getInitials } from '../../../shared/utils/initials'
 import type { IgdbGame } from '../types'
 
 /** Converts IGDB cover URL from t_thumb to t_cover_big (264×374) */
 function getCoverUrl(url: string): string {
   return url.replace('t_thumb', 't_cover_big').replace(/^\/\//, 'https://')
-}
-
-function getInitials(title: string): string {
-  return title
-    .split(' ')
-    .slice(0, 2)
-    .map((w) => w[0] ?? '')
-    .join('')
-    .toUpperCase()
 }
 
 interface PopularGameCardProps {

@@ -10,15 +10,7 @@ import { useIgdbGameDetail } from '../../games/hooks/useIgdbGameDetail'
 import { PLATFORM_LABELS } from '../../../shared/types/game'
 import type { Game } from '../../../shared/types/game'
 import { STATUS_LABELS, STATUS_TAG_COLORS } from '../../../shared/constants/gameStatus'
-
-function getInitials(title: string): string {
-  return title
-    .split(' ')
-    .slice(0, 2)
-    .map((w) => w[0] ?? '')
-    .join('')
-    .toUpperCase()
-}
+import { getInitials } from '../../../shared/utils/initials'
 
 function parseLines(text: string | undefined): string[] {
   if (!text) return []
