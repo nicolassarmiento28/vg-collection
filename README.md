@@ -1,4 +1,4 @@
-# ▸ VG Collection
+# VG Collection
 
 **VG Collection** es una SPA en React para gestionar una colección personal de videojuegos. Se integra con la [API de IGDB](https://www.igdb.com/) para explorar el catálogo global, buscar títulos y enriquecer fichas con datos reales. Su identidad visual está inspirada en la estética retro-arcade, con tipografías Bebas Neue, DM Sans y JetBrains Mono, un acento rojo distintivo, dark mode por defecto y una paleta "Cream Arcade" propia para light mode.
 
@@ -9,13 +9,13 @@
 
 ---
 
-## ✨ Features
+## Features
 
 ### Exploración y búsqueda
 
 - **Home con datos de IGDB** — sección "Mejor Valorados" en carrusel horizontal y "Lanzamientos Recientes" en grilla, ambos con portadas, año, rating y plataformas.
 - **Búsqueda global** — autocomplete en el header con resultados de IGDB, debounced a 400ms.
-- **Command Palette** — presioná `Ctrl+K` (o `⌘K` en Mac) para buscar juegos, navegar entre secciones o cambiar el tema sin usar el mouse.
+- **Command Palette** — presioná `Ctrl+K` (o `Cmd+K` en Mac) para buscar juegos, navegar entre secciones o cambiar el tema sin usar el mouse.
 - **Detalle IGDB** — vista con banner hero, portada superpuesta, descripción, stats 2×2 (rating, plataforma, lanzamiento, género), tags de plataformas y botón para agregar a tu colección.
 
 <div align="center">
@@ -80,7 +80,7 @@
 
 ---
 
-## 🛠 Stack
+## Stack
 
 | Capa | Tecnología |
 |---|---|
@@ -95,7 +95,7 @@
 
 ---
 
-## 📁 Arquitectura del proyecto
+## Arquitectura del proyecto
 
 ```
 src/
@@ -134,7 +134,7 @@ Componentes de UI (PopularGameCard, GameDetailPage, CommandPalette, etc.)
 
 ---
 
-## 🚀 Cómo correrlo localmente
+## Cómo correrlo localmente
 
 **Requisitos:** Node.js 20+, npm 9+
 
@@ -171,7 +171,7 @@ npm run dev          # → http://localhost:5173
 
 ---
 
-## 🧪 Testing
+## Testing
 
 El proyecto combina dos capas de testing:
 
@@ -185,7 +185,7 @@ npm run test:e2e      # Tests E2E (requiere npx playwright install primero)
 
 ---
 
-## ☁️ Deploy
+## Deploy
 
 Desplegado en [Vercel](https://vercel.com/) con:
 
@@ -195,7 +195,7 @@ Desplegado en [Vercel](https://vercel.com/) con:
 
 ---
 
-## 🤖 Claude Code / Subagentes
+## Claude Code / Subagentes
 
 El repositorio incluye un [`CLAUDE.md`](./CLAUDE.md) con contexto de arquitectura, convenciones y comandos para agentes de IA. También cuenta con subagentes especializados en `.claude/agents/`:
 
