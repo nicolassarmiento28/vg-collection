@@ -1,70 +1,142 @@
-# VG Collection
+# ▸ VG Collection
 
-SPA en React para gestionar una colección personal de videojuegos, con
-integración a la API de IGDB para explorar catálogo, buscar títulos y
-enriquecer datos. Identidad visual retro-arcade, con dark mode por defecto
-y una paleta "Cream Arcade" propia para light mode.
+**VG Collection** es una SPA en React para gestionar una colección personal de videojuegos. Se integra con la [API de IGDB](https://www.igdb.com/) para explorar el catálogo global, buscar títulos y enriquecer fichas con datos reales. Su identidad visual está inspirada en la estética retro-arcade, con tipografías Bebas Neue, DM Sans y JetBrains Mono, un acento rojo distintivo, dark mode por defecto y una paleta "Cream Arcade" propia para light mode.
 
-<!-- TODO: agregar screenshot o GIF de la app acá, por ejemplo public/screenshot.png -->
+<div align="center">
+  <img src="screenshots/home-dark.png" alt="VG Collection — Home en dark mode" width="80%" />
+  <p><em>Página de inicio con carrusel de juegos mejor valorados y grilla de lanzamientos recientes desde IGDB.</em></p>
+</div>
 
-## Features
+---
 
-**Exploración y búsqueda**
-- Home con secciones de juegos mejor valorados y lanzamientos recientes (IGDB).
-- Búsqueda global en el header con autocompletado.
-- Command palette (`Ctrl`/`Cmd` + `K`) para buscar juegos, navegar entre secciones y cambiar de tema sin usar el mouse.
-- Vista de detalle de juego IGDB (portada, descripción, rating, plataformas, año, género).
+## ✨ Features
 
-**Mi colección**
-- Colección personal con filtros por estado, plataforma y búsqueda.
-- Alta manual de juegos o desde el detalle de un título de IGDB (con datos precargados).
-- Edición, notas y puntos positivos/negativos por juego, marcado como completado.
-- Dashboard de estadísticas: distribución por plataforma, género, año y porcentaje de completado.
-- Importar/exportar la colección completa como archivo JSON.
+### Exploración y búsqueda
 
-**Productividad**
-- "¿Qué juego hoy?": elige al azar un juego pendiente del backlog.
-- Toggle de tema oscuro/claro con paleta propia por modo.
-- Autenticación demo en el cliente (sin backend real, ver `CLAUDE.md`).
+- **Home con datos de IGDB** — sección "Mejor Valorados" en carrusel horizontal y "Lanzamientos Recientes" en grilla, ambos con portadas, año, rating y plataformas.
+- **Búsqueda global** — autocomplete en el header con resultados de IGDB, debounced a 400ms.
+- **Command Palette** — presioná `Ctrl+K` (o `⌘K` en Mac) para buscar juegos, navegar entre secciones o cambiar el tema sin usar el mouse.
+- **Detalle IGDB** — vista con banner hero, portada superpuesta, descripción, stats 2×2 (rating, plataforma, lanzamiento, género), tags de plataformas y botón para agregar a tu colección.
 
-## Stack tecnológico
+<div align="center">
+  <table>
+    <tr>
+      <td width="50%"><img src="screenshots/game-detail-igdb.png" alt="Detalle de juego IGDB" width="100%" /></td>
+      <td width="50%"><img src="screenshots/command-palette.png" alt="Command Palette" width="100%" /></td>
+    </tr>
+    <tr>
+      <td><em>Detalle de juego desde IGDB con banner, stats y botón para agregar a colección.</em></td>
+      <td><em>Command Palette con búsqueda de juegos y comandos de navegación.</em></td>
+    </tr>
+  </table>
+</div>
 
-- [React](https://react.dev/) 19.2 + TypeScript 6
-- [Vite](https://vite.dev/) 8
-- [Ant Design](https://ant.design/) 6.3
-- [React Router](https://reactrouter.com/) 7.14
-- [Recharts](https://recharts.org/) 3.9 (gráficos del dashboard)
-- [Vitest](https://vitest.dev/) 4.1 + Testing Library (tests unitarios/integración)
-- [Playwright](https://playwright.dev/) 1.59 (tests E2E)
-- Proxy serverless propio (`api/igdb/games.ts`) que intermedia todas las consultas a IGDB, valida el body y aplica rate limiting básico por IP.
+### Mi colección
 
-## Arquitectura del proyecto
+- **Colección personal** con filtros por estado (backlog, jugando, completado, pausado, abandonado), plataforma agrupada por fabricante (Nintendo, PlayStation, Sega, Microsoft, PC, Commodore) y búsqueda textual.
+- **Alta de juegos** manual o desde el detalle de un título IGDB con datos precargados.
+- **Dashboard de estadísticas** con gráficos Recharts: donut de completado, barras por plataforma, género y año de lanzamiento.
+- **Importar/exportar** la colección completa como archivo JSON.
+- **Opinión por juego** — puntos positivos, negativos, notas personales y marcado como completado con un solo clic.
 
-```text
+<div align="center">
+  <table>
+    <tr>
+      <td width="50%"><img src="screenshots/collection-dashboard.png" alt="Dashboard de colección" width="100%" /></td>
+      <td width="50%"><img src="screenshots/collection-detail-igdb.png" alt="Detalle de juego en colección" width="100%" /></td>
+    </tr>
+    <tr>
+      <td><em>Dashboard con donut de completado, barras por plataforma y desglose por estado.</em></td>
+      <td><em>Detalle de juego en colección con opinión, notas y datos enriquecidos de IGDB.</em></td>
+    </tr>
+  </table>
+</div>
+
+### Productividad
+
+- **¿Qué juego hoy?** — selección aleatoria del backlog con animación de "spinning" estilo ruleta. Ideal para when no sabés qué jugar.
+- **Toggle dark/light mode** con paleta propia: dark arcade por defecto y "Cream Arcade" (beige cálido) para light mode.
+- **Autenticación demo** en el cliente — sin backend real, pensada para prototipado y experiencia de usuario.
+
+<div align="center">
+  <table>
+    <tr>
+      <td width="50%"><img src="screenshots/what-to-play.png" alt="¿Qué juego hoy?" width="100%" /></td>
+      <td width="50%"><img src="screenshots/home-light.png" alt="Home en light mode" width="100%" /></td>
+    </tr>
+    <tr>
+      <td><em>Modal "¿Qué juego hoy?" con selección aleatoria del backlog.</em></td>
+      <td><em>Home en light mode con la paleta "Cream Arcade".</em></td>
+    </tr>
+  </table>
+</div>
+
+### Responsive design
+
+<div align="center">
+  <img src="screenshots/collection-mobile.png" alt="VG Collection en mobile" width="30%" />
+  <p><em>Vista mobile con menú de navegación tipo drawer y colección adaptada.</em></p>
+</div>
+
+---
+
+## 🛠 Stack
+
+| Capa | Tecnología |
+|---|---|
+| **Framework** | React 19.2 + TypeScript 6 |
+| **Build** | Vite 8 |
+| **UI** | Ant Design 6.3 |
+| **Routing** | React Router 7.14 |
+| **Gráficos** | Recharts 3.9 |
+| **Tests unitarios** | Vitest 4.1 + Testing Library |
+| **Tests E2E** | Playwright 1.59 (7 viewports: 3 mobile, 2 tablet, 2 desktop) |
+| **Backend** | Proxy serverless propio (`api/igdb/games.ts`) con rate limiting, sanitización de queries y cache de token Twitch |
+
+---
+
+## 📁 Arquitectura del proyecto
+
+```
 src/
-  features/
-    auth/        # login/registro demo en el cliente, sin backend real
-    collection/  # colección del usuario: vista, detalle, dashboard, import/export
-    games/       # formularios, detalle de juego IGDB, estado global de juegos
-    home/        # página de inicio
-    popular/     # hooks y UI de juegos populares/recientes de IGDB
-  shared/
-    constants/   # valores fijos de la app
-    lib/         # utilidades de integración (storage, etc.)
-    state/       # estado global (tema, command palette)
-    types/       # tipos TypeScript compartidos
-    ui/          # layout, header search, footer, command palette, theme toggle
-    utils/       # utilidades generales
+├── features/           # Organización por dominio
+│   ├── auth/           # Login/registro demo (cliente, sin backend)
+│   ├── collection/     # Colección del usuario: dashboard, detalle, import/export, "Qué juego hoy"
+│   ├── games/          # Formularios, detalle IGDB, reducer de estado global
+│   ├── home/           # Página de inicio
+│   └── popular/        # Hooks y UI de juegos IGDB (populares, recientes, búsqueda)
+├── shared/
+│   ├── constants/      # Valores fijos (estados de juego, colores)
+│   ├── lib/            # Storage local con migración/validación
+│   ├── state/          # Contextos globales (tema, command palette)
+│   ├── types/          # Tipos TypeScript (Game, Platform, GameStatus, IgdbGame)
+│   ├── ui/             # Layout, header search, footer, command palette, theme toggle
+│   └── utils/          # Sanitización APICalypse, ratings, initials
 api/
-  igdb/          # proxy serverless a IGDB (producción)
-e2e/             # tests end-to-end con Playwright
+└── igdb/games.ts       # Proxy serverless a IGDB (producción en Vercel)
+e2e/                    # Tests end-to-end con Playwright
 ```
 
-Más detalle de convenciones y reglas del proyecto en [`CLAUDE.md`](./CLAUDE.md).
+### Flujo de datos IGDB
 
-## Cómo correrlo localmente
+```
+IGDB API (api.igdb.com)
+      ↑ POST /games (APICalypse query)
+      |
+api/igdb/games.ts  ←  Vite proxy (dev) / Vercel serverless (prod)
+      ↑ body sanitizado + rate limiting
+      |
+fetch('/api/igdb/games')  ←  useIgdbSearch, useIgdbPopularGames, etc.
+      ↑ hooks de React
+      |
+Componentes de UI (PopularGameCard, GameDetailPage, CommandPalette, etc.)
+```
 
-**Requisitos:** Node.js 20 o superior, npm 9 o superior.
+---
+
+## 🚀 Cómo correrlo localmente
+
+**Requisitos:** Node.js 20+, npm 9+
 
 ```bash
 git clone <url-del-repo>
@@ -72,19 +144,17 @@ cd vg-collection
 npm install
 ```
 
-Crear un archivo `.env.local` en la raíz con las credenciales de IGDB/Twitch:
+Crear un archivo `.env.local` en la raíz con credenciales de Twitch/IGDB:
 
 ```env
 TWITCH_CLIENT_ID=tu_client_id
 TWITCH_CLIENT_SECRET=tu_client_secret
 ```
 
-Estas variables las usa el proxy de Vite en desarrollo y el endpoint serverless
-(`api/igdb/games.ts`) en producción. Sin ellas, las secciones conectadas a
-IGDB fallan o no muestran datos.
+Estas variables alimentan el proxy de Vite en desarrollo y el endpoint serverless (`api/igdb/games.ts`) en producción. Sin ellas, las secciones conectadas a IGDB mostrarán estados de error.
 
 ```bash
-npm run dev
+npm run dev          # → http://localhost:5173
 ```
 
 ### Comandos disponibles
@@ -92,35 +162,47 @@ npm run dev
 | Comando | Descripción |
 |---|---|
 | `npm run dev` | Servidor de desarrollo con HMR |
-| `npm run build` | Type-check + build de producción (`dist`) |
-| `npm run preview` | Sirve localmente el build generado |
+| `npm run build` | Type-check + build de producción en `dist/` |
+| `npm run preview` | Sirve el build de producción localmente |
 | `npm run lint` | ESLint sobre todo el proyecto |
 | `npm run test` | Tests unitarios (Vitest) en modo run |
 | `npm run test:watch` | Tests unitarios en modo watch |
-| `npm run test:e2e` | Tests E2E (Playwright) |
+| `npm run test:e2e` | Tests E2E (Playwright) en 7 viewports |
 
-## Testing
+---
 
-El proyecto tiene tests unitarios y de integración con Vitest + Testing
-Library (`npm run test`), y tests E2E con Playwright (`npm run test:e2e`,
-requiere `npx playwright install` la primera vez).
+## 🧪 Testing
 
-## Uso de Claude Code
+El proyecto combina dos capas de testing:
 
-El repo incluye un [`CLAUDE.md`](./CLAUDE.md) con contexto de arquitectura,
-convenciones y comandos para que agentes de IA trabajen sobre el código, más
-subagentes especializados en `.claude/agents/`:
+- **Unitarios e integración** con Vitest + Testing Library. Cubren reducers (`gamesReducer`), utilidades (`dashboardStats`, `randomPick`, `importExport`, `rating`, `apicalypse`), almacenamiento (`gamesStorage`) y flujos completos (`gamesFlow.integration.test`).
+- **E2E** con Playwright sobre 7 viewports: iPhone SE, iPhone 14, Pixel 7, iPad Mini, iPad Pro 11", desktop 1280×800 y desktop 1920×1080. Cubren import/export de colección, command palette, responsive design y el flujo "Qué juego hoy".
 
-- **orchestrator** — coordina tareas que abarcan más de un dominio (UX, diseño visual, theming, seguridad).
-- **ux-ui-reviewer** — revisa estados de carga, vacíos, error y accesibilidad en componentes y flujos de usuario.
-- **frontend-visual-designer** — refuerza la identidad visual retro-arcade en vistas y componentes.
-- **theme-color-specialist** — mantiene coherencia de paleta y contraste entre dark y light mode.
-- **security-auditor** — audita el proxy de IGDB, el flujo de auth demo y la persistencia local antes de deploys.
+```bash
+npm run test          # Tests unitarios
+npm run test:e2e      # Tests E2E (requiere npx playwright install primero)
+```
 
-## Deploy
+---
 
-Desplegado en [Vercel](https://vercel.com/).
+## ☁️ Deploy
 
-## Licencia / autor
+Desplegado en [Vercel](https://vercel.com/) con:
 
-© 2026 Nicolás Sarmiento. Todos los derechos reservados.
+- **Proxy serverless** en `api/igdb/games.ts` que intermedia requests a IGDB, valida formato y tamaño del body, sanitiza la query APICalypse y aplica rate limiting básico por IP.
+- **Content-Security-Policy** estricta configurada via `vercel.json` (`default-src 'self'`, solo imágenes de `images.igdb.com`, nada de inline scripts).
+- Headers de seguridad: `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `X-Frame-Options: DENY`.
+
+---
+
+## 🤖 Claude Code / Subagentes
+
+El repositorio incluye un [`CLAUDE.md`](./CLAUDE.md) con contexto de arquitectura, convenciones y comandos para agentes de IA. También cuenta con subagentes especializados en `.claude/agents/`:
+
+| Agente | Rol |
+|---|---|
+| **orchestrator** | Coordina tareas multi-dominio (UX, diseño, theming, seguridad) |
+| **ux-ui-reviewer** | Revisa estados de carga, vacío, error y accesibilidad en componentes |
+| **frontend-visual-designer** | Refuerza la identidad visual retro-arcade |
+| **theme-color-specialist** | Mantiene coherencia dark/light y contraste de paleta |
+| **security-auditor** | Audita proxy IGDB, auth demo y persistencia local antes de deploys |
